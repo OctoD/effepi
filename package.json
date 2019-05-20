@@ -1,0 +1,28 @@
+{
+  "name": "pipe",
+  "version": "0.0.0",
+  "description": "Pipelinable functions",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OctoD/pipe.git"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Paolo Roth",
+    "email": "iamoctod@gmail.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/OctoD/pipe/issues"
+  },
+  "homepage": "https://github.com/OctoD/pipe#readme",
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.4.5"
+  }
+}
