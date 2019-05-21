@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/OctoD/pipe#readme",
   "devDependencies": {
+    "@types/jest": "^24.0.13",
     "jest": "^24.8.0",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"
