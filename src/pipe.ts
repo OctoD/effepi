@@ -1,4 +1,5 @@
 export type Callable<T, R> = (arg: T) => R;
+export type ToFunction<T, R> = () => (arg: T) => Promise<R>;
 
 /**
  * Represents a pipe
@@ -7,11 +8,13 @@ export type Pipe<T = unknown> = <R>(callable: Callable<T, R>) => {
   pipe: Pipe<R>;
   readonly pipeline: any[] & [Callable<T, R>];
   resolve(arg: T, context: IPipeContext<T, R>): Promise<R>;
+  toFunction: ToFunction<T, R>;
 };
 
 export type PipeLine<T, R> = any[] & [Callable<T, R>];
 
 export interface IPipeContext<T, R> {
+  index: number;
   pipeline: PipeLine<T, R>;
 }
 
@@ -42,8 +45,13 @@ function createResolver<T, R>(pipeline: any[]): (arg: T) => Promise<R> {
   };
 }
 
-export function createContext<T, R>(pipeline: PipeLine<T, R>): IPipeContext<T, R> {
+function createToFunction<T, R>(pipeline: any[]): ToFunction<T, R> {
+  return () => createResolver<T, R>(pipeline);
+} 
+
+function createContext<T, R>(pipeline: PipeLine<T, R>): IPipeContext<T, R> {
   return {
+    index: pipeline.length,
     pipeline,
   }
 }
@@ -58,8 +66,12 @@ export function pipe<X, T>(initialCallable: (arg: X) => T, preExistingPipeline: 
     pipeline.push(callable);
 
     return {
-      pipe: (createPipe as unknown) as Pipe<R>,
+      pipe: createPipe as unknown as Pipe<R>,
+      get pipeline() {
+        return pipeline.slice();
+      },
       resolve: createResolver<X, R>(pipeline),
+      toFunction: createToFunction<X, R>(pipeline),
     };
   };
 
@@ -69,6 +81,7 @@ export function pipe<X, T>(initialCallable: (arg: X) => T, preExistingPipeline: 
       return pipeline.slice();
     },
     resolve: createResolver<X, T>(pipeline),
+    toFunction: createToFunction<X, T>(pipeline),
   };
 }
 
