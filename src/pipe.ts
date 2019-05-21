@@ -6,8 +6,14 @@ export type Callable<T, R> = (arg: T) => R;
 export type Pipe<T = unknown> = <R>(callable: Callable<T, R>) => {
   pipe: Pipe<R>;
   readonly pipeline: any[] & [Callable<T, R>];
-  resolve(arg: T): Promise<R>;
+  resolve(arg: T, context: IPipeContext<T, R>): Promise<R>;
 };
+
+export type PipeLine<T, R> = any[] & [Callable<T, R>];
+
+export interface IPipeContext<T, R> {
+  pipeline: PipeLine<T, R>;
+}
 
 /**
  * @template T
@@ -24,7 +30,9 @@ function createResolver<T, R>(pipeline: any[]): (arg: T) => Promise<R> {
 
     while (length > 0) {
       const callback = newArray.pop();
-      const result = await callback(previousResult);
+      const result = await callback(previousResult, 
+        createContext(pipeline.slice(0, pipeline.length - length) as any)
+      );
 
       previousResult = result;
       length--;
@@ -34,13 +42,19 @@ function createResolver<T, R>(pipeline: any[]): (arg: T) => Promise<R> {
   };
 }
 
+export function createContext<T, R>(pipeline: PipeLine<T, R>): IPipeContext<T, R> {
+  return {
+    pipeline,
+  }
+}
+
 /**
  * @returns
  */
 export function pipe<X, T>(initialCallable: (arg: X) => T, preExistingPipeline: any[] = []) {
   const pipeline: any[] = preExistingPipeline.concat(initialCallable);
 
-  const createPipe = <R>(callable: (arg: T) => R) => {
+  const createPipe = <R>(callable: (arg: T, context: IPipeContext<T, R>) => R) => {
     pipeline.push(callable);
 
     return {
