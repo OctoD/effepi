@@ -20,6 +20,28 @@ export function subtract(value: number): (arg: number) => number {
 
 //#region logical operators
 
+export function createSwitch<TArgs extends Array<ReturnType<typeof createSwitchOption>>>(... args: TArgs): (arg: unknown) => unknown {
+  return arg => {
+    while (args.length > 0) {
+      const result = args.pop()!(arg);
+
+      if (result.success) {
+        return result.value;
+      }
+    }
+  };
+}
+
+export function createSwitchOption<Match, Value>(match: Match, value: Value): (arg: unknown) => { success: boolean, value: Value } {
+  return arg => {
+    if (arg === match) {
+      return { success: true, value };
+    }
+
+    return { success: false, value: undefined };
+  };
+}
+
 export function fold<Left, Right>(left: Left, right: Right): <T extends boolean>(arg: T) => T extends true ? Right : Left {
   return (arg: boolean) => arg ? right : left as any;
 }
