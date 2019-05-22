@@ -34,4 +34,7 @@ module.exports = {
     "dist",
     "node_modules",
   ],
+  transform: {
+    "^.+\\.tsx?$": "ts-jest"
+  },
 }

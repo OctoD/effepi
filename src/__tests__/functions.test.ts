@@ -7,15 +7,15 @@ describe(`Tests functions`, () => {
     });
 
     test(functions.divideBy.name, () => {
-      expect(functions.add(20)(2)).toBe(10);
+      expect(functions.divideBy(20)(2)).toBe(10);
     });
 
     test(functions.multiplyBy.name, () => {
-      expect(functions.add(20)(2)).toBe(40);
+      expect(functions.multiplyBy(20)(2)).toBe(40);
     });
 
     test(functions.subtract.name, () => {
-      expect(functions.add(20)(2)).toBe(18);
+      expect(functions.subtract(20)(2)).toBe(-18);
     });
   });
 });
