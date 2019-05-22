@@ -25,6 +25,7 @@ export interface IPipeContext<T = unknown, R = unknown> {
   index: number;
   memory: Map<string, unknown>;
   pipeline: PipeLine<T, R>;
+  previousValue: T;
   // next(): Pipe<R>;
   // prev(): Pipe<T>;
 }
@@ -72,9 +73,11 @@ export function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext)
 
     for (let i = 0; i < length; i++) {
       context.index = i;
-
+      
       const callback = newArray[i];
       const result = callback(previousResult, context);
+
+      context.previousValue = result;
 
       previousResult = result;
     }
@@ -97,6 +100,7 @@ export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>
     index: 0,
     memory: new Map(),
     pipeline,
+    previousValue: undefined,
   }
 }
 
