@@ -1,4 +1,4 @@
-export type Callable<T, R> = (arg: T) => R;
+export type Callable<T, R> = (arg: T, context: IPipeContext<T, R>) => R;
 export type ToFunction<T, R> = () => (arg: T) => Promise<R>;
 export type ToSyncFunction<T, R> = () => (arg: T) => R;
 
@@ -31,7 +31,7 @@ export interface IPipeContext<T = unknown, R = unknown> {
  * @param {any[]} pipeline
  * @returns {(arg: T) => Promise<R>}
  */
-function createResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => Promise<R> {
+export function createResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => Promise<R> {
   return async (arg: T) => {
     const newArray = pipeline.slice();
     const length = pipeline.length;
@@ -57,7 +57,7 @@ function createResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) 
  * @param {any[]} pipeline
  * @returns {(arg: T) => R}
  */
-function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => R {
+export function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => R {
   return (arg: T) => {
     const newArray = pipeline.slice();
     const length = pipeline.length;
@@ -79,15 +79,15 @@ function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext): (arg:
   };
 }
 
-function createToFunction<T, R>(pipeline: any[], context: IPipeContext): ToFunction<T, R> {
+export function createToFunction<T, R>(pipeline: any[], context: IPipeContext): ToFunction<T, R> {
   return () => createResolver<T, R>(pipeline, context);
 } 
 
-function createToSyncFunction<T, R>(pipeline: any[], context: IPipeContext): ToSyncFunction<T, R> {
+export function createToSyncFunction<T, R>(pipeline: any[], context: IPipeContext): ToSyncFunction<T, R> {
   return () => createSyncResolver<T, R>(pipeline, context);
 } 
 
-function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>): IPipeContext {
+export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>): IPipeContext<T, R> {
   return {
     callValue: undefined,
     index: 0,
