@@ -3,7 +3,7 @@ import pipe from '../pipe';
 
 describe(`miscellaneous tests, jff`, () => {
   test(`A vat calculator`, () => {
-    const p = (vat: number) => pipe(useCallValue()).pipe(divideBy(100)).pipe(multiplyBy(vat)).toSyncFunction();
+    const p = (vat: number) => pipe(useCallValue<number>()).pipe(divideBy(100)).pipe(multiplyBy(vat)).toSyncFunction();
     const vatCalculator = p(22);
 
     expect(vatCalculator(100)).toBe(22);

@@ -1,3 +1,5 @@
+import { IPipeContext } from './pipe';
+
 //#region Math
 
 export function add(value: number): (arg: number) => number {
@@ -107,7 +109,11 @@ export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(ca
   }
 }
 
-export function useCallValue<TCallValue = unknown>(): <TValue = TCallValue>(value: TValue) => TValue {
+export function useCallValue<TCallValue = unknown>(): <TValue = TCallValue>(value: TValue, context: IPipeContext<TValue, TValue>) => TValue {
+  return (_, context) => context.callValue;
+}
+
+export function useValue(): <TArg>(arg: TArg) => TArg {
   return value => value;
 }
 

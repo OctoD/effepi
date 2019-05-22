@@ -17,9 +17,12 @@ export type Pipe<T = unknown> = <R>(callable: Callable<T, R>) => {
 export type PipeLine<T, R> = any[] & [Callable<T, R>];
 
 export interface IPipeContext<T = unknown, R = unknown> {
+  callValue: T;
   index: number;
   memory: Map<string, unknown>;
   pipeline: PipeLine<T, R>;
+  // next(): Pipe<R>;
+  // prev(): Pipe<T>;
 }
 
 /**
@@ -34,6 +37,8 @@ function createResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) 
     const length = pipeline.length;
 
     let previousResult: any = arg;
+
+    context.callValue = arg;
 
     for (let i = 0; i < length; i++) {
       const callback = newArray[i];
@@ -59,6 +64,8 @@ function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext): (arg:
 
     let previousResult: any = arg;
 
+    context.callValue = arg;
+
     for (let i = 0; i < length; i++) {
       context.index = i;
 
@@ -82,6 +89,7 @@ function createToSyncFunction<T, R>(pipeline: any[], context: IPipeContext): ToS
 
 function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>): IPipeContext {
   return {
+    callValue: undefined,
     index: 0,
     memory: new Map(),
     pipeline,
@@ -91,7 +99,7 @@ function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>): IPip
 /**
  * @returns
  */
-export function pipe<X, T>(initialCallable: <X>(arg: X) => T, preExistingPipeline: any[] = []) {
+export function pipe<X, T>(initialCallable: <X>(arg: X, context: IPipeContext<X, T>) => T, preExistingPipeline: any[] = []) {
   const pipeline: any[] = preExistingPipeline.concat(initialCallable);
   const context = createContext(pipeline as any);
 
