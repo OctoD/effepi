@@ -11,6 +11,7 @@ export type Pipe<T = unknown> = <R>(callable: Callable<T, R>) => {
   resolve(arg: T): Promise<R>;
   resolveSync(arg: T): R;
   toFunction: ToFunction<T, R>;
+  toSyncFunction: ToSyncFunction<T, R>;
 };
 
 export type PipeLine<T, R> = any[] & [Callable<T, R>];

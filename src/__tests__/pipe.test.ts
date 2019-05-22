@@ -8,9 +8,13 @@ describe(`pipe`, () => {
     expect(p).toHaveProperty('pipe');
     expect(p).toHaveProperty('pipeline');
     expect(p).toHaveProperty('resolve');
+    expect(p).toHaveProperty('resolveSync');
     expect(p).toHaveProperty('toFunction');
+    expect(p).toHaveProperty('toSyncFunction');
     expect(typeof p.resolve).toBe('function');
+    expect(typeof p.resolveSync).toBe('function');
     expect(typeof p.toFunction).toBe('function');
+    expect(typeof p.toSyncFunction).toBe('function');
   });
 
   test(`Each pipeline function will be invoked on resolve`, async () => {
@@ -33,12 +37,34 @@ describe(`pipe`, () => {
     expect(rt1).toHaveBeenCalled();
     expect(rt2).toHaveBeenCalled();
     expect(rt3).toHaveBeenCalled();
-  })
+  });
+
+  test(`can create a new pipeline from an existing one`, () => {
+    const p1 = pipe(put(0)).pipe(add(10));
+    const p2 = pipe(add(0), p1.pipeline).pipe(multiplyBy(2));
+
+    expect(p2.pipeline.length).toBe(4);
+    expect(p2.toSyncFunction()(0)).toBe(20);
+  });
 
   test(`resolve returns the pipeline result`, () => {
     const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
 
     expect(p.pipeline.length).toBe(3);
     expect(p.resolveSync(0)).toBe(60);
+  });
+
+  test(`can create an async function which can be called later`, async () => {
+    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+    const fn = p.toFunction();
+
+    expect(await fn(0)).toBe(60);
+  });
+
+  test(`can create a sync function which which can be called later`, () => {
+    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+    const fn = p.toSyncFunction();
+
+    expect(fn(0)).toBe(60);
   });
 });
