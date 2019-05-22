@@ -89,6 +89,24 @@ export function put<TValue>(value: TValue): () => TValue {
   return () => value;
 }
 
+/**
+ * @export
+ * @template T
+ * @template TValue
+ * @template TReturn
+ * @param {T} callback
+ * @returns {((arg: TValue) => TReturn | void)}
+ */
+export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(callback: T): (arg: TValue) => TReturn | void {
+  return arg => {
+    try {
+      return callback(arg);
+    } catch {
+      return;
+    }
+  }
+}
+
 //#endregion
 
 //#region type casting

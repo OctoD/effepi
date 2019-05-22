@@ -53,6 +53,31 @@ describe(`Tests functions`, () => {
     test(functions.put.name, () => {
       expect(functions.put(10)()).toBe(10);
     });
+
+    test(functions.safeCall.name, () => {
+      const fn = (value: unknown) => {
+        switch (typeof value) {
+          case 'number':
+          case 'object':
+          case 'string':
+            throw new Error();
+          default:
+            return 'hello';
+        }
+      };
+      
+      expect(() => functions.safeCall(fn)('')).not.toThrow();
+      expect(() => functions.safeCall(fn)(1)).not.toThrow();
+      expect(() => functions.safeCall(fn)({})).not.toThrow();
+      expect(() => functions.safeCall(fn)([])).not.toThrow();
+      expect(() => functions.safeCall(fn)(undefined)).not.toThrow();
+      
+      expect(functions.safeCall(fn)('')).toBeUndefined();
+      expect(functions.safeCall(fn)(1)).toBeUndefined();
+      expect(functions.safeCall(fn)({})).toBeUndefined();
+      expect(functions.safeCall(fn)([])).toBeUndefined();
+      expect(functions.safeCall(fn)(undefined)).toBe('hello');
+    });
   });
 
   describe(`Type conversion functions`, () => {
