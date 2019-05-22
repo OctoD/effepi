@@ -20,25 +20,53 @@ export function subtract(value: number): (arg: number) => number {
 
 //#region logical operators
 
+export interface ISwitchResult<TValue> {
+  default: boolean;
+  success: boolean;
+  value: TValue;
+}
+
 export function createSwitch<TArgs extends Array<ReturnType<typeof createSwitchOption>>>(... args: TArgs): (arg: unknown) => unknown {
   return arg => {
-    while (args.length > 0) {
-      const result = args.pop()!(arg);
+    let defaultCase: ISwitchResult<unknown> = undefined;
+    let tests = args.slice();
+    
+    while (tests.length > 0) {
+      const result = tests.pop()!(arg);
 
+      if (result.default) {
+        defaultCase = result;
+        continue;
+      }
+      
       if (result.success) {
         return result.value;
       }
     }
+
+    if (defaultCase !== undefined) {
+      return defaultCase.value;
+    }
   };
 }
 
-export function createSwitchOption<Match, Value>(match: Match, value: Value): (arg: unknown) => { success: boolean, value: Value } {
+export function createSwitchDefault<Value>(value: Value): (arg: unknown) => ISwitchResult<Value> {
+  return arg => {
+    return {
+      default: true,
+      success: false,
+      value,
+    };
+  }
+}
+
+export function createSwitchOption<Match, Value>(match: Match, value: Value): (arg: unknown) => ISwitchResult<Value> {
   return arg => {
     if (arg === match) {
-      return { success: true, value };
+      return { default: false, success: true, value };
     }
 
-    return { success: false, value: undefined };
+    return { default: false, success: false, value: undefined };
   };
 }
 
@@ -47,6 +75,8 @@ export function fold<Left, Right>(left: Left, right: Right): <T extends boolean>
 }
 
 //#endregion
+
+//#region misc
 
 /**
  * Puts a value inside a pipeline
@@ -58,6 +88,8 @@ export function fold<Left, Right>(left: Left, right: Right): <T extends boolean>
 export function put<TValue>(value: TValue): () => TValue {
   return () => value;
 }
+
+//#endregion
 
 //#region type casting
 

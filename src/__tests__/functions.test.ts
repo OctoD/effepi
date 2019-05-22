@@ -19,6 +19,42 @@ describe(`Tests functions`, () => {
     });
   });
 
+  describe(`Logical operators`, () => {
+    test(functions.fold.name, () => {
+      expect(functions.fold(100, 200)(true)).toBe(200);
+      expect(functions.fold(100, 200)(false)).toBe(100);
+    });
+
+    test(functions.createSwitch.name, () => {
+      const switcher = functions.createSwitch(
+        functions.createSwitchOption(100, true),
+        functions.createSwitchOption(200, true),
+        functions.createSwitchOption(300, true),
+        functions.createSwitchOption(400, false),
+        functions.createSwitchDefault('default'),
+      );
+      const switcher2 = functions.createSwitch(
+        functions.createSwitchOption(100, true),
+        functions.createSwitchOption(200, true),
+        functions.createSwitchOption(300, true),
+        functions.createSwitchOption(400, false),
+      );
+      
+      expect(switcher(100)).toBe(true);
+      expect(switcher(200)).toBe(true);
+      expect(switcher(300)).toBe(true);
+      expect(switcher(400)).toBe(false);
+      expect(switcher('hello world')).toBe('default');
+      expect(switcher2('hello world')).toBeUndefined();
+    });
+  });
+
+  describe(`Miscellaneous functions`, () => {
+    test(functions.put.name, () => {
+      expect(functions.put(10)()).toBe(10);
+    });
+  });
+
   describe(`Type conversion functions`, () => {
     test(functions.toArray.name, () => {
       expect(
