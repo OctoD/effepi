@@ -1,5 +1,5 @@
 import pipe from '../pipe';
-import { put, add, multiplyBy } from '../functions';
+import { put, add, multiplyBy, useCallValue } from '../functions';
 
 describe(`pipe`, () => {
   test(`creates a pipe`, async () => {
@@ -41,7 +41,7 @@ describe(`pipe`, () => {
 
   test(`can create a new pipeline from an existing one`, () => {
     const p1 = pipe(put(0)).pipe(add(10));
-    const p2 = pipe(add(0), p1.pipeline).pipe(multiplyBy(2));
+    const p2 = pipe(useCallValue(), p1.pipeline).pipe(multiplyBy(2));
 
     expect(p2.pipeline.length).toBe(4);
     expect(p2.toSyncFunction()(0)).toBe(20);

@@ -107,6 +107,10 @@ export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(ca
   }
 }
 
+export function useCallValue<TCallValue = unknown>(): <TValue = TCallValue>(value: TValue) => TValue {
+  return value => value;
+}
+
 //#endregion
 
 //#region type casting
