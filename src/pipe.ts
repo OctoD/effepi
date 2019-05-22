@@ -1,5 +1,6 @@
 export type Callable<T, R> = (arg: T) => R;
 export type ToFunction<T, R> = () => (arg: T) => Promise<R>;
+export type ToSyncFunction<T, R> = () => (arg: T) => R;
 
 /**
  * Represents a pipe
@@ -7,7 +8,8 @@ export type ToFunction<T, R> = () => (arg: T) => Promise<R>;
 export type Pipe<T = unknown> = <R>(callable: Callable<T, R>) => {
   pipe: Pipe<R>;
   readonly pipeline: any[] & [Callable<T, R>];
-  resolve(arg: T, context: IPipeContext<T, R>): Promise<R>;
+  resolve(arg: T): Promise<R>;
+  resolveSync(arg: T): R;
   toFunction: ToFunction<T, R>;
 };
 
@@ -27,18 +29,43 @@ export interface IPipeContext<T, R> {
 function createResolver<T, R>(pipeline: any[]): (arg: T) => Promise<R> {
   return async (arg: T) => {
     const newArray = pipeline.slice();
-    let length = pipeline.length;
+    const length = pipeline.length;
 
     let previousResult: any = arg;
 
-    while (length > 0) {
-      const callback = newArray.pop();
-      const result = await callback(previousResult, 
+    for (let i = 0; i < length; i++) {
+      const callback = newArray[i];
+      const result = await callback(previousResult,
         createContext(pipeline.slice(0, pipeline.length - length) as any)
       );
 
       previousResult = result;
-      length--;
+    }
+
+    return previousResult;
+  };
+}
+
+/**
+ * @template T
+ * @template R
+ * @param {any[]} pipeline
+ * @returns {(arg: T) => R}
+ */
+function createSyncResolver<T, R>(pipeline: any[]): (arg: T) => R {
+  return (arg: T) => {
+    const newArray = pipeline.slice();
+    const length = pipeline.length;
+
+    let previousResult: any = arg;
+
+    for (let i = 0; i < length; i++) {
+      const callback = newArray[i];
+      const result = callback(previousResult,
+        createContext(pipeline.slice(0, pipeline.length - length) as any)
+      );
+
+      previousResult = result;
     }
 
     return previousResult;
@@ -47,6 +74,10 @@ function createResolver<T, R>(pipeline: any[]): (arg: T) => Promise<R> {
 
 function createToFunction<T, R>(pipeline: any[]): ToFunction<T, R> {
   return () => createResolver<T, R>(pipeline);
+} 
+
+function createToSyncFunction<T, R>(pipeline: any[]): ToSyncFunction<T, R> {
+  return () => createSyncResolver<T, R>(pipeline);
 } 
 
 function createContext<T, R>(pipeline: PipeLine<T, R>): IPipeContext<T, R> {
@@ -71,7 +102,9 @@ export function pipe<X, T>(initialCallable: (arg: X) => T, preExistingPipeline: 
         return pipeline.slice();
       },
       resolve: createResolver<X, R>(pipeline),
+      resolveSync: createSyncResolver<X, T>(pipeline),
       toFunction: createToFunction<X, R>(pipeline),
+      toSyncFunction: createToSyncFunction<X, R>(pipeline),
     };
   };
 
@@ -81,7 +114,9 @@ export function pipe<X, T>(initialCallable: (arg: X) => T, preExistingPipeline: 
       return pipeline.slice();
     },
     resolve: createResolver<X, T>(pipeline),
+    resolveSync: createSyncResolver<X, T>(pipeline),
     toFunction: createToFunction<X, T>(pipeline),
+    toSyncFunction: createToSyncFunction<X, T>(pipeline),
   };
 }
 
