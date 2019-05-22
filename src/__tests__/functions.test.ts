@@ -77,6 +77,7 @@ describe(`Tests functions`, () => {
       expect(functions.safeCall(fn)({})).toBeUndefined();
       expect(functions.safeCall(fn)([])).toBeUndefined();
       expect(functions.safeCall(fn)(undefined)).toBe('hello');
+      expect(functions.safeCall(fn, '100')([])).toBe('100');
     });
   });
 

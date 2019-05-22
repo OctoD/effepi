@@ -97,12 +97,12 @@ export function put<TValue>(value: TValue): () => TValue {
  * @param {T} callback
  * @returns {((arg: TValue) => TReturn | void)}
  */
-export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(callback: T): (arg: TValue) => TReturn | void {
+export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(callback: T, fallback?: TReturn): (arg: TValue) => TReturn | undefined {
   return arg => {
     try {
       return callback(arg);
     } catch {
-      return;
+      return fallback;
     }
   }
 }
