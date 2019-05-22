@@ -1,20 +1,20 @@
-import { IPipeContext, Callable } from './pipe';
+import { IPipeContext, ICallable } from './pipe';
 
 //#region Math
 
-export function add(value: number): Callable<number, number> {
+export function add(value: number): ICallable<number, number> {
   return arg => arg + value;
 }
 
-export function divideBy(value: number): Callable<number, number> {
+export function divideBy(value: number): ICallable<number, number> {
   return arg => arg / value;
 }
 
-export function multiplyBy(value: number): Callable<number, number> {
+export function multiplyBy(value: number): ICallable<number, number> {
   return arg => arg * value;
 }
 
-export function subtract(value: number): Callable<number, number> {
+export function subtract(value: number): ICallable<number, number> {
   return arg => arg - value;
 }
 

@@ -1,20 +1,24 @@
-export type Callable<T, R> = (arg: T, context: IPipeContext<T, R>) => R;
 export type ToFunction<T, R> = () => (arg: T) => Promise<R>;
 export type ToSyncFunction<T, R> = () => (arg: T) => R;
+
+export interface ICallable<T, R> {
+  (arg: T): R;
+  (arg: T, context: IPipeContext<T, R>): R;
+}
 
 /**
  * Represents a pipe
  */
-export type Pipe<T = unknown> = <R>(callable: Callable<T, R>) => {
+export type Pipe<T = unknown> = <R>(callable: ICallable<T, R>) => {
   pipe: Pipe<R>;
-  readonly pipeline: any[] & [Callable<T, R>];
+  readonly pipeline: any[] & [ICallable<T, R>];
   resolve(arg: T): Promise<R>;
   resolveSync(arg: T): R;
   toFunction: ToFunction<T, R>;
   toSyncFunction: ToSyncFunction<T, R>;
 };
 
-export type PipeLine<T, R> = any[] & [Callable<T, R>];
+export type PipeLine<T, R> = any[] & [ICallable<T, R>];
 
 export interface IPipeContext<T = unknown, R = unknown> {
   callValue: T;
