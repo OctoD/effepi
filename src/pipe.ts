@@ -39,7 +39,7 @@ export interface IPipeContext<T = unknown, R = unknown> {
 export function createResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => Promise<R> {
   return async (arg: T) => {
     const newArray = pipeline.slice();
-    const length = pipeline.length;
+    const length = newArray.length;
 
     let previousResult: any = arg;
 
@@ -69,7 +69,7 @@ export function createResolver<T, R>(pipeline: any[], context: IPipeContext): (a
 export function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => R {
   return (arg: T) => {
     const newArray = pipeline.slice();
-    const length = pipeline.length;
+    const length = newArray.length;
 
     let previousResult: any = arg;
 
