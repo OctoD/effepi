@@ -32,6 +32,7 @@ function updateContext<CallValue, PreviousValue = unknown>(context: IContext<Cal
     ... context,
     mutationIndex: context.mutationIndex + 1,
     previousValue,
+    previousValues: [... context.previousValues, previousValue],
   };
 }
 
