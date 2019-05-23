@@ -1,7 +1,28 @@
 import * as functions from '../functions';
-import { createContext } from '../pipe';
+import pipe from '../pipe';
 
 describe(`Tests functions`, () => {
+  describe(`Array functions`, () => {
+    test(functions.applyEach.name, async () => {
+      const p = pipe(functions.useCallValue()).pipe(functions.add(1));
+      const result = functions.applyEach(p)([100, 200, 300], { } as any);
+      const exresult = await Promise.all(result);
+
+      expect(exresult[0]).toBe(101);
+      expect(exresult[1]).toBe(201);
+      expect(exresult[2]).toBe(301);
+    });
+
+    test(functions.applyEachSync.name, async () => {
+      const p = pipe(functions.useCallValue()).pipe(functions.add(1));
+      const result = functions.applyEachSync(p)([100, 200, 300], { } as any);
+
+      expect(result[0]).toBe(101);
+      expect(result[1]).toBe(201);
+      expect(result[2]).toBe(301);
+    });
+  });
+  
   describe(`Math functions`, () => {
     test(functions.add.name, () => {
       expect(functions.add(20)(2)).toBe(22);

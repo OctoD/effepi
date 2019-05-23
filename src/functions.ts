@@ -1,49 +1,61 @@
-import { IPipeContext, ICallable } from './pipe';
+import { ICallable, IPipeContext, IPipePureReturnValue } from './pipe';
+
+//#region Array
+
+export function applyEach<T, R>(pipe: IPipePureReturnValue<T, R>): (arg: T[], context: IPipeContext<T[], R>) => Promise<R>[] {
+  return values => values.map(value => pipe.resolve(value));
+}
+
+export function applyEachSync<T, R>(pipe: IPipePureReturnValue<T, R>): (arg: T[], context: IPipeContext<T[], R>) => R[] {
+  return values => values.map(value => pipe.resolveSync(value));
+}
+
+//#endregion
 
 //#region Math
 
 export function add(value: number): ICallable<number, number> {
-  return arg => arg + value;
+  return (arg: number) => arg + value;
 }
 
 export function changeSign(): ICallable<number, number> {
-  return arg => -arg;
+  return (arg: number) => -arg;
 }
 
 export function divideBy(value: number): ICallable<number, number> {
-  return arg => arg / value;
+  return (arg: number) => arg / value;
 }
 
 export function multiplyBy(value: number): ICallable<number, number> {
-  return arg => arg * value;
+  return (arg: number) => arg * value;
 }
 
 export function negative(): ICallable<number, number> {
-  return arg => arg > 0 ? -arg : arg;
+  return (arg: number) => arg > 0 ? -arg : arg;
 }
 
 export function positive(): ICallable<number, number> {
-  return arg => arg > 0 ? arg : -arg;
+  return (arg: number) => arg > 0 ? arg : -arg;
 }
 
 export function pow(exponent: number): ICallable<number, number> {
-  return arg => arg ** exponent;
+  return (arg: number) => arg ** exponent;
 }
 
 export function root(exponent: number): ICallable<number, number> {
-  return arg => Math.pow(arg, 1 / exponent);
+  return (arg: number) => Math.pow(arg, 1 / exponent);
 }
 
 export function subtract(value: number): ICallable<number, number> {
-  return arg => arg - value;
+  return (arg: number) => arg - value;
 }
 
 export function takeGreater(): ICallable<number[], number> {
-  return arg => Math.max.apply(Math, arg);
+  return (arg: number[]) => Math.max.apply(Math, arg);
 }
 
 export function takeLower(): ICallable<number[], number> {
-  return arg => Math.min.apply(Math, arg);
+  return (arg: number[]) => Math.min.apply(Math, arg);
 }
 
 //#endregion
@@ -139,8 +151,8 @@ export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(ca
   }
 }
 
-export function useCallValue<TCallValue = unknown>(): <TValue = TCallValue>(value: TValue, context: IPipeContext<TValue, TValue>) => TValue {
-  return (_, context) => context.callValue;
+export function useCallValue<TCallValue = unknown>(): (value: unknown, context: IPipeContext<unknown, TCallValue>) => TCallValue {
+  return (_, context) => context.callValue as TCallValue;
 }
 
 export function useValue(): <TArg>(arg: TArg) => TArg {

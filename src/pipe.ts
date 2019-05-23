@@ -9,14 +9,7 @@ export interface ICallable<T, R> {
 /**
  * Represents a pipe
  */
-export type Pipe<T = unknown> = <R>(callable: ICallable<T, R>) => {
-  pipe: Pipe<R>;
-  readonly pipeline: any[] & [ICallable<T, R>];
-  resolve(arg: T): Promise<R>;
-  resolveSync(arg: T): R;
-  toFunction: ToFunction<T, R>;
-  toSyncFunction: ToSyncFunction<T, R>;
-};
+export type Pipe<T = unknown> = <R>(callable: ICallable<T, R>) => IPipeReturnValue<T, R>;
 
 export type PipeLine<T, R> = any[] & [ICallable<T, R>];
 
@@ -27,8 +20,16 @@ export interface IPipeContext<T = unknown, R = unknown> {
   previousValue: T;
 }
 
-interface IStatefulContext<T = unknown, R = unknown> extends IPipeContext<T, R> {
-  state: any;
+export interface IPipePureReturnValue<T, R> {
+  pipe: Pipe<R>;
+  resolve(arg: T): Promise<R>;
+  resolveSync(arg: T): R;
+  toFunction: ToFunction<T, R>;
+  toSyncFunction: ToSyncFunction<T, R>;
+}
+
+export interface IPipeReturnValue<T, R> extends IPipePureReturnValue<T, R> {
+  readonly pipeline: ICallable<unknown, unknown>[];
 }
 
 /**
@@ -105,7 +106,7 @@ export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>
     index: 0,
     pipeline,
     previousValue: undefined,
-  }
+  };
 }
 
 /**
@@ -113,11 +114,9 @@ export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>
  */
 export function pipe<X, T>(initialCallable: <X>(arg: X, context: IPipeContext<X, T>) => T, preExistingPipeline: any[] = []) {
   const pipeline: any[] = preExistingPipeline.concat(initialCallable);
-  const context = createContext(pipeline as any) as IStatefulContext;
+  const context = createContext(pipeline as any);
 
-  context.state = null;
-
-  const createPipe = <R>(callable: (arg: T, context: IPipeContext<T, R>) => R) => {
+  const createPipe = <R>(callable: (previousArg: T, context: IPipeContext<T, R>) => R) => {
     pipeline.push(callable);
 
     return {
@@ -126,10 +125,10 @@ export function pipe<X, T>(initialCallable: <X>(arg: X, context: IPipeContext<X,
         return pipeline.slice();
       },
       resolve: createResolver<X, R>(pipeline, context),
-      resolveSync: createSyncResolver<X, T>(pipeline, context),
+      resolveSync: createSyncResolver<X, R>(pipeline, context),
       toFunction: createToFunction<X, R>(pipeline, context),
       toSyncFunction: createToSyncFunction<X, R>(pipeline, context),
-    };
+    } as unknown as IPipeReturnValue<X, R>;
   };
 
   return {
@@ -141,7 +140,7 @@ export function pipe<X, T>(initialCallable: <X>(arg: X, context: IPipeContext<X,
     resolveSync: createSyncResolver<X, T>(pipeline, context),
     toFunction: createToFunction<X, T>(pipeline, context),
     toSyncFunction: createToSyncFunction<X, T>(pipeline, context),
-  };
+  } as unknown as IPipeReturnValue<X, T>;
 }
 
 export default pipe;
