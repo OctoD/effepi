@@ -46,8 +46,12 @@ export function createResolver<T, R>(pipeline: any[], context: IPipeContext): (a
     context.callValue = arg;
 
     for (let i = 0; i < length; i++) {
+      context.index = i;
+      
       const callback = newArray[i];
       const result = await callback(previousResult, context);
+
+      context.previousValue = result;
 
       previousResult = result;
     }
