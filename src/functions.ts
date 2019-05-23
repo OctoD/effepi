@@ -6,12 +6,24 @@ export function add(value: number): ICallable<number, number> {
   return arg => arg + value;
 }
 
+export function changeSign(): ICallable<number, number> {
+  return arg => -arg;
+}
+
 export function divideBy(value: number): ICallable<number, number> {
   return arg => arg / value;
 }
 
 export function multiplyBy(value: number): ICallable<number, number> {
   return arg => arg * value;
+}
+
+export function negative(): ICallable<number, number> {
+  return arg => arg > 0 ? -arg : arg;
+}
+
+export function positive(): ICallable<number, number> {
+  return arg => arg > 0 ? arg : -arg;
 }
 
 export function pow(exponent: number): ICallable<number, number> {

@@ -7,12 +7,27 @@ describe(`Tests functions`, () => {
       expect(functions.add(20)(2)).toBe(22);
     });
 
+    test(functions.changeSign.name, () => {
+      expect(functions.changeSign()(2)).toBe(-2);
+      expect(functions.changeSign()(-2)).toBe(2);
+    });
+
     test(functions.divideBy.name, () => {
       expect(functions.divideBy(20)(2)).toBe(.1);
     });
     
     test(functions.multiplyBy.name, () => {
       expect(functions.multiplyBy(20)(2)).toBe(40);
+    });
+
+    test(functions.negative.name, () => {
+      expect(functions.negative()(-5)).toBe(-5);
+      expect(functions.negative()(5)).toBe(-5);
+    });
+
+    test(functions.positive.name, () => {
+      expect(functions.positive()(-5)).toBe(5);
+      expect(functions.positive()(5)).toBe(5);
     });
 
     test(functions.pow.name, () => {
