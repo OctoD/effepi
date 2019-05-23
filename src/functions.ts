@@ -42,13 +42,15 @@ export function subtract(value: number): ICallable<number, number> {
 
 //#region logical operators
 
+export type SwitchOption<TValue> = (arg: unknown) => ISwitchResult<TValue>;
+
 export interface ISwitchResult<TValue> {
   default: boolean;
   success: boolean;
   value: TValue;
 }
 
-export function createSwitch<TArgs extends Array<ReturnType<typeof createSwitchOption>>>(... args: TArgs): (arg: unknown) => unknown {
+export function createSwitch<TValue>(...args: SwitchOption<TValue>[]): (arg: TValue) => unknown {
   return arg => {
     let defaultCase: ISwitchResult<unknown> = undefined;
     let tests = args.slice();
@@ -72,7 +74,7 @@ export function createSwitch<TArgs extends Array<ReturnType<typeof createSwitchO
   };
 }
 
-export function createSwitchDefault<Value>(value: Value): (arg: unknown) => ISwitchResult<Value> {
+export function createSwitchDefault<Value>(value: Value): SwitchOption<Value> {
   return arg => {
     return {
       default: true,
@@ -82,7 +84,7 @@ export function createSwitchDefault<Value>(value: Value): (arg: unknown) => ISwi
   }
 }
 
-export function createSwitchOption<Match, Value>(match: Match, value: Value): (arg: unknown) => ISwitchResult<Value> {
+export function createSwitchOption<Match, Value>(match: Match, value: Value): SwitchOption<Value> {
   return arg => {
     if (arg === match) {
       return { default: false, success: true, value };
