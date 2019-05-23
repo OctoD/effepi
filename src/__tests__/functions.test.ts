@@ -10,9 +10,17 @@ describe(`Tests functions`, () => {
     test(functions.divideBy.name, () => {
       expect(functions.divideBy(20)(2)).toBe(.1);
     });
-
+    
     test(functions.multiplyBy.name, () => {
       expect(functions.multiplyBy(20)(2)).toBe(40);
+    });
+
+    test(functions.pow.name, () => {
+      expect(functions.pow(2)(5)).toBe(25);
+    });
+
+    test(functions.root.name, () => {
+      expect(functions.root(3)(8)).toBe(2);
     });
 
     test(functions.subtract.name, () => {

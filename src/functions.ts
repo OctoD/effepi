@@ -14,6 +14,14 @@ export function multiplyBy(value: number): ICallable<number, number> {
   return arg => arg * value;
 }
 
+export function pow(exponent: number): ICallable<number, number> {
+  return arg => arg ** exponent;
+}
+
+export function root(exponent: number): ICallable<number, number> {
+  return arg => Math.pow(arg, 1 / exponent);
+}
+
 export function subtract(value: number): ICallable<number, number> {
   return arg => arg - value;
 }
