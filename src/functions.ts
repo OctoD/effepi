@@ -38,6 +38,14 @@ export function subtract(value: number): ICallable<number, number> {
   return arg => arg - value;
 }
 
+export function takeGreater(): ICallable<number[], number> {
+  return arg => Math.max.apply(Math, arg);
+}
+
+export function takeLower(): ICallable<number[], number> {
+  return arg => Math.min.apply(Math, arg);
+}
+
 //#endregion
 
 //#region logical operators

@@ -41,6 +41,14 @@ describe(`Tests functions`, () => {
     test(functions.subtract.name, () => {
       expect(functions.subtract(20)(2)).toBe(-18);
     });
+
+    test(functions.takeGreater.name, () => {
+      expect(functions.takeGreater()([10, 200, 2001, 1, 55])).toBe(2001);
+    });
+
+    test(functions.takeLower.name, () => {
+      expect(functions.takeLower()([10, 200, 2001, 1, 55, -123])).toBe(-123);
+    });
   });
 
   describe(`Logical operators`, () => {
@@ -50,14 +58,14 @@ describe(`Tests functions`, () => {
     });
 
     test(functions.createSwitch.name, () => {
-      const switcher = functions.createSwitch(
+      const switcher = functions.createSwitch<boolean | number | string>(
         functions.createSwitchOption(100, true),
         functions.createSwitchOption(200, true),
         functions.createSwitchOption(300, true),
         functions.createSwitchOption(400, false),
         functions.createSwitchDefault('default'),
       );
-      const switcher2 = functions.createSwitch(
+      const switcher2 = functions.createSwitch<boolean | string>(
         functions.createSwitchOption(100, true),
         functions.createSwitchOption(200, true),
         functions.createSwitchOption(300, true),

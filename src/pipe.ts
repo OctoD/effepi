@@ -23,11 +23,12 @@ export type PipeLine<T, R> = any[] & [ICallable<T, R>];
 export interface IPipeContext<T = unknown, R = unknown> {
   callValue: T;
   index: number;
-  memory: Map<string, unknown>;
   pipeline: PipeLine<T, R>;
   previousValue: T;
-  // next(): Pipe<R>;
-  // prev(): Pipe<T>;
+}
+
+interface IStatefulContext<T = unknown, R = unknown> extends IPipeContext<T, R> {
+  state: any;
 }
 
 /**
@@ -102,7 +103,6 @@ export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>
   return {
     callValue: undefined,
     index: 0,
-    memory: new Map(),
     pipeline,
     previousValue: undefined,
   }
@@ -113,7 +113,9 @@ export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>
  */
 export function pipe<X, T>(initialCallable: <X>(arg: X, context: IPipeContext<X, T>) => T, preExistingPipeline: any[] = []) {
   const pipeline: any[] = preExistingPipeline.concat(initialCallable);
-  const context = createContext(pipeline as any);
+  const context = createContext(pipeline as any) as IStatefulContext;
+
+  context.state = null;
 
   const createPipe = <R>(callable: (arg: T, context: IPipeContext<T, R>) => R) => {
     pipeline.push(callable);
