@@ -1,5 +1,5 @@
-export type Callable = <Input, Output>(input: Input) => Output;
-export type ExplicitCallable<Input, Output> = (input: Input) => Output;
+export type Callable = <Input, Output>(input: Input, context: IContext<unknown, Input>) => Output;
+export type ExplicitCallable<Input, Output> = (input: Input, context: IContext<unknown, Input>) => Output;
 export type ResolvedPipe<Input, Output> = (input: Input) => Promise<Output>;
 export type ResolvedSyncPipe<Input, Output> = (input: Input) => Output;
 export type Pipeline = Array<Callable | ExplicitCallable<unknown, unknown>>;
@@ -76,7 +76,7 @@ async function resolve(pipeline: Pipeline, index: number, context: IContext): Pr
     return;
   }
 
-  const previousValue = await Promise.resolve(pipeline[index](context.previousValue));
+  const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
   const updatedContext = updateContext<unknown, unknown>(context, previousValue);
 
   resolve(pipeline, index + 1, updatedContext);
@@ -87,7 +87,7 @@ function resolveSync(pipeline: Pipeline, index: number, context: IContext): void
     return;
   }
 
-  const previousValue = pipeline[index](context.previousValue);
+  const previousValue = pipeline[index](context.previousValue, context);
   const updatedContext = updateContext<unknown, unknown>(context, previousValue);
 
   resolveSync(pipeline, index + 1, updatedContext);
