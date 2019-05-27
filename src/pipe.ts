@@ -83,7 +83,7 @@ async function resolve(pipeline: Pipeline, index: number, context: IContext): Pr
   const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
   const updatedContext = updateContext<unknown, unknown>(context, previousValue);
 
-  resolve(pipeline, index + 1, updatedContext);
+  return resolve(pipeline, index + 1, updatedContext);
 }
 
 function resolveSync(pipeline: Pipeline, index: number, context: IContext): unknown {
@@ -94,7 +94,7 @@ function resolveSync(pipeline: Pipeline, index: number, context: IContext): unkn
   const previousValue = pipeline[index](context.previousValue, context);
   const updatedContext = updateContext<unknown, unknown>(context, previousValue);
 
-  resolveSync(pipeline, index + 1, updatedContext);
+  return resolveSync(pipeline, index + 1, updatedContext);
 }
 
 function updateContext<CallValue, PreviousValue = unknown>(context: IContext<CallValue>, previousValue: PreviousValue): IContext<CallValue, PreviousValue> {

@@ -38,7 +38,19 @@ describe(`pipe`, () => {
     expect(rt3).toHaveBeenCalled();
   });
 
-  test(`resolve returns the pipeline result`, () => {
+  test(`the first value passed to the first function is the same one passed to the resolve function`, () => {
+    const p = pipe(useCallValue());
+
+    expect(p.resolveSync(10)).toBe(10);
+  });
+
+  test(`resolve returns the pipeline result`, async () => {
+    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+
+    expect(await p.resolve(0)).toBe(60);
+  });
+
+  test(`resolve sync returns the pipeline result`, () => {
     const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
 
     expect(p.resolveSync(0)).toBe(60);
