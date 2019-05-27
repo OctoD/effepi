@@ -142,6 +142,13 @@ describe(`Tests functions`, () => {
       expect(functions.safeCall(fn)(undefined)).toBe('hello');
       expect(functions.safeCall(fn, '100')([])).toBe('100');
     });
+
+    test(functions.useValue.name, () => {
+      const p = functions.useValue();
+
+      expect(p(1)).toBe(1);
+      expect(p(123123)).toBe(123123);
+    });
   });
 
   describe(`Type conversion functions`, () => {
