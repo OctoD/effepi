@@ -65,7 +65,7 @@ function createSyncResolver<TCallValue, TReturnValue>(pipeline: Pipeline): Resol
   return callValue => {
     const context = createContext(callValue);
 
-    resolve(pipeline, 0, context);
+    resolveSync(pipeline, 0, context);
 
     return context.previousValue as TReturnValue;
   }
