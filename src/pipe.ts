@@ -36,8 +36,12 @@ function createFunction<TCallValue, TReturnValue>(pipeline: Pipeline): (arg: TCa
 function createMethods<TCallValue, TReturnValue>(pipeline: Pipeline): IPipe<TCallValue, TReturnValue> {
   return {
     pipe: <TNextValue>(callable: ExplicitCallable<TReturnValue, TNextValue>): IPipe<TCallValue, TNextValue> => {
-      pipeline.push(callable);
-      return createMethods<TCallValue, TNextValue>(pipeline) as unknown as IPipe<TCallValue, TNextValue>;
+      return createMethods<TCallValue, TNextValue>(
+        [
+          ...pipeline, 
+          callable
+        ]
+      ) as unknown as IPipe<TCallValue, TNextValue>;
     },
     resolve: createResolver<TCallValue, TReturnValue>(pipeline),
     resolveSync: createSyncResolver<TCallValue, TReturnValue>(pipeline),
@@ -53,27 +57,27 @@ function createSyncFunction<TCallValue, TReturnValue>(pipeline: Pipeline): (arg:
 
 function createResolver<TCallValue, TReturnValue>(pipeline: Pipeline): ResolvedPipe<TCallValue, TReturnValue> {
   return async callValue => {
-    const context = createContext(callValue);
-
-    await resolve(pipeline, 0, context);
-
-    return context.previousValue as TReturnValue;
+    return resolve(
+      pipeline, 
+      0, 
+      createContext(callValue)
+    ) as Promise<TReturnValue>;
   }
 }
 
 function createSyncResolver<TCallValue, TReturnValue>(pipeline: Pipeline): ResolvedSyncPipe<TCallValue, TReturnValue> {
   return callValue => {
-    const context = createContext(callValue);
-
-    resolveSync(pipeline, 0, context);
-
-    return context.previousValue as TReturnValue;
+    return resolveSync(
+      pipeline, 
+      0, 
+      createContext(callValue)
+    ) as TReturnValue;
   }
 }
 
-async function resolve(pipeline: Pipeline, index: number, context: IContext): Promise<void> {
-  if (index > pipeline.length) {
-    return;
+async function resolve(pipeline: Pipeline, index: number, context: IContext): Promise<unknown> {
+  if (index >= pipeline.length) {
+    return context.previousValue;
   }
 
   const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
@@ -82,9 +86,9 @@ async function resolve(pipeline: Pipeline, index: number, context: IContext): Pr
   resolve(pipeline, index + 1, updatedContext);
 }
 
-function resolveSync(pipeline: Pipeline, index: number, context: IContext): void {
-  if (index > pipeline.length) {
-    return;
+function resolveSync(pipeline: Pipeline, index: number, context: IContext): unknown {
+  if (index >= pipeline.length) {
+    return context.previousValue;
   }
 
   const previousValue = pipeline[index](context.previousValue, context);
