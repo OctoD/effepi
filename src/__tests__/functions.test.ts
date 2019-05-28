@@ -93,6 +93,33 @@ describe(`Tests functions`, () => {
       expect(functions.takeGreater()([10, 200, 2001, 1, 55], {} as any)).toBe(2001);
     });
 
+    test(functions.takeGreaterThan.name, () => {
+      const list = [1, 2, 3, 4, 5, 6, 7, 8];
+      const result = functions.takeGreaterThan(6)(list, { } as any);
+      const resultEqual = functions.takeGreaterThan(6, true)(list, { } as any);
+
+      expect(() => functions.takeGreaterThan(0)({} as any, {} as any)).toThrowError();
+      expect(() => functions.takeGreaterThan(0, true)({} as any, {} as any)).toThrowError();
+
+      expect(result.includes(1)).toBeFalsy();
+      expect(result.includes(2)).toBeFalsy();
+      expect(result.includes(3)).toBeFalsy();
+      expect(result.includes(4)).toBeFalsy();
+      expect(result.includes(5)).toBeFalsy();
+      expect(result.includes(6)).toBeFalsy();
+      expect(result.includes(7)).toBeTruthy();
+      expect(result.includes(8)).toBeTruthy();
+
+      expect(resultEqual.includes(1)).toBeFalsy();
+      expect(resultEqual.includes(2)).toBeFalsy();
+      expect(resultEqual.includes(3)).toBeFalsy();
+      expect(resultEqual.includes(4)).toBeFalsy();
+      expect(resultEqual.includes(5)).toBeFalsy();
+      expect(resultEqual.includes(6)).toBeTruthy();
+      expect(resultEqual.includes(7)).toBeTruthy();
+      expect(resultEqual.includes(8)).toBeTruthy();
+    });
+
     test(functions.takeLower.name, () => {
       expect(functions.takeLower()([10, 200, 2001, 1, 55, -123], {} as any)).toBe(-123);
     });
