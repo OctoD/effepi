@@ -6,7 +6,6 @@ describe(`pipe`, () => {
     const p = pipe(() => 10);
 
     expect(p).toHaveProperty('pipe');
-    expect(p).toHaveProperty('pipeline');
     expect(p).toHaveProperty('resolve');
     expect(p).toHaveProperty('resolveSync');
     expect(p).toHaveProperty('toFunction');
@@ -39,18 +38,21 @@ describe(`pipe`, () => {
     expect(rt3).toHaveBeenCalled();
   });
 
-  test(`can create a new pipeline from an existing one`, () => {
-    const p1 = pipe(put(0)).pipe(add(10));
-    const p2 = pipe(useValue(), p1.pipeline).pipe(multiplyBy(2));
+  test(`the first value passed to the first function is the same one passed to the resolve function`, () => {
+    const p = pipe(useCallValue());
 
-    expect(p2.pipeline.length).toBe(4);
-    expect(p2.toSyncFunction()(0)).toBe(20);
+    expect(p.resolveSync(10)).toBe(10);
   });
 
-  test(`resolve returns the pipeline result`, () => {
+  test(`resolve returns the pipeline result`, async () => {
     const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
 
-    expect(p.pipeline.length).toBe(3);
+    expect(await p.resolve(0)).toBe(60);
+  });
+
+  test(`resolve sync returns the pipeline result`, () => {
+    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+
     expect(p.resolveSync(0)).toBe(60);
   });
 

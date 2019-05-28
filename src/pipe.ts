@@ -1,145 +1,118 @@
-export type ToFunction<T, R> = () => (arg: T) => Promise<R>;
-export type ToSyncFunction<T, R> = () => (arg: T) => R;
+export type Callable = <Input, Output>(input: Input, context: IContext<unknown, Input>) => Output;
+export type ExplicitCallable<Input, Output> = (input: Input, context: IContext<unknown, Input>) => Output;
+export type ResolvedPipe<Input, Output> = (input: Input) => Promise<Output>;
+export type ResolvedSyncPipe<Input, Output> = (input: Input) => Output;
+export type Pipeline = Array<Callable | ExplicitCallable<unknown, unknown>>;
 
-export interface ICallable<T, R> {
-  (arg: T): R;
-  (arg: T, context: IPipeContext<T, R>): R;
+export interface IContext<CallValue = unknown, PreviousValue = unknown> {
+  readonly callValue: CallValue;
+  readonly mutationIndex: number;
+  readonly previousValue: PreviousValue;
+  readonly previousValues: unknown[];
 }
 
-/**
- * Represents a pipe
- */
-export type Pipe<T = unknown> = <R>(callable: ICallable<T, R>) => {
-  pipe: Pipe<R>;
-  readonly pipeline: any[] & [ICallable<T, R>];
-  resolve(arg: T): Promise<R>;
-  resolveSync(arg: T): R;
-  toFunction: ToFunction<T, R>;
-  toSyncFunction: ToSyncFunction<T, R>;
-};
-
-export type PipeLine<T, R> = any[] & [ICallable<T, R>];
-
-export interface IPipeContext<T = unknown, R = unknown> {
-  callValue: T;
-  index: number;
-  memory: Map<string, unknown>;
-  pipeline: PipeLine<T, R>;
-  previousValue: T;
-  // next(): Pipe<R>;
-  // prev(): Pipe<T>;
+export interface IPipe<InitialCallable, Output> {
+  pipe<NextValue>(callable: ExplicitCallable<Output, NextValue>): IPipe<InitialCallable, NextValue>;
+  resolve: ResolvedPipe<InitialCallable, Output>;
+  resolveSync: ResolvedSyncPipe<InitialCallable, Output>;
+  toFunction(): (input: InitialCallable) => Promise<Output>;
+  toSyncFunction(): (input: InitialCallable) => Output;
 }
 
-/**
- * @template T
- * @template R
- * @param {any[]} pipeline
- * @returns {(arg: T) => Promise<R>}
- */
-export function createResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => Promise<R> {
-  return async (arg: T) => {
-    const newArray = pipeline.slice();
-    const length = pipeline.length;
-
-    let previousResult: any = arg;
-
-    context.callValue = arg;
-
-    for (let i = 0; i < length; i++) {
-      context.index = i;
-      
-      const callback = newArray[i];
-      const result = await callback(previousResult, context);
-
-      context.previousValue = result;
-
-      previousResult = result;
-    }
-
-    return previousResult;
-  };
-}
-
-/**
- * @template T
- * @template R
- * @param {any[]} pipeline
- * @returns {(arg: T) => R}
- */
-export function createSyncResolver<T, R>(pipeline: any[], context: IPipeContext): (arg: T) => R {
-  return (arg: T) => {
-    const newArray = pipeline.slice();
-    const length = pipeline.length;
-
-    let previousResult: any = arg;
-
-    context.callValue = arg;
-
-    for (let i = 0; i < length; i++) {
-      context.index = i;
-      
-      const callback = newArray[i];
-      const result = callback(previousResult, context);
-
-      context.previousValue = result;
-
-      previousResult = result;
-    }
-
-    return previousResult;
-  };
-}
-
-export function createToFunction<T, R>(pipeline: any[], context: IPipeContext): ToFunction<T, R> {
-  return () => createResolver<T, R>(pipeline, context);
-} 
-
-export function createToSyncFunction<T, R>(pipeline: any[], context: IPipeContext): ToSyncFunction<T, R> {
-  return () => createSyncResolver<T, R>(pipeline, context);
-} 
-
-export function createContext<T = unknown, R = unknown>(pipeline: PipeLine<T, R>): IPipeContext<T, R> {
+function createContext<CallValue>(callValue: CallValue): IContext<CallValue> {
   return {
-    callValue: undefined,
-    index: 0,
-    memory: new Map(),
-    pipeline,
+    callValue,
+    mutationIndex: 0,
     previousValue: undefined,
+    previousValues: [],
+  };
+}
+
+function createFunction<TCallValue, TReturnValue>(pipeline: Pipeline): (arg: TCallValue) => Promise<TReturnValue> {
+  const resolver = createResolver<TCallValue, TReturnValue>(pipeline);
+  return arg => resolver(arg);
+}
+
+function createMethods<TCallValue, TReturnValue>(pipeline: Pipeline): IPipe<TCallValue, TReturnValue> {
+  return {
+    pipe: <TNextValue>(callable: ExplicitCallable<TReturnValue, TNextValue>): IPipe<TCallValue, TNextValue> => {
+      return createMethods<TCallValue, TNextValue>(
+        [
+          ...pipeline, 
+          callable
+        ]
+      ) as unknown as IPipe<TCallValue, TNextValue>;
+    },
+    resolve: createResolver<TCallValue, TReturnValue>(pipeline),
+    resolveSync: createSyncResolver<TCallValue, TReturnValue>(pipeline),
+    toFunction: <TCall, TReturn>() => createFunction<TCall, TReturn>(pipeline),
+    toSyncFunction: <TCall, TReturn>() => createSyncFunction<TCall, TReturn>(pipeline),
   }
 }
 
-/**
- * @returns
- */
-export function pipe<X, T>(initialCallable: <X>(arg: X, context: IPipeContext<X, T>) => T, preExistingPipeline: any[] = []) {
-  const pipeline: any[] = preExistingPipeline.concat(initialCallable);
-  const context = createContext(pipeline as any);
+function createSyncFunction<TCallValue, TReturnValue>(pipeline: Pipeline): (arg: TCallValue) => TReturnValue {
+  const resolver = createSyncResolver<TCallValue, TReturnValue>(pipeline);
+  return arg => resolver(arg);
+}
 
-  const createPipe = <R>(callable: (arg: T, context: IPipeContext<T, R>) => R) => {
-    pipeline.push(callable);
+function createResolver<TCallValue, TReturnValue>(pipeline: Pipeline): ResolvedPipe<TCallValue, TReturnValue> {
+  return async callValue => {
+    return resolve(
+      pipeline, 
+      0, 
+      createContext(callValue)
+    ) as Promise<TReturnValue>;
+  }
+}
 
-    return {
-      pipe: createPipe as unknown as Pipe<R>,
-      get pipeline() {
-        return pipeline.slice();
-      },
-      resolve: createResolver<X, R>(pipeline, context),
-      resolveSync: createSyncResolver<X, T>(pipeline, context),
-      toFunction: createToFunction<X, R>(pipeline, context),
-      toSyncFunction: createToSyncFunction<X, R>(pipeline, context),
-    };
-  };
+function createSyncResolver<TCallValue, TReturnValue>(pipeline: Pipeline): ResolvedSyncPipe<TCallValue, TReturnValue> {
+  return callValue => {
+    return resolveSync(
+      pipeline, 
+      0, 
+      createContext(callValue)
+    ) as TReturnValue;
+  }
+}
 
+async function resolve(pipeline: Pipeline, index: number, context: IContext): Promise<unknown> {
+  if (index >= pipeline.length) {
+    return context.previousValue;
+  }
+
+  const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
+  const updatedContext = updateContext<unknown, unknown>(context, previousValue);
+
+  return resolve(pipeline, index + 1, updatedContext);
+}
+
+function resolveSync(pipeline: Pipeline, index: number, context: IContext): unknown {
+  if (index >= pipeline.length) {
+    return context.previousValue;
+  }
+
+  const previousValue = pipeline[index](context.previousValue, context);
+  const updatedContext = updateContext<unknown, unknown>(context, previousValue);
+
+  return resolveSync(pipeline, index + 1, updatedContext);
+}
+
+function updateContext<CallValue, PreviousValue = unknown>(context: IContext<CallValue>, previousValue: PreviousValue): IContext<CallValue, PreviousValue> {
+  const {
+    callValue,
+    mutationIndex,
+    previousValues,
+  } = context;
+  
   return {
-    pipe: createPipe,
-    get pipeline() {
-      return pipeline.slice();
-    },
-    resolve: createResolver<X, T>(pipeline, context),
-    resolveSync: createSyncResolver<X, T>(pipeline, context),
-    toFunction: createToFunction<X, T>(pipeline, context),
-    toSyncFunction: createToSyncFunction<X, T>(pipeline, context),
+    callValue,
+    mutationIndex: mutationIndex + 1,
+    previousValue,
+    previousValues: [... previousValues, previousValue],
   };
 }
 
-export default pipe;
+export default function pipe<CallValue, NextValue>(callable: ExplicitCallable<CallValue, NextValue>) {
+  const pipeline = [callable] as Pipeline;
+  return createMethods<CallValue, NextValue>(pipeline);
+}
