@@ -1,5 +1,5 @@
 import { divideBy, useCallValue, put, multiplyBy, add, toString, toDate, toNumber } from '../functions';
-import pipe from '../pipe';
+import {pipe} from '../pipe';
 
 describe(`miscellaneous tests, jff`, () => {
   test(`A vat calculator`, () => {
