@@ -215,6 +215,20 @@ describe(`Tests functions`, () => {
       expect(result).toHaveProperty(`baz`);
     });
 
+    test(functions.hasProperty.name, () => {
+      expect(
+        functions.hasProperty('foo')({}, {} as any)
+      ).toBeFalsy();
+
+      expect(
+        functions.hasProperty('foo')({ foo: 100 }, {} as any)
+      ).toBeTruthy();
+
+      expect(
+        functions.hasProperty('foo')(null, {} as any)
+      ).toBeFalsy();
+    });
+
     test(functions.pick.name, () => {
       class Test {
         public foo = 1;

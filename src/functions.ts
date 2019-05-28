@@ -1,5 +1,9 @@
 import { ExplicitCallable, IContext, IPipe } from './pipe';
 
+function isNullOrUndefined(arg: unknown): arg is (null | undefined) {
+  return arg === undefined || arg === null;
+}
+
 function throwIfNotArray(functionName: string, value: unknown): never | void {
   if (!Array.isArray(value)) {
     throw new TypeError(`${functionName} argument must be a numbers array`);
@@ -227,6 +231,16 @@ export function exclude<KObject, Keys extends keyof KObject = keyof KObject>(...
 
     return newObject;
   };
+}
+
+export function hasProperty(propertyKey: string): ExplicitCallable<unknown, boolean> {
+  return arg => {
+    if (isNullOrUndefined(arg)) {
+      return false;
+    }
+
+    return Object.prototype.hasOwnProperty.call(arg, propertyKey); 
+  }
 }
 
 export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
