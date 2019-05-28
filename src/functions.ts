@@ -1,5 +1,11 @@
 import { ExplicitCallable, IContext, IPipe } from './pipe';
 
+function throwIfNotArray(functionName: string, value: unknown): never | void {
+  if (!Array.isArray(value)) {
+    throw new TypeError(`${functionName} argument must be a numbers array`);
+  }
+}
+
 //#region Array
 
 export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
@@ -52,9 +58,7 @@ export function subtract(value: number): ExplicitCallable<number, number> {
 
 export function takeBetween(start: number, end: number): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
-    if (!Array.isArray(arg)) {
-      throw new TypeError(`takeBetween argument must be a numbers array`);
-    }
+    throwIfNotArray(`takeBetween`, arg);
     
     const newArray: number[] = [];
     const length = arg.length;
@@ -77,9 +81,7 @@ export function takeGreater(): ExplicitCallable<number[], number> {
 
 export function takeGreaterThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
-    if (!Array.isArray(arg)) {
-      throw new TypeError(`takeBetween argument must be a numbers array`);
-    }
+    throwIfNotArray(`takeGreaterThan`, arg);
 
     const newArray: number[] = [];
     const length = arg.length;
@@ -104,9 +106,7 @@ export function takeLower(): ExplicitCallable<number[], number> {
 
 export function takeLowerThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
-    if (!Array.isArray(arg)) {
-      throw new TypeError(`takeBetween argument must be a numbers array`);
-    }
+    throwIfNotArray(`takeLowerThan`, arg);
 
     const newArray: number[] = [];
     const length = arg.length;
@@ -127,9 +127,7 @@ export function takeLowerThan(check: number, equal: boolean = false): ExplicitCa
 
 export function takeOuter(start: number, end: number): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
-    if (!Array.isArray(arg)) {
-      throw new TypeError(`takeBetween argument must be a numbers array`);
-    }
+    throwIfNotArray(`takeOuter`, arg);
 
     const newArray: number[] = [];
     const length = arg.length;
