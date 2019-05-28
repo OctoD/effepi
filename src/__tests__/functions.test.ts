@@ -199,17 +199,33 @@ describe(`Tests functions`, () => {
   });
 
   describe(`Object functions`, () => {
+    test(functions.exclude.name, () => {
+      class Test {
+        public foo = 1;
+        public bar = 2;
+        public baz = new Date();
+      }
+
+      const result = functions.exclude<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
+
+      expect(() => functions.exclude()('' as any, {} as any)).toThrowError();
+
+      expect(result).not.toHaveProperty(`foo`);
+      expect(result).not.toHaveProperty(`bar`);
+      expect(result).toHaveProperty(`baz`);
+    });
+
     test(functions.pick.name, () => {
       class Test {
         public foo = 1;
         public bar = 2;
         public baz = new Date();
       }
-      
+
       const result = functions.pick<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
 
       expect(() => functions.pick()('' as any, {} as any)).toThrowError();
-      
+
       expect(result).toHaveProperty(`foo`);
       expect(result).toHaveProperty(`bar`);
       expect(result).not.toHaveProperty(`baz`);

@@ -214,6 +214,21 @@ export function fold<Left, Right>(left: Left, right: Right): <T extends boolean>
 
 //#region object functions
 
+export function exclude<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
+  return (arg: any) => {
+    throwIfNotObject<KObject>(`pick`, arg);
+
+    const newObject = <Pick<KObject, Keys>> { ... arg };
+    const keysArray = keys.slice();
+
+    while (keysArray.length > 0) {
+      delete newObject[keysArray.pop()];
+    }
+
+    return newObject;
+  };
+}
+
 export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
   return (arg: any) => {
     throwIfNotObject<KObject>(`pick`, arg);
