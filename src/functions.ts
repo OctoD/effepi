@@ -102,6 +102,29 @@ export function takeLower(): ExplicitCallable<number[], number> {
   return (arg: number[]) => Math.min.apply(Math, arg);
 }
 
+export function takeLowerThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
+  return (arg: number[]) => {
+    if (!Array.isArray(arg)) {
+      throw new TypeError(`takeBetween argument must be a numbers array`);
+    }
+
+    const newArray: number[] = [];
+    const length = arg.length;
+
+    for (let i = 0; i < length; i++) {
+      const value = arg[i];
+
+      if (equal && value <= check) {
+        newArray.push(value);
+      } else if (value < check) {
+        newArray.push(value);
+      }
+    }
+
+    return newArray;
+  };
+}
+
 export function takeOuter(start: number, end: number): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
     if (!Array.isArray(arg)) {

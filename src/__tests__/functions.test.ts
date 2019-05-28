@@ -124,6 +124,33 @@ describe(`Tests functions`, () => {
       expect(functions.takeLower()([10, 200, 2001, 1, 55, -123], {} as any)).toBe(-123);
     });
 
+    test(functions.takeLowerThan.name, () => {
+      const list = [1, 2, 3, 4, 5, 6, 7, 8];
+      const result = functions.takeLowerThan(6)(list, {} as any);
+      const resultEqual = functions.takeLowerThan(6, true)(list, {} as any);
+
+      expect(() => functions.takeLowerThan(0)({} as any, {} as any)).toThrowError();
+      expect(() => functions.takeLowerThan(0, true)({} as any, {} as any)).toThrowError();
+
+      expect(result.includes(1)).toBeTruthy();
+      expect(result.includes(2)).toBeTruthy();
+      expect(result.includes(3)).toBeTruthy();
+      expect(result.includes(4)).toBeTruthy();
+      expect(result.includes(5)).toBeTruthy();
+      expect(result.includes(6)).toBeFalsy();
+      expect(result.includes(7)).toBeFalsy();
+      expect(result.includes(8)).toBeFalsy();
+
+      expect(resultEqual.includes(1)).toBeTruthy();
+      expect(resultEqual.includes(2)).toBeTruthy();
+      expect(resultEqual.includes(3)).toBeTruthy();
+      expect(resultEqual.includes(4)).toBeTruthy();
+      expect(resultEqual.includes(5)).toBeTruthy();
+      expect(resultEqual.includes(6)).toBeTruthy();
+      expect(resultEqual.includes(7)).toBeFalsy();
+      expect(resultEqual.includes(8)).toBeFalsy();
+    });
+
     test(functions.takeOuter.name, () => {
       const list = [11, 25, 4, 5, 6, 12, 10];
       const result = functions.takeOuter(5, 10)(list, {} as any);
