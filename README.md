@@ -303,6 +303,16 @@ pipe(useCallValue())
   .resolveSync({ foo: new Date() }) // true
 ```
 
+###### merge
+
+Merges the previous object with the given one
+
+```ts
+pipe(useCallValue())
+  .pipe(merge({ foo: 'bar' }))
+  .resolveSync({ bar: 'baz' }) // { foo: 'bar', bar: 'baz' }
+```
+
 ###### pick
 
 Returns a new object (previous value) with the given keys. This applies only to objects.

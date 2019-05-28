@@ -229,6 +229,16 @@ describe(`Tests functions`, () => {
       ).toBeFalsy();
     });
 
+    test(functions.merge.name, () => {
+      expect(() => functions.merge({})(123, {} as any)).toThrowError();
+      expect(
+        functions.merge({ foo: 123 })({ bar: 123 }, { } as any)
+      ).toStrictEqual({
+        foo: 123,
+        bar: 123,
+      });
+    });
+
     test(functions.pick.name, () => {
       class Test {
         public foo = 1;

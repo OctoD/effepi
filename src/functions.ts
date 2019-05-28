@@ -243,6 +243,17 @@ export function hasProperty(propertyKey: string): ExplicitCallable<unknown, bool
   }
 }
 
+export function merge<T extends object, K>(target: T): ExplicitCallable<K, K & T> {
+  return arg => {
+    throwIfNotObject('merge', arg);
+
+    return {
+      ... arg,
+      ... target,
+    }
+  }
+}
+
 export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
   return (arg: any) => {
     throwIfNotObject<KObject>(`pick`, arg);
