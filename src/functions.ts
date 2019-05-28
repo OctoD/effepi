@@ -1,8 +1,18 @@
 import { ExplicitCallable, IContext, IPipe } from './pipe';
 
+function isNullOrUndefined(arg: unknown): arg is (null | undefined) {
+  return arg === undefined || arg === null;
+}
+
 function throwIfNotArray(functionName: string, value: unknown): never | void {
   if (!Array.isArray(value)) {
     throw new TypeError(`${functionName} argument must be a numbers array`);
+  }
+}
+
+function throwIfNotObject<T = object>(functionName: string, value: unknown): never | void {
+  if (typeof value !== 'object') {
+    throw new TypeError(`${functionName} argument must be a valid object`);
   }
 }
 
@@ -202,6 +212,65 @@ export function createSwitchOption<Match, Value>(match: Match, value: Value): Sw
 
 export function fold<Left, Right>(left: Left, right: Right): <T extends boolean>(arg: T) => T extends true ? Right : Left {
   return (arg: boolean) => arg ? right : left as any;
+}
+
+//#endregion
+
+//#region object functions
+
+export function exclude<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
+  return (arg: any) => {
+    throwIfNotObject<KObject>(`pick`, arg);
+
+    const newObject = <Pick<KObject, Keys>> { ... arg };
+    const keysArray = keys.slice();
+
+    while (keysArray.length > 0) {
+      delete newObject[keysArray.pop()];
+    }
+
+    return newObject;
+  };
+}
+
+export function hasProperty(propertyKey: string): ExplicitCallable<unknown, boolean> {
+  return arg => {
+    if (isNullOrUndefined(arg)) {
+      return false;
+    }
+
+    return Object.prototype.hasOwnProperty.call(arg, propertyKey); 
+  }
+}
+
+export function merge<T extends object, K>(target: T): ExplicitCallable<K, K & T> {
+  return arg => {
+    throwIfNotObject('merge', arg);
+
+    return {
+      ... arg,
+      ... target,
+    }
+  }
+}
+
+export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
+  return (arg: any) => {
+    throwIfNotObject<KObject>(`pick`, arg);
+
+    const newObject = <Pick<KObject, Keys>> { };
+    const keysArray = keys.slice();
+
+    while(keysArray.length > 0) {
+      const key = keysArray.pop();
+
+      if (arg[key]) {
+        newObject[key] = arg[key];
+      }
+    }
+
+    return newObject;
+  };
 }
 
 //#endregion

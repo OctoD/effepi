@@ -198,6 +198,64 @@ describe(`Tests functions`, () => {
     });
   });
 
+  describe(`Object functions`, () => {
+    test(functions.exclude.name, () => {
+      class Test {
+        public foo = 1;
+        public bar = 2;
+        public baz = new Date();
+      }
+
+      const result = functions.exclude<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
+
+      expect(() => functions.exclude()('' as any, {} as any)).toThrowError();
+
+      expect(result).not.toHaveProperty(`foo`);
+      expect(result).not.toHaveProperty(`bar`);
+      expect(result).toHaveProperty(`baz`);
+    });
+
+    test(functions.hasProperty.name, () => {
+      expect(
+        functions.hasProperty('foo')({}, {} as any)
+      ).toBeFalsy();
+
+      expect(
+        functions.hasProperty('foo')({ foo: 100 }, {} as any)
+      ).toBeTruthy();
+
+      expect(
+        functions.hasProperty('foo')(null, {} as any)
+      ).toBeFalsy();
+    });
+
+    test(functions.merge.name, () => {
+      expect(() => functions.merge({})(123, {} as any)).toThrowError();
+      expect(
+        functions.merge({ foo: 123 })({ bar: 123 }, { } as any)
+      ).toStrictEqual({
+        foo: 123,
+        bar: 123,
+      });
+    });
+
+    test(functions.pick.name, () => {
+      class Test {
+        public foo = 1;
+        public bar = 2;
+        public baz = new Date();
+      }
+
+      const result = functions.pick<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
+
+      expect(() => functions.pick()('' as any, {} as any)).toThrowError();
+
+      expect(result).toHaveProperty(`foo`);
+      expect(result).toHaveProperty(`bar`);
+      expect(result).not.toHaveProperty(`baz`);
+    });
+  });
+
   describe(`Miscellaneous functions`, () => {
     test(functions.put.name, () => {
       expect(functions.put(10)()).toBe(10);
