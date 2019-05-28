@@ -1,41 +1,61 @@
-import { IPipeContext, ICallable } from './pipe';
+import { ExplicitCallable, IContext, IPipe } from './pipe';
+
+//#region Array
+
+export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
+  return values => values.map(value => pipe.resolve(value));
+}
+
+export function applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[] {
+  return values => values.map(value => pipe.resolveSync(value));
+}
+
+//#endregion
 
 //#region Math
 
-export function add(value: number): ICallable<number, number> {
-  return arg => arg + value;
+export function add(value: number): ExplicitCallable<number, number> {
+  return (arg: number) => arg + value;
 }
 
-export function changeSign(): ICallable<number, number> {
-  return arg => -arg;
+export function changeSign(): ExplicitCallable<number, number> {
+  return (arg: number) => -arg;
 }
 
-export function divideBy(value: number): ICallable<number, number> {
-  return arg => arg / value;
+export function divideBy(value: number): ExplicitCallable<number, number> {
+  return (arg: number) => arg / value;
 }
 
-export function multiplyBy(value: number): ICallable<number, number> {
-  return arg => arg * value;
+export function multiplyBy(value: number): ExplicitCallable<number, number> {
+  return (arg: number) => arg * value;
 }
 
-export function negative(): ICallable<number, number> {
-  return arg => arg > 0 ? -arg : arg;
+export function negative(): ExplicitCallable<number, number> {
+  return (arg: number) => arg > 0 ? -arg : arg;
 }
 
-export function positive(): ICallable<number, number> {
-  return arg => arg > 0 ? arg : -arg;
+export function positive(): ExplicitCallable<number, number> {
+  return (arg: number) => arg > 0 ? arg : -arg;
 }
 
-export function pow(exponent: number): ICallable<number, number> {
-  return arg => arg ** exponent;
+export function pow(exponent: number): ExplicitCallable<number, number> {
+  return (arg: number) => arg ** exponent;
 }
 
-export function root(exponent: number): ICallable<number, number> {
-  return arg => Math.pow(arg, 1 / exponent);
+export function root(exponent: number): ExplicitCallable<number, number> {
+  return (arg: number) => Math.pow(arg, 1 / exponent);
 }
 
-export function subtract(value: number): ICallable<number, number> {
-  return arg => arg - value;
+export function subtract(value: number): ExplicitCallable<number, number> {
+  return (arg: number) => arg - value;
+}
+
+export function takeGreater(): ExplicitCallable<number[], number> {
+  return (arg: number[]) => Math.max.apply(Math, arg);
+}
+
+export function takeLower(): ExplicitCallable<number[], number> {
+  return (arg: number[]) => Math.min.apply(Math, arg);
 }
 
 //#endregion
@@ -131,8 +151,8 @@ export function safeCall<T extends (arg: TValue) => TReturn, TValue, TReturn>(ca
   }
 }
 
-export function useCallValue<TCallValue = unknown>(): <TValue = TCallValue>(value: TValue, context: IPipeContext<TValue, TValue>) => TValue {
-  return (_, context) => context.callValue;
+export function useCallValue<TCallValue = unknown>(): (value: unknown, context: IContext<unknown, TCallValue>) => TCallValue {
+  return (_, context) => context.callValue as TCallValue;
 }
 
 export function useValue(): <TArg>(arg: TArg) => TArg {

@@ -1,4 +1,4 @@
-import { divideBy, useCallValue, put, multiplyBy, add } from '../functions';
+import { divideBy, useCallValue, put, multiplyBy, add, toString, toDate, toNumber } from '../functions';
 import pipe from '../pipe';
 
 describe(`miscellaneous tests, jff`, () => {
