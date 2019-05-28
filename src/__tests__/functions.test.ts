@@ -198,6 +198,24 @@ describe(`Tests functions`, () => {
     });
   });
 
+  describe(`Object functions`, () => {
+    test(functions.pick.name, () => {
+      class Test {
+        public foo = 1;
+        public bar = 2;
+        public baz = new Date();
+      }
+      
+      const result = functions.pick<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
+
+      expect(() => functions.pick()('' as any, {} as any)).toThrowError();
+      
+      expect(result).toHaveProperty(`foo`);
+      expect(result).toHaveProperty(`bar`);
+      expect(result).not.toHaveProperty(`baz`);
+    });
+  });
+
   describe(`Miscellaneous functions`, () => {
     test(functions.put.name, () => {
       expect(functions.put(10)()).toBe(10);

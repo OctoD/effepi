@@ -6,6 +6,12 @@ function throwIfNotArray(functionName: string, value: unknown): never | void {
   }
 }
 
+function throwIfNotObject<T = object>(functionName: string, value: unknown): never | void {
+  if (typeof value !== 'object') {
+    throw new TypeError(`${functionName} argument must be a valid object`);
+  }
+}
+
 //#region Array
 
 export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
@@ -202,6 +208,29 @@ export function createSwitchOption<Match, Value>(match: Match, value: Value): Sw
 
 export function fold<Left, Right>(left: Left, right: Right): <T extends boolean>(arg: T) => T extends true ? Right : Left {
   return (arg: boolean) => arg ? right : left as any;
+}
+
+//#endregion
+
+//#region object functions
+
+export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...keys: Keys[]): ExplicitCallable<KObject, Pick<KObject, Keys>> {
+  return (arg: any) => {
+    throwIfNotObject<KObject>(`pick`, arg);
+
+    const newObject = <Pick<KObject, Keys>> { };
+    const keysArray = keys.slice();
+
+    while(keysArray.length > 0) {
+      const key = keysArray.pop();
+
+      if (arg[key]) {
+        newObject[key] = arg[key];
+      }
+    }
+
+    return newObject;
+  };
 }
 
 //#endregion
