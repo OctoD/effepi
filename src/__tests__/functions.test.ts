@@ -73,6 +73,22 @@ describe(`Tests functions`, () => {
       expect(functions.subtract(20)(2, {} as any)).toBe(-18);
     });
 
+    test(functions.takeBetween.name, () => {
+      const list = [11, 25, 4, 5, 6, 12, 10];
+      const result = functions.takeBetween(5, 10)(list, {} as any);
+
+      expect(() => functions.takeBetween(0, 0)({} as any, {} as any)).toThrowError();
+      
+      expect(result.includes(5)).toBeTruthy();
+      expect(result.includes(6)).toBeTruthy();
+      expect(result.includes(10)).toBeTruthy();
+      
+      expect(result.includes(4)).toBeFalsy();
+      expect(result.includes(11)).toBeFalsy();
+      expect(result.includes(12)).toBeFalsy();
+      expect(result.includes(25)).toBeFalsy();
+    });
+
     test(functions.takeGreater.name, () => {
       expect(functions.takeGreater()([10, 200, 2001, 1, 55], {} as any)).toBe(2001);
     });
