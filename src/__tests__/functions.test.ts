@@ -96,6 +96,22 @@ describe(`Tests functions`, () => {
     test(functions.takeLower.name, () => {
       expect(functions.takeLower()([10, 200, 2001, 1, 55, -123], {} as any)).toBe(-123);
     });
+
+    test(functions.takeOuter.name, () => {
+      const list = [11, 25, 4, 5, 6, 12, 10];
+      const result = functions.takeOuter(5, 10)(list, {} as any);
+
+      expect(() => functions.takeOuter(0, 0)({} as any, {} as any)).toThrowError();
+
+      expect(result.includes(5)).toBeFalsy();
+      expect(result.includes(6)).toBeFalsy();
+      expect(result.includes(10)).toBeFalsy();
+
+      expect(result.includes(4)).toBeTruthy();
+      expect(result.includes(11)).toBeTruthy();
+      expect(result.includes(12)).toBeTruthy();
+      expect(result.includes(25)).toBeTruthy();
+    });
   });
 
   describe(`Logical operators`, () => {

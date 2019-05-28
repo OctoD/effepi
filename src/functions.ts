@@ -79,6 +79,27 @@ export function takeLower(): ExplicitCallable<number[], number> {
   return (arg: number[]) => Math.min.apply(Math, arg);
 }
 
+export function takeOuter(start: number, end: number): ExplicitCallable<number[], number[]> {
+  return (arg: number[]) => {
+    if (!Array.isArray(arg)) {
+      throw new TypeError(`takeBetween argument must be a numbers array`);
+    }
+
+    const newArray: number[] = [];
+    const length = arg.length;
+
+    for (let i = 0; i < length; i++) {
+      const value = arg[i];
+
+      if (value < start || value > end) {
+        newArray.push(value);
+      }
+    }
+
+    return newArray;
+  };
+}
+
 //#endregion
 
 //#region logical operators
