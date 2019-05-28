@@ -1,5 +1,11 @@
 import { ExplicitCallable, IContext, IPipe } from './pipe';
 
+function throwIfNotArray(functionName: string, value: unknown): never | void {
+  if (!Array.isArray(value)) {
+    throw new TypeError(`${functionName} argument must be a numbers array`);
+  }
+}
+
 //#region Array
 
 export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
@@ -50,12 +56,92 @@ export function subtract(value: number): ExplicitCallable<number, number> {
   return (arg: number) => arg - value;
 }
 
+export function takeBetween(start: number, end: number): ExplicitCallable<number[], number[]> {
+  return (arg: number[]) => {
+    throwIfNotArray(`takeBetween`, arg);
+    
+    const newArray: number[] = [];
+    const length = arg.length;
+    
+    for (let i = 0; i < length; i++) {
+      const value = arg[i];
+
+      if (value >= start && value <= end) {
+        newArray.push(value);
+      }
+    }
+
+    return newArray;
+  };
+}
+
 export function takeGreater(): ExplicitCallable<number[], number> {
   return (arg: number[]) => Math.max.apply(Math, arg);
 }
 
+export function takeGreaterThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
+  return (arg: number[]) => {
+    throwIfNotArray(`takeGreaterThan`, arg);
+
+    const newArray: number[] = [];
+    const length = arg.length;
+
+    for (let i = 0; i < length; i++) {
+      const value = arg[i];
+
+      if (equal && value >= check) {
+        newArray.push(value);
+      } else if (value > check) {
+        newArray.push(value);
+      }
+    }
+
+    return newArray;
+  };
+}
+
 export function takeLower(): ExplicitCallable<number[], number> {
   return (arg: number[]) => Math.min.apply(Math, arg);
+}
+
+export function takeLowerThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
+  return (arg: number[]) => {
+    throwIfNotArray(`takeLowerThan`, arg);
+
+    const newArray: number[] = [];
+    const length = arg.length;
+
+    for (let i = 0; i < length; i++) {
+      const value = arg[i];
+
+      if (equal && value <= check) {
+        newArray.push(value);
+      } else if (value < check) {
+        newArray.push(value);
+      }
+    }
+
+    return newArray;
+  };
+}
+
+export function takeOuter(start: number, end: number): ExplicitCallable<number[], number[]> {
+  return (arg: number[]) => {
+    throwIfNotArray(`takeOuter`, arg);
+
+    const newArray: number[] = [];
+    const length = arg.length;
+
+    for (let i = 0; i < length; i++) {
+      const value = arg[i];
+
+      if (value < start || value > end) {
+        newArray.push(value);
+      }
+    }
+
+    return newArray;
+  };
 }
 
 //#endregion
