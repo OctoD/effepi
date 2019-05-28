@@ -1,5 +1,5 @@
 import * as functions from '../functions';
-import pipe from '../pipe';
+import {pipe} from '../pipe';
 
 describe(`Tests functions`, () => {
   describe(`Array functions`, () => {

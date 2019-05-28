@@ -139,7 +139,7 @@ function updateContext<CallValue, PreviousValue = unknown>(context: IContext<Cal
   };
 }
 
-export default function pipe<CallValue, NextValue>(callable: ExplicitCallable<CallValue, NextValue>) {
+export function pipe<CallValue, NextValue>(callable: ExplicitCallable<CallValue, NextValue>) {
   const pipeline = [callable] as Pipeline;
   return createMethods<CallValue, NextValue>(pipeline);
 }

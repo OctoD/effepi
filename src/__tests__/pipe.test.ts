@@ -1,4 +1,4 @@
-import pipe from '../pipe';
+import {pipe} from '../pipe';
 import { put, add, multiplyBy, useCallValue, useValue } from '../functions';
 
 describe(`pipe`, () => {
