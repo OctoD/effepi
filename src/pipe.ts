@@ -9,6 +9,7 @@ export interface IContext<CallValue = unknown, PreviousValue = unknown> {
   readonly mutationIndex: number;
   readonly previousValue: PreviousValue;
   readonly previousValues: unknown[];
+  mutate?(pipeline: Pipeline): IMutatedContext;
 }
 
 export interface IPipe<InitialCallable, Output> {
@@ -17,6 +18,28 @@ export interface IPipe<InitialCallable, Output> {
   resolveSync: ResolvedSyncPipe<InitialCallable, Output>;
   toFunction(): (input: InitialCallable) => Promise<Output>;
   toSyncFunction(): (input: InitialCallable) => Output;
+}
+
+export interface IMutatedContext {
+  pipeline: Pipeline;
+}
+
+function applyMutation(context: IContext, pipeline: Pipeline): [IContext, Pipeline] {
+  if (typeof context.mutate !== 'function') {
+    return [context, pipeline];
+  }
+
+  const mutations = context.mutate(pipeline);
+  const newPipeline = pipeline.slice();
+
+  newPipeline.splice(context.mutationIndex, 0, ... mutations.pipeline);
+  
+  context.mutate = undefined;
+
+  return [
+    context,
+    newPipeline,
+  ];
 }
 
 function createContext<CallValue>(callValue: CallValue): IContext<CallValue> {
@@ -82,8 +105,9 @@ async function resolve(pipeline: Pipeline, index: number, context: IContext): Pr
 
   const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
   const updatedContext = updateContext<unknown, unknown>(context, previousValue);
+  const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
-  return resolve(pipeline, index + 1, updatedContext);
+  return resolve(mutatedPipeline, index + 1, mutatedContext);
 }
 
 function resolveSync(pipeline: Pipeline, index: number, context: IContext): unknown {
@@ -93,20 +117,23 @@ function resolveSync(pipeline: Pipeline, index: number, context: IContext): unkn
 
   const previousValue = pipeline[index](context.previousValue, context);
   const updatedContext = updateContext<unknown, unknown>(context, previousValue);
+  const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
-  return resolveSync(pipeline, index + 1, updatedContext);
+  return resolveSync(mutatedPipeline, index + 1, mutatedContext);
 }
 
 function updateContext<CallValue, PreviousValue = unknown>(context: IContext<CallValue>, previousValue: PreviousValue): IContext<CallValue, PreviousValue> {
   const {
     callValue,
     mutationIndex,
+    mutate,
     previousValues,
   } = context;
   
   return {
     callValue,
     mutationIndex: mutationIndex + 1,
+    mutate,
     previousValue,
     previousValues: [... previousValues, previousValue],
   };

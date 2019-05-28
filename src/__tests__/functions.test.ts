@@ -73,12 +73,98 @@ describe(`Tests functions`, () => {
       expect(functions.subtract(20)(2, {} as any)).toBe(-18);
     });
 
+    test(functions.takeBetween.name, () => {
+      const list = [11, 25, 4, 5, 6, 12, 10];
+      const result = functions.takeBetween(5, 10)(list, {} as any);
+
+      expect(() => functions.takeBetween(0, 0)({} as any, {} as any)).toThrowError();
+      
+      expect(result.includes(5)).toBeTruthy();
+      expect(result.includes(6)).toBeTruthy();
+      expect(result.includes(10)).toBeTruthy();
+      
+      expect(result.includes(4)).toBeFalsy();
+      expect(result.includes(11)).toBeFalsy();
+      expect(result.includes(12)).toBeFalsy();
+      expect(result.includes(25)).toBeFalsy();
+    });
+
     test(functions.takeGreater.name, () => {
       expect(functions.takeGreater()([10, 200, 2001, 1, 55], {} as any)).toBe(2001);
     });
 
+    test(functions.takeGreaterThan.name, () => {
+      const list = [1, 2, 3, 4, 5, 6, 7, 8];
+      const result = functions.takeGreaterThan(6)(list, { } as any);
+      const resultEqual = functions.takeGreaterThan(6, true)(list, { } as any);
+
+      expect(() => functions.takeGreaterThan(0)({} as any, {} as any)).toThrowError();
+      expect(() => functions.takeGreaterThan(0, true)({} as any, {} as any)).toThrowError();
+
+      expect(result.includes(1)).toBeFalsy();
+      expect(result.includes(2)).toBeFalsy();
+      expect(result.includes(3)).toBeFalsy();
+      expect(result.includes(4)).toBeFalsy();
+      expect(result.includes(5)).toBeFalsy();
+      expect(result.includes(6)).toBeFalsy();
+      expect(result.includes(7)).toBeTruthy();
+      expect(result.includes(8)).toBeTruthy();
+
+      expect(resultEqual.includes(1)).toBeFalsy();
+      expect(resultEqual.includes(2)).toBeFalsy();
+      expect(resultEqual.includes(3)).toBeFalsy();
+      expect(resultEqual.includes(4)).toBeFalsy();
+      expect(resultEqual.includes(5)).toBeFalsy();
+      expect(resultEqual.includes(6)).toBeTruthy();
+      expect(resultEqual.includes(7)).toBeTruthy();
+      expect(resultEqual.includes(8)).toBeTruthy();
+    });
+
     test(functions.takeLower.name, () => {
       expect(functions.takeLower()([10, 200, 2001, 1, 55, -123], {} as any)).toBe(-123);
+    });
+
+    test(functions.takeLowerThan.name, () => {
+      const list = [1, 2, 3, 4, 5, 6, 7, 8];
+      const result = functions.takeLowerThan(6)(list, {} as any);
+      const resultEqual = functions.takeLowerThan(6, true)(list, {} as any);
+
+      expect(() => functions.takeLowerThan(0)({} as any, {} as any)).toThrowError();
+      expect(() => functions.takeLowerThan(0, true)({} as any, {} as any)).toThrowError();
+
+      expect(result.includes(1)).toBeTruthy();
+      expect(result.includes(2)).toBeTruthy();
+      expect(result.includes(3)).toBeTruthy();
+      expect(result.includes(4)).toBeTruthy();
+      expect(result.includes(5)).toBeTruthy();
+      expect(result.includes(6)).toBeFalsy();
+      expect(result.includes(7)).toBeFalsy();
+      expect(result.includes(8)).toBeFalsy();
+
+      expect(resultEqual.includes(1)).toBeTruthy();
+      expect(resultEqual.includes(2)).toBeTruthy();
+      expect(resultEqual.includes(3)).toBeTruthy();
+      expect(resultEqual.includes(4)).toBeTruthy();
+      expect(resultEqual.includes(5)).toBeTruthy();
+      expect(resultEqual.includes(6)).toBeTruthy();
+      expect(resultEqual.includes(7)).toBeFalsy();
+      expect(resultEqual.includes(8)).toBeFalsy();
+    });
+
+    test(functions.takeOuter.name, () => {
+      const list = [11, 25, 4, 5, 6, 12, 10];
+      const result = functions.takeOuter(5, 10)(list, {} as any);
+
+      expect(() => functions.takeOuter(0, 0)({} as any, {} as any)).toThrowError();
+
+      expect(result.includes(5)).toBeFalsy();
+      expect(result.includes(6)).toBeFalsy();
+      expect(result.includes(10)).toBeFalsy();
+
+      expect(result.includes(4)).toBeTruthy();
+      expect(result.includes(11)).toBeTruthy();
+      expect(result.includes(12)).toBeTruthy();
+      expect(result.includes(25)).toBeTruthy();
     });
   });
 
@@ -109,6 +195,64 @@ describe(`Tests functions`, () => {
       expect(switcher(400)).toBe(false);
       expect(switcher('hello world')).toBe('default');
       expect(switcher2('hello world')).toBeUndefined();
+    });
+  });
+
+  describe(`Object functions`, () => {
+    test(functions.exclude.name, () => {
+      class Test {
+        public foo = 1;
+        public bar = 2;
+        public baz = new Date();
+      }
+
+      const result = functions.exclude<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
+
+      expect(() => functions.exclude()('' as any, {} as any)).toThrowError();
+
+      expect(result).not.toHaveProperty(`foo`);
+      expect(result).not.toHaveProperty(`bar`);
+      expect(result).toHaveProperty(`baz`);
+    });
+
+    test(functions.hasProperty.name, () => {
+      expect(
+        functions.hasProperty('foo')({}, {} as any)
+      ).toBeFalsy();
+
+      expect(
+        functions.hasProperty('foo')({ foo: 100 }, {} as any)
+      ).toBeTruthy();
+
+      expect(
+        functions.hasProperty('foo')(null, {} as any)
+      ).toBeFalsy();
+    });
+
+    test(functions.merge.name, () => {
+      expect(() => functions.merge({})(123, {} as any)).toThrowError();
+      expect(
+        functions.merge({ foo: 123 })({ bar: 123 }, { } as any)
+      ).toStrictEqual({
+        foo: 123,
+        bar: 123,
+      });
+    });
+
+    test(functions.pick.name, () => {
+      class Test {
+        public foo = 1;
+        public bar = 2;
+        public baz = new Date();
+      }
+
+      const result = functions.pick<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
+
+      expect(() => functions.pick()('' as any, {} as any)).toThrowError();
+
+      expect(result).toHaveProperty(`foo`);
+      expect(result).toHaveProperty(`bar`);
+      expect(result).not.toHaveProperty(`baz`);
     });
   });
 

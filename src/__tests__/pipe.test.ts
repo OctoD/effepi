@@ -69,4 +69,23 @@ describe(`pipe`, () => {
 
     expect(fn(0)).toBe(60);
   });
+
+  test(`context can apply arbitrary mutations to pipeline`, () => {
+    const mock = jest.fn((arg: number) => arg ** 2);
+    const p = pipe<number, number>(useCallValue()).pipe((arg, context) => {
+      context.mutate = () => {
+        const pipeline = [mock];
+        return { 
+          pipeline,
+        };
+      };
+
+      return arg + 1;
+    }).pipe(add(1));
+
+    const result = p.resolveSync(10);
+    
+    expect(mock).toHaveBeenCalled();
+    expect(result).toBe(122);
+  });
 });
