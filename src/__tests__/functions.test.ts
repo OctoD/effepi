@@ -10,6 +10,7 @@ describe(`Tests functions`, () => {
         mutationIndex: 0,
         previousValue: 0,
         previousValues: [],
+        apply: jest.fn(),
       });
       const exresult = await Promise.all(result);
 
@@ -25,6 +26,7 @@ describe(`Tests functions`, () => {
         mutationIndex: 0,
         previousValue: 0,
         previousValues: [],
+        apply: jest.fn(),
       });
 
       expect(result[0]).toBe(101);
