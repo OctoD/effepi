@@ -47,6 +47,8 @@ p(10) // returns 10
 p('hello world') // returns 'hello world'
 ```
 
+#### pipeline context
+
 Each function passed in a pipeline can use the previous value and can access to the current pipeline context. A passed context can be enriched with a `mutation` function, which is the only way to mutate the pipeline from the inside of a function.
 
 ```ts
@@ -74,6 +76,17 @@ const isEven = pipe(useCallValue())
   .toSyncFunction(); // returns true if the number is even
 
 isEven(10) // logs 10, logs true, returns true
+```
+
+A context has also the `apply` method, which can be used to invoke a function with
+the previous value as argument.
+
+```ts
+pipe(useCallValue())
+  .pipe(
+    (value, context) => context.apply(add(10)
+  )
+).resolveSync(0); // returns 10
 ```
 
 ## Functions
