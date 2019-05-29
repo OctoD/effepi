@@ -1,4 +1,5 @@
 export type Callable = <Input, Output>(input: Input, context: IContext<unknown, Input>) => Output;
+export type ExecutionContextFlow = 'async' | 'sync';
 export type ExplicitCallable<Input, Output> = (input: Input, context: IContext<unknown, Input>) => Output;
 export type ResolvedPipe<Input, Output> = (input: Input) => Promise<Output>;
 export type ResolvedSyncPipe<Input, Output> = (input: Input) => Output;
@@ -6,6 +7,7 @@ export type Pipeline = Array<Callable | ExplicitCallable<unknown, unknown>>;
 
 export interface IContext<CallValue = unknown, PreviousValue = unknown> {
   readonly callValue: CallValue;
+  readonly executionFlow: ExecutionContextFlow;
   readonly mutationIndex: number;
   readonly previousValue: PreviousValue;
   readonly previousValues: unknown[];
@@ -44,9 +46,10 @@ function applyMutation(context: IContext, pipeline: Pipeline): [IContext, Pipeli
   ];
 }
 
-function createContext<CallValue>(callValue: CallValue): IContext<CallValue> {
+function createContext<CallValue>(callValue: CallValue, executionFlow: ExecutionContextFlow): IContext<CallValue> {
   return {
     callValue,
+    executionFlow,
     mutationIndex: 0,
     previousValue: undefined,
     previousValues: [],
@@ -98,7 +101,7 @@ function createResolver<TCallValue, TReturnValue>(pipeline: Pipeline, memoized: 
     previousReturnValue = await resolve(
       pipeline, 
       0, 
-      createContext(callValue)
+      createContext(callValue, 'async')
     ) as TReturnValue;
 
     return previousReturnValue;
@@ -118,7 +121,7 @@ function createSyncResolver<TCallValue, TReturnValue>(pipeline: Pipeline, memoiz
     previousReturnValue = resolveSync(
       pipeline,
       0,
-      createContext(callValue)
+      createContext(callValue, 'sync')
     ) as TReturnValue;
 
     return previousReturnValue;
@@ -153,6 +156,7 @@ function updateContext<CallValue, PreviousValue = unknown>(context: IContext<Cal
   const {
     apply,
     callValue,
+    executionFlow,
     mutationIndex,
     mutate,
     previousValues,
@@ -161,6 +165,7 @@ function updateContext<CallValue, PreviousValue = unknown>(context: IContext<Cal
   return {
     apply: apply as any,
     callValue,
+    executionFlow,
     mutationIndex: mutationIndex + 1,
     mutate,
     previousValue,

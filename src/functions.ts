@@ -1,7 +1,13 @@
-import { ExplicitCallable, IContext, IPipe } from './pipe';
+import { ExplicitCallable, IContext, IPipe, ExecutionContextFlow } from './pipe';
 
 function isNullOrUndefined(arg: unknown): arg is (null | undefined) {
   return arg === undefined || arg === null;
+}
+
+function throwContextExecutionFlow(functionName: string, context: IContext, flow: ExecutionContextFlow): never | void {
+  if (context.executionFlow !== flow) {
+    throw new Error(`Cannot use ${functionName} on ${context.executionFlow} context`);
+  }
 }
 
 function throwIfNotArray(functionName: string, value: unknown): never | void {
@@ -25,11 +31,19 @@ function throwIfNotString(functionName: string, value: unknown): never | void {
 //#region Array
 
 export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
-  return values => values.map(value => pipe.resolve(value));
+  return (values, context) => {
+    throwContextExecutionFlow('applyEach', context, 'async');
+    
+    return values.map(value => pipe.resolve(value));
+  };
 }
 
 export function applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[] {
-  return values => values.map(value => pipe.resolveSync(value));
+  return (values, context) => {
+    throwContextExecutionFlow('applyEachSync', context, 'sync');
+
+    return values.map(value => pipe.resolveSync(value));
+  };
 }
 
 //#endregion
@@ -292,11 +306,17 @@ export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...key
 //#region misc
 
 export function apply<Initial, Output>(pipe: IPipe<Initial, Output>): ExplicitCallable<Initial, Output> {
-  return arg => pipe.resolve(arg) as unknown as Output;
+  return (arg, context) => {
+    throwContextExecutionFlow('apply', context, 'async');
+    return pipe.resolve(arg) as unknown as Output;
+  };
 }
 
 export function applySync<Initial, Output>(pipe: IPipe<Initial, Output>): ExplicitCallable<Initial, Output> {
-  return arg => pipe.resolveSync(arg);
+  return (arg, context) => {
+    throwContextExecutionFlow('applySync', context, 'sync');
+    return pipe.resolveSync(arg);
+  }
 }
 
 /**
