@@ -444,6 +444,16 @@ pipe(useCallValue())
   .resolveSync('hello') // returns ['h', 'e', 'l', 'l', 'o']
 ```
 
+###### concat
+
+Concatenate previous value with another string. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(concat('world'))
+  .resolveSync('hello') // 'helloworld'
+```
+
 ###### length
 
 Returns previous value length. Previous value must be a string.

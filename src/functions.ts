@@ -357,6 +357,13 @@ export function chars(): ExplicitCallable<string, string[]> {
   };
 }
 
+export function concat(str: string): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString(`concat`, arg);
+    return arg + str;
+  }
+}
+
 export function length(): ExplicitCallable<string, number> {
   return arg => {
     throwIfNotString(`length`, arg);

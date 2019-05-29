@@ -343,6 +343,14 @@ describe(`Tests functions`, () => {
       expect(chars.length).toBe(str.length);
       expect(() => functions.chars()(123 as any, {} as any)).toThrowError();
     });
+    
+    test(functions.concat.name, () => {
+      const str = 'hello';
+      const concat = functions.concat('world')(str, {} as any);
+
+      expect(concat).toBe('helloworld');
+      expect(() => functions.concat('')(123 as any, {} as any)).toThrowError();
+    });
 
     test(functions.length.name, () => {
       const str = 'hello world';
