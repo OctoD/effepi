@@ -422,6 +422,18 @@ pipe(useCallValue())
   .resolveSync(10) // 20
 ```
 
+#### String functions
+
+###### chars
+
+Returns previous value as an array of chars. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(chars())
+  .resolveSync('hello') // returns ['h', 'e', 'l', 'l', 'o']
+```
+
 #### Type functions
 
 ###### toArray

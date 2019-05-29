@@ -325,6 +325,17 @@ describe(`Tests functions`, () => {
     });
   });
 
+  describe(`String functions`, () => {
+    test(functions.chars.name, () => {
+      const str = 'hello world';
+      const chars = functions.chars()(str, {} as any);
+
+      expect(Array.isArray(chars)).toBeTruthy();
+      expect(chars.length).toBe(str.length);
+      expect(() => functions.chars()(123 as any, {} as any)).toThrowError();
+    });
+  });
+
   describe(`Type conversion functions`, () => {
     test(functions.toArray.name, () => {
       expect(

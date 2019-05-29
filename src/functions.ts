@@ -16,6 +16,12 @@ function throwIfNotObject<T = object>(functionName: string, value: unknown): nev
   }
 }
 
+function throwIfNotString(functionName: string, value: unknown): never | void {
+  if (typeof value !== 'string') {
+    throw new TypeError(`${functionName} arg must be a string`);
+  }
+}
+
 //#region Array
 
 export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
@@ -328,6 +334,17 @@ export function useCallValue<TCallValue = unknown>(): (value: unknown, context: 
 
 export function useValue(): <TArg>(arg: TArg) => TArg {
   return value => value;
+}
+
+//#endregion
+
+//#region String
+
+export function chars(): ExplicitCallable<string, string[]> {
+  return arg => {
+    throwIfNotString(`chars`, arg);
+    return arg.split('');
+  };
 }
 
 //#endregion
