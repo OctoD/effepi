@@ -1,14 +1,14 @@
-pipe
-====
+effepi
+======
 
 Put your functions in a pipeline.
 
-## What pipe is
+## What effepi is
 
-Pipe is a functional way to enqueue and use different functions. You can put your functions in a pipeline and resolve them both asynchronously or synchronously, creating new async functions or sync functions.
+Effepi is a functional way to enqueue and use different functions. You can put your functions in a pipeline and resolve them both asynchronously or synchronously, creating new async functions or sync functions.
 
-- [pipe](#pipe)
-  - [What pipe is](#what-pipe-is)
+- [effepi](#effepi)
+  - [What effepi is](#what-effepi-is)
   - [Install](#install)
   - [How to use it](#how-to-use-it)
       - [pipeline context](#pipeline-context)
@@ -80,7 +80,7 @@ yarn add pipe
 ## How to use it
 
 ```ts
-import { pipe, functions } from 'pipe';
+import { pipe, functions } from 'effepi';
 
 const {
   divideBy,
