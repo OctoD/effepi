@@ -16,6 +16,8 @@ Pipe is a functional way to enqueue and use different functions. You can put you
       - [Array functions](#array-functions)
           - [applyEach](#applyeach)
           - [applyEachSync](#applyeachsync)
+          - [join](#join)
+          - [reverse](#reverse)
       - [Math functions](#math-functions)
           - [add](#add)
           - [changeSign](#changesign)
@@ -184,6 +186,26 @@ Note: invoking a pipeline using this function with an async method will throw an
 
 ```ts
 applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[]
+```
+
+###### join
+
+Joins the previous value with a given char. If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(join('*'))
+  .resolveSync([1,2,3]) // '1*2*3'
+```
+
+###### reverse
+
+Reverses the previous value. If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(reverse())
+  .resolveSync([1,2,3]) // [3,2,1]
 ```
 
 #### Math functions
