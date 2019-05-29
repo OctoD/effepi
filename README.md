@@ -444,6 +444,16 @@ pipe(useCallValue())
   .resolveSync('hello') // 5
 ```
 
+###### lowercase
+
+Returns previous value in lower case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(lowercase())
+  .resolveSync('HELLO') // 'hello'
+```
+
 ###### replaceAll
 
 Replaces all occurencies from the previous value. Previous value must be a string.
@@ -452,6 +462,16 @@ Replaces all occurencies from the previous value. Previous value must be a strin
 pipe(useCallValue())
   .pipe(replaceAll('l', '1'))
   .resolveSync('hello') // he110
+```
+
+###### uppercase
+
+Returns previous value in upper case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(uppercase())
+  .resolveSync('hello') // 'HELLO'
 ```
 
 #### Type functions

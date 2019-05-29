@@ -355,12 +355,26 @@ export function length(): ExplicitCallable<string, number> {
   }
 }
 
+export function lowercase(): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString(`lowercase`, arg);
+    return arg.toLowerCase();
+  };
+}
+
 export function replaceAll(needle: string, replaceWith: string): ExplicitCallable<string, string> {
   return arg => {
-    throwIfNotString(`length`, arg);
+    throwIfNotString(`replaceAll`, arg);
     regexps[needle] = regexps[needle] || new RegExp(needle, 'gi');
     return arg.replace(regexps[needle], replaceWith);
   }
+}
+
+export function uppercase(): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString(`uppercase`, arg);
+    return arg.toUpperCase();
+  };
 }
 
 //#endregion

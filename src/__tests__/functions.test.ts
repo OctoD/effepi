@@ -344,13 +344,29 @@ describe(`Tests functions`, () => {
       expect(() => functions.length()(123 as any, {} as any)).toThrowError();
     });
 
-    test(functions.length.name, () => {
+    test(functions.lowercase.name, () => {
+      const str = 'HELLO WORLD';
+      const lowercase = functions.lowercase()(str, {} as any);
+
+      expect(lowercase).toBe('hello world');
+      expect(() => functions.lowercase()(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.replaceAll.name, () => {
       const str = 'hello';
       const out = functions.replaceAll('l', '1')(str, {} as any);
 
       expect(typeof out === 'string').toBeTruthy();
       expect(out).toBe('he11o');
       expect(() => functions.replaceAll('', '')(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.uppercase.name, () => {
+      const str = 'hello world';
+      const uppercase = functions.uppercase()(str, {} as any);
+
+      expect(uppercase).toBe('HELLO WORLD');
+      expect(() => functions.uppercase()(123 as any, {} as any)).toThrowError();
     });
   });
 
