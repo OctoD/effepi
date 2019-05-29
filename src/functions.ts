@@ -46,6 +46,10 @@ export function applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: ICon
   };
 }
 
+export function join(char: string): ExplicitCallable<unknown[], string> {
+  return arr => arr.join(char);
+}
+
 export function reverse(): ExplicitCallable<unknown[], unknown[]> {
   return arr => {
     throwIfNotArray('reverse', arr);

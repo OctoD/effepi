@@ -64,6 +64,12 @@ describe(`Tests functions`, () => {
 
     testFunction(functions.reverse, () => {
       expect(
+        functions.join('_')([1,2,3], {} as any)
+      ).toBe('1_2_3');
+    });
+
+    testFunction(functions.reverse, () => {
+      expect(
         expect.arrayContaining(
           functions.reverse()([1, 2, 3], {} as any)
         )
