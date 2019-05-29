@@ -46,6 +46,26 @@ export function applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: ICon
   };
 }
 
+export function reverse(): ExplicitCallable<unknown[], unknown[]> {
+  return arr => {
+    throwIfNotArray('reverse', arr);
+    
+    const newArr = arr.slice();
+    const length = newArr.length;
+
+    for (let i = length / 2; i > 0; i--) {
+      const startIndex = length - i;
+      const left = newArr[startIndex];
+      const right = newArr[i];
+      
+      newArr[startIndex] = right;
+      newArr[i] = left;
+    }
+
+    return arr;
+  }
+}
+
 //#endregion
 
 //#region Math

@@ -1,6 +1,10 @@
 import * as functions from '../functions';
 import {pipe} from '../pipe';
 
+function testFunction<T extends Function>(fn: T, callback: jest.ProvidesCallback, timeout?: number): void {
+  test(fn.name, callback, timeout);
+}
+
 describe(`Tests functions`, () => {
   describe(`Array functions`, () => {
     test(functions.applyEach.name, async () => {
@@ -56,6 +60,14 @@ describe(`Tests functions`, () => {
           apply: jest.fn(),
         })
       ).toThrowError();
+    });
+
+    testFunction(functions.reverse, () => {
+      expect(
+        expect.arrayContaining(
+          functions.reverse()([1, 2, 3], {} as any)
+        )
+      ).toEqual([3, 2, 1]);
     });
   });
   
