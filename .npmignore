@@ -1,0 +1,12 @@
+# tests dirs
+__tests__
+
+# source dir
+src
+
+# config files and dirs
+.github
+.vscode
+coverage
+jest.config.js
+tsconfig.json
