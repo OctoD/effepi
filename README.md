@@ -422,6 +422,88 @@ pipe(useCallValue())
   .resolveSync(10) // 20
 ```
 
+#### String functions
+
+###### camelCase
+
+Returns previous value in camel-case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(camelCase())
+  .resolveSync('hello world') // 'helloWorld'
+```
+
+###### chars
+
+Returns previous value as an array of chars. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(chars())
+  .resolveSync('hello') // returns ['h', 'e', 'l', 'l', 'o']
+```
+
+###### concat
+
+Concatenate previous value with another string. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(concat('world'))
+  .resolveSync('hello') // 'helloworld'
+```
+
+###### length
+
+Returns previous value length. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(length())
+  .resolveSync('hello') // 5
+```
+
+###### lowercase
+
+Returns previous value in lower case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(lowercase())
+  .resolveSync('HELLO') // 'hello'
+```
+
+###### pascalCase
+
+Returns previous value in pascal-case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(pascalCase())
+  .resolveSync('hello world') // 'HelloWorld'
+```
+
+###### replaceAll
+
+Replaces all occurencies from the previous value. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(replaceAll('l', '1'))
+  .resolveSync('hello') // he110
+```
+
+###### uppercase
+
+Returns previous value in upper case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(uppercase())
+  .resolveSync('hello') // 'HELLO'
+```
+
 #### Type functions
 
 ###### toArray

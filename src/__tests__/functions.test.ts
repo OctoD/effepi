@@ -325,6 +325,77 @@ describe(`Tests functions`, () => {
     });
   });
 
+  describe(`String functions`, () => {
+    test(functions.camelCase.name, () => {
+      const str = 'hello world foo bar baz';
+      const result = functions.camelCase()(str, { } as any);
+
+      expect(typeof result === 'string').toBeTruthy();
+      expect(result).toBe(`helloWorldFooBarBaz`);
+      expect(() => functions.camelCase()(123 as any, {} as any)).toThrowError();
+    });
+    
+    test(functions.chars.name, () => {
+      const str = 'hello world';
+      const chars = functions.chars()(str, {} as any);
+
+      expect(Array.isArray(chars)).toBeTruthy();
+      expect(chars.length).toBe(str.length);
+      expect(() => functions.chars()(123 as any, {} as any)).toThrowError();
+    });
+    
+    test(functions.concat.name, () => {
+      const str = 'hello';
+      const concat = functions.concat('world')(str, {} as any);
+
+      expect(concat).toBe('helloworld');
+      expect(() => functions.concat('')(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.length.name, () => {
+      const str = 'hello world';
+      const length = functions.length()(str, {} as any);
+
+      expect(Number.isInteger(length)).toBeTruthy();
+      expect(length).toBe(str.length);
+      expect(() => functions.length()(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.lowercase.name, () => {
+      const str = 'HELLO WORLD';
+      const lowercase = functions.lowercase()(str, {} as any);
+
+      expect(lowercase).toBe('hello world');
+      expect(() => functions.lowercase()(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.pascalCase.name, () => {
+      const str = 'hello world foo bar baz';
+      const result = functions.pascalCase()(str, {} as any);
+
+      expect(typeof result === 'string').toBeTruthy();
+      expect(result).toBe(`HelloWorldFooBarBaz`);
+      expect(() => functions.pascalCase()(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.replaceAll.name, () => {
+      const str = 'hello';
+      const out = functions.replaceAll('l', '1')(str, {} as any);
+
+      expect(typeof out === 'string').toBeTruthy();
+      expect(out).toBe('he11o');
+      expect(() => functions.replaceAll('', '')(123 as any, {} as any)).toThrowError();
+    });
+
+    test(functions.uppercase.name, () => {
+      const str = 'hello world';
+      const uppercase = functions.uppercase()(str, {} as any);
+
+      expect(uppercase).toBe('HELLO WORLD');
+      expect(() => functions.uppercase()(123 as any, {} as any)).toThrowError();
+    });
+  });
+
   describe(`Type conversion functions`, () => {
     test(functions.toArray.name, () => {
       expect(
