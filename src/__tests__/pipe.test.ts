@@ -1,5 +1,6 @@
 import {pipe} from '../pipe';
-import { put, add, multiplyBy, useCallValue, useValue } from '../functions';
+import * as misc from '../misc';
+import * as math from '../math';
 
 describe(`pipe`, () => {
   test(`creates a pipe`, async () => {
@@ -39,32 +40,32 @@ describe(`pipe`, () => {
   });
 
   test(`the first value passed to the first function is the same one passed to the resolve function`, () => {
-    const p = pipe(useCallValue());
+    const p = pipe(misc.useCallValue());
 
     expect(p.resolveSync(10)).toBe(10);
   });
 
   test(`resolve returns the pipeline result`, async () => {
-    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+    const p = pipe(misc.put(10)).pipe(math.add(20)).pipe(math.multiplyBy(2));
 
     expect(await p.resolve(0)).toBe(60);
   });
 
   test(`resolve sync returns the pipeline result`, () => {
-    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+    const p = pipe(misc.put(10)).pipe(math.add(20)).pipe(math.multiplyBy(2));
 
     expect(p.resolveSync(0)).toBe(60);
   });
 
   test(`can create an async function which can be called later`, async () => {
-    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+    const p = pipe(misc.put(10)).pipe(math.add(20)).pipe(math.multiplyBy(2));
     const fn = p.toFunction();
 
     expect(await fn(0)).toBe(60);
   });
 
   test(`can create a sync function which which can be called later`, () => {
-    const p = pipe(put(10)).pipe(add(20)).pipe(multiplyBy(2));
+    const p = pipe(misc.put(10)).pipe(math.add(20)).pipe(math.multiplyBy(2));
     const fn = p.toSyncFunction();
 
     expect(fn(0)).toBe(60);
@@ -72,7 +73,7 @@ describe(`pipe`, () => {
 
   test(`context can apply arbitrary mutations to pipeline`, () => {
     const mock = jest.fn((arg: number) => arg ** 2);
-    const p = pipe<number, number>(useCallValue()).pipe((arg, context) => {
+    const p = pipe<number, number>(misc.useCallValue()).pipe((arg, context) => {
       context.mutate = () => {
         const pipeline = [mock];
         return { 
@@ -81,7 +82,7 @@ describe(`pipe`, () => {
       };
 
       return arg + 1;
-    }).pipe(add(1));
+    }).pipe(math.add(1));
 
     const result = p.resolveSync(10);
     
@@ -90,8 +91,8 @@ describe(`pipe`, () => {
   });
 
   test(`context has an apply method, which can be used to call a function with the previous value as argument`, () => {
-    const p = pipe<number, number>(useCallValue()).pipe((value, context) => {
-      return context.apply(add(value));
+    const p = pipe<number, number>(misc.useCallValue()).pipe((value, context) => {
+      return context.apply(math.add(value));
     });
 
     expect(p.resolveSync(2)).toBe(4);
@@ -102,8 +103,8 @@ describe(`pipe`, () => {
     const increment = (arg: number) => arg + 1;
     const mock = jest.fn(increment);
     const mockSync = jest.fn(increment);
-    const fn = pipe<number, number>(useCallValue(), true).pipe(mock).toFunction();
-    const fnSync = pipe<number, number>(useCallValue(), true).pipe(mockSync).toSyncFunction();
+    const fn = pipe<number, number>(misc.useCallValue(), true).pipe(mock).toFunction();
+    const fnSync = pipe<number, number>(misc.useCallValue(), true).pipe(mockSync).toSyncFunction();
 
     await fn(10);
     fnSync(10);
