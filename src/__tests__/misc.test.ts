@@ -1,4 +1,4 @@
-import { divideBy, useCallValue, put, multiplyBy, add, toString, toDate, toNumber } from '../functions';
+import { divideBy, useCallValue, put, multiplyBy, add, toString, toDate, toNumber, apply, applySync, pow, chars } from '../functions';
 import {pipe, IContext} from '../pipe';
 
 describe(`miscellaneous tests, jff`, () => {
@@ -29,5 +29,16 @@ describe(`miscellaneous tests, jff`, () => {
     expect(isEven(10)).toBeTruthy();
     expect(mock).toHaveBeenCalled();
     expect(isEven(9)).toBeFalsy();
+  });
+
+  test(`Pipeline composition`, () => {
+    const p1 = pipe(useCallValue()).pipe(multiplyBy(5));
+    const p2 = pipe(useCallValue()).pipe(divideBy(2)).pipe(pow(3));
+    const p3 = pipe<number, number>(useCallValue()).pipe(applySync(p1)).pipe(applySync(p2));
+    const p4 = pipe<number, number>(useCallValue()).pipe(applySync(p3)).pipe(toString()).pipe(chars());
+
+    expect(p3.resolveSync(4)).toBe(1000);
+    const p4result = p4.resolveSync(4);
+    expect(expect.arrayContaining(p4result)).toEqual(['1', '0', '0', '0']);
   });
 });
