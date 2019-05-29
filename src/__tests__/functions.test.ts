@@ -361,6 +361,15 @@ describe(`Tests functions`, () => {
       expect(() => functions.lowercase()(123 as any, {} as any)).toThrowError();
     });
 
+    test(functions.pascalCase.name, () => {
+      const str = 'hello world foo bar baz';
+      const result = functions.pascalCase()(str, {} as any);
+
+      expect(typeof result === 'string').toBeTruthy();
+      expect(result).toBe(`HelloWorldFooBarBaz`);
+      expect(() => functions.pascalCase()(123 as any, {} as any)).toThrowError();
+    });
+
     test(functions.replaceAll.name, () => {
       const str = 'hello';
       const out = functions.replaceAll('l', '1')(str, {} as any);

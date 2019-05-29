@@ -371,6 +371,14 @@ export function lowercase(): ExplicitCallable<string, string> {
   };
 }
 
+export function pascalCase(): ExplicitCallable<string, string> {
+  return (arg, context) => {
+    let camelized = camelCase()(arg, context);
+    
+    return camelized.charAt(0).toUpperCase() + camelized.slice(1);
+  }
+}
+
 export function replaceAll(needle: string, replaceWith: string): ExplicitCallable<string, string> {
   return arg => {
     throwIfNotString(`replaceAll`, arg);

@@ -464,6 +464,16 @@ pipe(useCallValue())
   .resolveSync('HELLO') // 'hello'
 ```
 
+###### pascalCase
+
+Returns previous value in pascal-case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(pascalCase())
+  .resolveSync('hello world') // 'HelloWorld'
+```
+
 ###### replaceAll
 
 Replaces all occurencies from the previous value. Previous value must be a string.
