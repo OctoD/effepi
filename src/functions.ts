@@ -341,6 +341,15 @@ export function useValue(): <TArg>(arg: TArg) => TArg {
 //#region String
 const regexps = {} as { [index: string]: RegExp };
 
+export function camelCase(): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString(`camelCase`, arg);
+    return arg.replace(/(?:^\w|[A-Z]|\b\w)/g, function (letter, index) {
+      return index == 0 ? letter.toLowerCase() : letter.toUpperCase();
+    }).replace(/\s+/g, '');
+  }
+}
+
 export function chars(): ExplicitCallable<string, string[]> {
   return arg => {
     throwIfNotString(`chars`, arg);

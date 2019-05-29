@@ -326,6 +326,15 @@ describe(`Tests functions`, () => {
   });
 
   describe(`String functions`, () => {
+    test(functions.camelCase.name, () => {
+      const str = 'hello world foo bar baz';
+      const result = functions.camelCase()(str, { } as any);
+
+      expect(typeof result === 'string').toBeTruthy();
+      expect(result).toBe(`helloWorldFooBarBaz`);
+      expect(() => functions.camelCase()(123 as any, {} as any)).toThrowError();
+    });
+    
     test(functions.chars.name, () => {
       const str = 'hello world';
       const chars = functions.chars()(str, {} as any);

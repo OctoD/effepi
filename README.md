@@ -424,6 +424,16 @@ pipe(useCallValue())
 
 #### String functions
 
+###### camelCase
+
+Returns previous value in camel-case. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(camelCase())
+  .resolveSync('hello world') // 'helloWorld'
+```
+
 ###### chars
 
 Returns previous value as an array of chars. Previous value must be a string.
