@@ -80,18 +80,12 @@ yarn add pipe
 ## How to use it
 
 ```ts
-import { pipe, functions } from 'effepi';
-
-const {
-  divideBy,
-  multiplyBy,
-  useCallValue,
-} = functions;
+import { pipe, math, misc } from 'effepi';
 
 export const calculateVat = (vatPercentage: number) =>
-  pipe<number, number>(useCallValue())
-    .pipe(divideBy(100))
-    .pipe(multiplyBy(vatPercentage))
+  pipe<number, number>(misc.useCallValue())
+    .pipe(math.divideBy(100))
+    .pipe(math.multiplyBy(vatPercentage))
     .toSyncFunction();
 
 vatCalculator(22)(100); // 22
