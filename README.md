@@ -322,6 +322,36 @@ pipe(useCallValue())
 
 #### Misc functions
 
+###### apply
+
+Applies a pipeline using the async `resolve` method.
+
+```ts
+const injectedPipeline = pipe(functions.useCallValue())
+        .pipe(functions.add(10));
+
+const testPipeline = pipe(functions.useCallValue())
+  .pipe(functions.apply(injectedPipeline))
+  .pipe(functions.multiplyBy(2)); 
+
+testPipeline.resolve(2) // Promise(24)
+```
+
+###### applySync
+
+Applies a pipeline using the sync `resolveSync` method.
+
+```ts
+const injectedPipeline = pipe(functions.useCallValue())
+        .pipe(functions.add(10));
+
+const testPipeline = pipe(functions.useCallValue())
+  .pipe(functions.applySync(injectedPipeline))
+  .pipe(functions.multiplyBy(2)); 
+
+testPipeline.resolve(2) // 24
+```
+
 ###### put
 
 Use this function to put a value at the beginning of the pipeline
