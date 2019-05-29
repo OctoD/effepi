@@ -97,4 +97,36 @@ describe(`pipe`, () => {
     expect(p.resolveSync(2)).toBe(4);
     expect(p.resolveSync(10)).toBe(20);
   });
+
+  test(`pipe can be memoized, for speed stuff and for caching result`, async () => {
+    const increment = (arg: number) => arg + 1;
+    const mock = jest.fn(increment);
+    const mockSync = jest.fn(increment);
+    const fn = pipe<number, number>(useCallValue(), true).pipe(mock).toFunction();
+    const fnSync = pipe<number, number>(useCallValue(), true).pipe(mockSync).toSyncFunction();
+
+    await fn(10);
+    fnSync(10);
+
+    expect(mock).toBeCalledTimes(1);
+    expect(mockSync).toBeCalledTimes(1);
+    
+    await fn(10);
+    fnSync(10);
+
+    expect(mock).toBeCalledTimes(1);
+    expect(mockSync).toBeCalledTimes(1);
+
+    await fn(11);
+    fnSync(11);
+
+    expect(mock).toBeCalledTimes(2);
+    expect(mockSync).toBeCalledTimes(2);
+
+    await fn(10);
+    fnSync(10);
+
+    expect(mock).toBeCalledTimes(3);
+    expect(mockSync).toBeCalledTimes(3);
+  });
 });
