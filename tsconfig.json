@@ -21,6 +21,8 @@
       "es2017.sharedmemory",
       "es2017.typedarrays"
     ],
+    "outDir": "dist",
+    "declaration": true,
     "esModuleInterop": true,
     "module": "commonjs",
     "moduleResolution": "node",
