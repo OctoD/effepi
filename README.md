@@ -162,6 +162,12 @@ pipe(useCallValue())
 
 #### Array functions
 
+Array functions are under the `array` module.
+
+```ts
+import { array } from 'effepi';
+```
+
 ###### applyEach
 
 Applies the result of a pipeline to each element in an array of another pipeline.
@@ -203,6 +209,12 @@ pipe(useCallValue())
 ```
 
 #### Math functions
+
+Math functions are under the `math` module.
+
+```ts
+import { math } from 'effepi';
+```
 
 ###### add
 
@@ -343,6 +355,12 @@ pipe(useCallValue()).pipe(takeOuter(5, 10)).resolveSync([3,4,5,10,11]) // [3, 4,
 
 #### Logical operators functions
 
+Logical operators functions are under the `logical` module.
+
+```ts
+import { logical } from 'effepi';
+```
+
 ###### createSwitch
 
 Is the same of the `switch` construct.
@@ -386,6 +404,12 @@ smsLengthCheck('lorem'.repeat(2000)) // 'Maximum character'
 
 #### Object functions
 
+Object functions are under the `object` module.
+
+```ts
+import { object } from 'effepi';
+```
+
 ###### exclude
 
 Returns previous value except for the given keys. This applies only to objects.
@@ -427,6 +451,12 @@ pipe(useCallValue())
 ```
 
 #### Misc functions
+
+Misc functions are under the `misc` module.
+
+```ts
+import { misc } from 'effepi';
+```
 
 ###### apply
 
@@ -505,6 +535,12 @@ pipe(useCallValue())
 ```
 
 #### String functions
+
+String functions are under the `string` module.
+
+```ts
+import { string } from 'effepi';
+```
 
 ###### camelCase
 
@@ -587,6 +623,12 @@ pipe(useCallValue())
 ```
 
 #### Type functions
+
+Type functions are under the `type` module.
+
+```ts
+import { type } from 'effepi';
+```
 
 ###### toArray
 
