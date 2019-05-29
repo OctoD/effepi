@@ -170,6 +170,8 @@ pipe(useCallValue())
 
 Applies the result of a pipeline to each element in an array of another pipeline.
 
+Note: invoking a pipeline using this function with a sync method will throw an error.
+
 ```ts
 applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[]
 ```
@@ -177,6 +179,8 @@ applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Pro
 ###### applyEachSync
 
 Is the same of applyEach, except it does not work with async functions
+
+Note: invoking a pipeline using this function with an async method will throw an error.
 
 ```ts
 applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[]
@@ -410,7 +414,9 @@ pipe(useCallValue())
 
 ###### apply
 
-Applies a pipeline using the async `resolve` method.
+Applies a pipeline using the async `resolve` method. 
+
+Note: invoking a pipeline using this function with a sync method will throw an error.
 
 ```ts
 const injectedPipeline = pipe(functions.useCallValue())
@@ -426,6 +432,8 @@ testPipeline.resolve(2) // Promise(24)
 ###### applySync
 
 Applies a pipeline using the sync `resolveSync` method.
+
+Note: invoking a pipeline using this function with an async method will throw an error.
 
 ```ts
 const injectedPipeline = pipe(functions.useCallValue())
