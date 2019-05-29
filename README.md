@@ -99,7 +99,7 @@ the previous value as argument.
 ```ts
 pipe(useCallValue())
   .pipe(
-    (value, context) => context.apply(add(10)
+    (value, context) => context.apply(add(10))
   )
 ).resolveSync(0); // returns 10
 ```
