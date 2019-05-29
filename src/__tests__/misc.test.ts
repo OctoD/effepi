@@ -1,44 +1,63 @@
-import { divideBy, useCallValue, put, multiplyBy, add, toString, toDate, toNumber, apply, applySync, pow, chars } from '../functions';
-import {pipe, IContext} from '../pipe';
+import * as misc from '../misc';
+import { pipe } from '../pipe';
+import * as math from '../math';
+import testFunction from './__ignore__/testFunction';
 
-describe(`miscellaneous tests, jff`, () => {
-  test(`A vat calculator`, () => {
-    const p = (vat: number) => pipe(useCallValue<number>()).pipe(divideBy(100)).pipe(multiplyBy(vat)).toSyncFunction();
-    const vatCalculator = p(22);
+describe(`Miscellaneous functions`, () => {
+  testFunction(misc.apply, async () => {
+    const p = pipe(misc.useCallValue())
+      .pipe(math.add(10));
+    const testP = pipe(misc.useCallValue())
+      .pipe(misc.apply(p))
+      .pipe(math.multiplyBy(2));
 
-    expect(vatCalculator(100)).toBe(22);
-    expect(vatCalculator(1285)).toBe(282.7);
+    expect(await testP.resolve(2)).toBe(24);
   });
 
-  test(`Mutation example`, () => {
-    const mock = jest.fn((arg: number) => arg % 2 === 0);
-    const aFunctionUsingContext = (previousValue: number, context: IContext) => {
-      context.mutate = () => {
-        const pipeline = [mock];
+  testFunction(misc.applySync, () => {
+    const p = pipe(misc.useCallValue())
+      .pipe(math.add(10));
+    const testP = pipe(misc.useCallValue())
+      .pipe(misc.applySync(p))
+      .pipe(math.multiplyBy(2));
 
-        return { pipeline };
-      };
+    expect(testP.resolveSync(2)).toBe(24);
+  });
 
-      return previousValue;
+  testFunction(misc.put, () => {
+    expect(misc.put(10)()).toBe(10);
+  });
+
+  testFunction(misc.safeCall, () => {
+    const fn = (value: unknown) => {
+      switch (typeof value) {
+        case 'number':
+        case 'object':
+        case 'string':
+          throw new Error();
+        default:
+          return 'hello';
+      }
     };
 
-    const isEven = pipe(useCallValue())
-      .pipe(aFunctionUsingContext)
-      .toSyncFunction();
+    expect(() => misc.safeCall(fn)('')).not.toThrow();
+    expect(() => misc.safeCall(fn)(1)).not.toThrow();
+    expect(() => misc.safeCall(fn)({})).not.toThrow();
+    expect(() => misc.safeCall(fn)([])).not.toThrow();
+    expect(() => misc.safeCall(fn)(undefined)).not.toThrow();
 
-    expect(isEven(10)).toBeTruthy();
-    expect(mock).toHaveBeenCalled();
-    expect(isEven(9)).toBeFalsy();
+    expect(misc.safeCall(fn)('')).toBeUndefined();
+    expect(misc.safeCall(fn)(1)).toBeUndefined();
+    expect(misc.safeCall(fn)({})).toBeUndefined();
+    expect(misc.safeCall(fn)([])).toBeUndefined();
+    expect(misc.safeCall(fn)(undefined)).toBe('hello');
+    expect(misc.safeCall(fn, '100')([])).toBe('100');
   });
 
-  test(`Pipeline composition`, () => {
-    const p1 = pipe(useCallValue()).pipe(multiplyBy(5));
-    const p2 = pipe(useCallValue()).pipe(divideBy(2)).pipe(pow(3));
-    const p3 = pipe<number, number>(useCallValue()).pipe(applySync(p1)).pipe(applySync(p2));
-    const p4 = pipe<number, number>(useCallValue()).pipe(applySync(p3)).pipe(toString()).pipe(chars());
+  testFunction(misc.useValue, () => {
+    const p = misc.useValue();
 
-    expect(p3.resolveSync(4)).toBe(1000);
-    const p4result = p4.resolveSync(4);
-    expect(expect.arrayContaining(p4result)).toEqual(['1', '0', '0', '0']);
+    expect(p(1)).toBe(1);
+    expect(p(123123)).toBe(123123);
   });
 });
