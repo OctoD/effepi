@@ -9,6 +9,7 @@ export interface IContext<CallValue = unknown, PreviousValue = unknown> {
   readonly mutationIndex: number;
   readonly previousValue: PreviousValue;
   readonly previousValues: unknown[];
+  apply<ReturnType>(callable: ExplicitCallable<PreviousValue, ReturnType>): ReturnType; 
   mutate?(pipeline: Pipeline): IMutatedContext;
 }
 
@@ -48,6 +49,9 @@ function createContext<CallValue>(callValue: CallValue): IContext<CallValue> {
     mutationIndex: 0,
     previousValue: undefined,
     previousValues: [],
+    apply(this: IContext<CallValue>, callable) {
+      return callable(this.previousValue, this);
+    }
   };
 }
 
@@ -124,6 +128,7 @@ function resolveSync(pipeline: Pipeline, index: number, context: IContext): unkn
 
 function updateContext<CallValue, PreviousValue = unknown>(context: IContext<CallValue>, previousValue: PreviousValue): IContext<CallValue, PreviousValue> {
   const {
+    apply,
     callValue,
     mutationIndex,
     mutate,
@@ -131,6 +136,7 @@ function updateContext<CallValue, PreviousValue = unknown>(context: IContext<Cal
   } = context;
   
   return {
+    apply: apply as any,
     callValue,
     mutationIndex: mutationIndex + 1,
     mutate,

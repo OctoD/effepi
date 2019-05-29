@@ -88,4 +88,12 @@ describe(`pipe`, () => {
     expect(mock).toHaveBeenCalled();
     expect(result).toBe(122);
   });
+
+  test(`context has an apply method, which can be used to call a function with the previous value as argument`, () => {
+    const p = pipe(useCallValue()).pipe((value, context) => {
+      return context.apply(add(10));
+    });
+
+    expect(p.resolveSync(0)).toBe(10);
+  });
 });
