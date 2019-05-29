@@ -50,10 +50,9 @@ p('hello world') // returns 'hello world'
 Each function passed in a pipeline can use the previous value and can access to the current pipeline context. A passed context can be enriched with a `mutation` function, which is the only way to mutate the pipeline from the inside of a function.
 
 ```ts
-const ceil = (previousValue) => Math.ceil(previousValue);
 const aFunctionUsingContext = (previousValue, context) => {
   // mutations are always executed after the current function
-  context.mutation = () => {
+  context.mutate = () => {
     const pipeline = [
       (arg: number) => {
         const isEven = arg % 2 === 0;
@@ -71,10 +70,8 @@ const aFunctionUsingContext = (previousValue, context) => {
 };
 
 const isEven = pipe(useCallValue())
-  .pipe(multiplyBy(1000))
-  .pipe(ceil)
   .pipe(aFunctionUsingContext) // uses console.log for context callValue
-  .toFunction(); // returns true if the number is even
+  .toSyncFunction(); // returns true if the number is even
 
 isEven(10) // logs 10, logs true, returns true
 ```
@@ -324,6 +321,36 @@ pipe(useCallValue())
 ```
 
 #### Misc functions
+
+###### apply
+
+Applies a pipeline using the async `resolve` method.
+
+```ts
+const injectedPipeline = pipe(functions.useCallValue())
+        .pipe(functions.add(10));
+
+const testPipeline = pipe(functions.useCallValue())
+  .pipe(functions.apply(injectedPipeline))
+  .pipe(functions.multiplyBy(2)); 
+
+testPipeline.resolve(2) // Promise(24)
+```
+
+###### applySync
+
+Applies a pipeline using the sync `resolveSync` method.
+
+```ts
+const injectedPipeline = pipe(functions.useCallValue())
+        .pipe(functions.add(10));
+
+const testPipeline = pipe(functions.useCallValue())
+  .pipe(functions.applySync(injectedPipeline))
+  .pipe(functions.multiplyBy(2)); 
+
+testPipeline.resolve(2) // 24
+```
 
 ###### put
 

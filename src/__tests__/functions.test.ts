@@ -257,6 +257,26 @@ describe(`Tests functions`, () => {
   });
 
   describe(`Miscellaneous functions`, () => {
+    test(functions.apply.name, async () => {
+      const p = pipe(functions.useCallValue())
+        .pipe(functions.add(10));
+      const testP = pipe(functions.useCallValue())
+        .pipe(functions.apply(p))
+        .pipe(functions.multiplyBy(2)); 
+
+      expect(await testP.resolve(2)).toBe(24);
+    });
+
+    test(functions.applySync.name, () => {
+      const p = pipe(functions.useCallValue())
+        .pipe(functions.add(10));
+      const testP = pipe(functions.useCallValue())
+        .pipe(functions.applySync(p))
+        .pipe(functions.multiplyBy(2));
+
+      expect(testP.resolveSync(2)).toBe(24);
+    });
+    
     test(functions.put.name, () => {
       expect(functions.put(10)()).toBe(10);
     });

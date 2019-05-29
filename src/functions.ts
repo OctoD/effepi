@@ -277,6 +277,14 @@ export function pick<KObject, Keys extends keyof KObject = keyof KObject>(...key
 
 //#region misc
 
+export function apply<Initial, Output>(pipe: IPipe<Initial, Output>): ExplicitCallable<Initial, Output> {
+  return arg => pipe.resolve(arg) as unknown as Output;
+}
+
+export function applySync<Initial, Output>(pipe: IPipe<Initial, Output>): ExplicitCallable<Initial, Output> {
+  return arg => pipe.resolveSync(arg);
+}
+
 /**
  * Puts a value inside a pipeline
  * @export
