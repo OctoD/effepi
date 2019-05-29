@@ -347,6 +347,13 @@ export function chars(): ExplicitCallable<string, string[]> {
   };
 }
 
+export function length(): ExplicitCallable<string, number> {
+  return arg => {
+    throwIfNotString(`length`, arg);
+    return arg.length;
+  }
+}
+
 //#endregion
 
 //#region type casting

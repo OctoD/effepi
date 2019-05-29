@@ -434,6 +434,16 @@ pipe(useCallValue())
   .resolveSync('hello') // returns ['h', 'e', 'l', 'l', 'o']
 ```
 
+###### length
+
+Returns previous value length. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(length())
+  .resolveSync('hello') // 5
+```
+
 #### Type functions
 
 ###### toArray

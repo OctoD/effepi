@@ -334,6 +334,15 @@ describe(`Tests functions`, () => {
       expect(chars.length).toBe(str.length);
       expect(() => functions.chars()(123 as any, {} as any)).toThrowError();
     });
+
+    test(functions.length.name, () => {
+      const str = 'hello world';
+      const length = functions.length()(str, {} as any);
+
+      expect(Number.isInteger(length)).toBeTruthy();
+      expect(length).toBe(str.length);
+      expect(() => functions.length()(123 as any, {} as any)).toThrowError();
+    });
   });
 
   describe(`Type conversion functions`, () => {
