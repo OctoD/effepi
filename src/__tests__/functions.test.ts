@@ -7,6 +7,7 @@ describe(`Tests functions`, () => {
       const p = pipe(functions.useCallValue()).pipe(functions.add(1));
       const result = functions.applyEach(p)([100, 200, 300], {
         callValue: 0 as any,
+        executionFlow: 'async',
         mutationIndex: 0,
         previousValue: 0,
         previousValues: [],
@@ -17,12 +18,24 @@ describe(`Tests functions`, () => {
       expect(exresult[0]).toBe(101);
       expect(exresult[1]).toBe(201);
       expect(exresult[2]).toBe(301);
+
+      expect(() => 
+        functions.applyEach(p)([100, 200, 300], {
+          callValue: 0 as any,
+          executionFlow: 'sync',
+          mutationIndex: 0,
+          previousValue: 0,
+          previousValues: [],
+          apply: jest.fn(),
+        })
+      ).toThrowError();
     });
 
     test(functions.applyEachSync.name, async () => {
       const p = pipe(functions.useCallValue()).pipe(functions.add(1));
       const result = functions.applyEachSync(p)([100, 200, 300], {
         callValue: 0 as any,
+        executionFlow: 'sync',
         mutationIndex: 0,
         previousValue: 0,
         previousValues: [],
@@ -32,6 +45,17 @@ describe(`Tests functions`, () => {
       expect(result[0]).toBe(101);
       expect(result[1]).toBe(201);
       expect(result[2]).toBe(301);
+
+      expect(() =>
+        functions.applyEachSync(p)([100, 200, 300], {
+          callValue: 0 as any,
+          executionFlow: 'async',
+          mutationIndex: 0,
+          previousValue: 0,
+          previousValues: [],
+          apply: jest.fn(),
+        })
+      ).toThrowError();
     });
   });
   
