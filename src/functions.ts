@@ -339,6 +339,7 @@ export function useValue(): <TArg>(arg: TArg) => TArg {
 //#endregion
 
 //#region String
+const regexps = {} as { [index: string]: RegExp };
 
 export function chars(): ExplicitCallable<string, string[]> {
   return arg => {
@@ -351,6 +352,14 @@ export function length(): ExplicitCallable<string, number> {
   return arg => {
     throwIfNotString(`length`, arg);
     return arg.length;
+  }
+}
+
+export function replaceAll(needle: string, replaceWith: string): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString(`length`, arg);
+    regexps[needle] = regexps[needle] || new RegExp(needle, 'gi');
+    return arg.replace(regexps[needle], replaceWith);
   }
 }
 

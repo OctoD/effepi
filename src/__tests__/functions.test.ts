@@ -343,6 +343,15 @@ describe(`Tests functions`, () => {
       expect(length).toBe(str.length);
       expect(() => functions.length()(123 as any, {} as any)).toThrowError();
     });
+
+    test(functions.length.name, () => {
+      const str = 'hello';
+      const out = functions.replaceAll('l', '1')(str, {} as any);
+
+      expect(typeof out === 'string').toBeTruthy();
+      expect(out).toBe('he11o');
+      expect(() => functions.replaceAll('', '')(123 as any, {} as any)).toThrowError();
+    });
   });
 
   describe(`Type conversion functions`, () => {

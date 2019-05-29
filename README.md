@@ -444,6 +444,16 @@ pipe(useCallValue())
   .resolveSync('hello') // 5
 ```
 
+###### replaceAll
+
+Replaces all occurencies from the previous value. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(replaceAll('l', '1'))
+  .resolveSync('hello') // he110
+```
+
 #### Type functions
 
 ###### toArray
