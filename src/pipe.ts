@@ -14,6 +14,7 @@ export interface IContext<CallValue = unknown, PreviousValue = unknown> {
 }
 
 export interface IPipe<InitialCallable, Output> {
+  readonly memoized: boolean;
   pipe<NextValue>(callable: ExplicitCallable<Output, NextValue>): IPipe<InitialCallable, NextValue>;
   resolve: ResolvedPipe<InitialCallable, Output>;
   resolveSync: ResolvedSyncPipe<InitialCallable, Output>;
@@ -55,50 +56,72 @@ function createContext<CallValue>(callValue: CallValue): IContext<CallValue> {
   };
 }
 
-function createFunction<TCallValue, TReturnValue>(pipeline: Pipeline): (arg: TCallValue) => Promise<TReturnValue> {
-  const resolver = createResolver<TCallValue, TReturnValue>(pipeline);
+function createFunction<TCallValue, TReturnValue>(pipeline: Pipeline, memoized: boolean): (arg: TCallValue) => Promise<TReturnValue> {
+  const resolver = createResolver<TCallValue, TReturnValue>(pipeline, memoized);
   return arg => resolver(arg);
 }
 
-function createMethods<TCallValue, TReturnValue>(pipeline: Pipeline): IPipe<TCallValue, TReturnValue> {
+function createMethods<TCallValue, TReturnValue>(pipeline: Pipeline, memoized: boolean): IPipe<TCallValue, TReturnValue> {
   return {
+    memoized,
     pipe: <TNextValue>(callable: ExplicitCallable<TReturnValue, TNextValue>): IPipe<TCallValue, TNextValue> => {
       return createMethods<TCallValue, TNextValue>(
         [
-          ...pipeline, 
+          ...pipeline,
           callable
-        ]
+        ],
+        memoized,
       ) as unknown as IPipe<TCallValue, TNextValue>;
     },
-    resolve: createResolver<TCallValue, TReturnValue>(pipeline),
-    resolveSync: createSyncResolver<TCallValue, TReturnValue>(pipeline),
-    toFunction: <TCall, TReturn>() => createFunction<TCall, TReturn>(pipeline),
-    toSyncFunction: <TCall, TReturn>() => createSyncFunction<TCall, TReturn>(pipeline),
+    resolve: createResolver<TCallValue, TReturnValue>(pipeline, memoized),
+    resolveSync: createSyncResolver<TCallValue, TReturnValue>(pipeline, memoized),
+    toFunction: <TCall, TReturn>() => createFunction<TCall, TReturn>(pipeline, memoized),
+    toSyncFunction: <TCall, TReturn>() => createSyncFunction<TCall, TReturn>(pipeline, memoized),
   }
 }
 
-function createSyncFunction<TCallValue, TReturnValue>(pipeline: Pipeline): (arg: TCallValue) => TReturnValue {
-  const resolver = createSyncResolver<TCallValue, TReturnValue>(pipeline);
+function createSyncFunction<TCallValue, TReturnValue>(pipeline: Pipeline, memoized: boolean): (arg: TCallValue) => TReturnValue {
+  const resolver = createSyncResolver<TCallValue, TReturnValue>(pipeline, memoized);
   return arg => resolver(arg);
 }
 
-function createResolver<TCallValue, TReturnValue>(pipeline: Pipeline): ResolvedPipe<TCallValue, TReturnValue> {
+function createResolver<TCallValue, TReturnValue>(pipeline: Pipeline, memoized: boolean): ResolvedPipe<TCallValue, TReturnValue> {
+  let previousCallValue: TCallValue = undefined;
+  let previousReturnValue: TReturnValue = undefined;
+  
   return async callValue => {
-    return resolve(
-      pipeline, 
-      0, 
-      createContext(callValue)
-    ) as Promise<TReturnValue>;
-  }
-}
-
-function createSyncResolver<TCallValue, TReturnValue>(pipeline: Pipeline): ResolvedSyncPipe<TCallValue, TReturnValue> {
-  return callValue => {
-    return resolveSync(
+    if (memoized && callValue === previousCallValue) {
+      return previousReturnValue;
+    }
+    
+    previousCallValue = callValue;
+    previousReturnValue = await resolve(
       pipeline, 
       0, 
       createContext(callValue)
     ) as TReturnValue;
+
+    return previousReturnValue;
+  }
+}
+
+function createSyncResolver<TCallValue, TReturnValue>(pipeline: Pipeline, memoized: boolean): ResolvedSyncPipe<TCallValue, TReturnValue> {
+  let previousCallValue: TCallValue = undefined;
+  let previousReturnValue: TReturnValue = undefined;
+  
+  return callValue => {
+    if (memoized && callValue === previousCallValue) {
+      return previousReturnValue;
+    }
+    
+    previousCallValue = callValue;
+    previousReturnValue = resolveSync(
+      pipeline,
+      0,
+      createContext(callValue)
+    ) as TReturnValue;
+
+    return previousReturnValue;
   }
 }
 
@@ -145,7 +168,10 @@ function updateContext<CallValue, PreviousValue = unknown>(context: IContext<Cal
   };
 }
 
-export function pipe<CallValue, NextValue>(callable: ExplicitCallable<CallValue, NextValue>) {
+export function pipe<CallValue, NextValue>(
+  callable: ExplicitCallable<CallValue, NextValue>,
+  memoized: boolean = false,
+) {
   const pipeline = [callable] as Pipeline;
-  return createMethods<CallValue, NextValue>(pipeline);
+  return createMethods<CallValue, NextValue>(pipeline, memoized);
 }

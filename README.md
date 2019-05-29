@@ -47,6 +47,21 @@ p(10) // returns 10
 p('hello world') // returns 'hello world'
 ```
 
+A pipeline can be memoized, it is useful when you have to call a pipeline a lot of times.
+
+```ts
+const test = pipe(useCallValue(), true)
+  .pipe(add(10))
+  .pipe(multiplyBy(2))
+  .toSyncFunction();
+
+test(1) // returns 22
+test(1) // returns the cached previous result
+test(2) // returns 24
+test(2) // returns the cached previous result
+test(2) // returns the cached previous result
+```
+
 #### pipeline context
 
 Each function passed in a pipeline can use the previous value and can access to the current pipeline context. A passed context can be enriched with a `mutation` function, which is the only way to mutate the pipeline from the inside of a function.
