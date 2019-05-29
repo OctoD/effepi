@@ -38,8 +38,16 @@ export function changeSign(): ExplicitCallable<number, number> {
   return (arg: number) => -arg;
 }
 
+export function decrement(): ExplicitCallable<number, number> {
+  return arg => --arg;
+}
+
 export function divideBy(value: number): ExplicitCallable<number, number> {
   return (arg: number) => arg / value;
+}
+
+export function increment(): ExplicitCallable<number, number> {
+  return arg => ++arg;
 }
 
 export function multiplyBy(value: number): ExplicitCallable<number, number> {

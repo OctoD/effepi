@@ -45,8 +45,16 @@ describe(`Tests functions`, () => {
       expect(functions.changeSign()(-2, {} as any)).toBe(2);
     });
 
+    test(functions.decrement.name, () => {
+      expect(functions.decrement()(1, {} as any)).toBe(0);
+    });
+
     test(functions.divideBy.name, () => {
       expect(functions.divideBy(20)(2, {} as any)).toBe(.1);
+    });
+
+    test(functions.increment.name, () => {
+      expect(functions.increment()(1, {} as any)).toBe(2);
     });
     
     test(functions.multiplyBy.name, () => {
