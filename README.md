@@ -61,6 +61,8 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [replaceAll](#replaceall)
           - [uppercase](#uppercase)
       - [Type functions](#type-functions)
+          - [exactTypeOf](#exacttypeof)
+          - [ofType](#oftype)
           - [toArray](#toarray)
           - [toDate](#todate)
           - [toNumber](#tonumber)
@@ -700,6 +702,40 @@ Type functions are under the `type` module.
 
 ```ts
 import { type } from 'effepi';
+```
+
+###### exactTypeOf
+
+Throws if the previous value is not of the same type expected.
+
+TypeName is the second portion of a `Object.prototype.toString` call in **lowerCase**:
+
+> [object **TypeName**] --> `typename` 
+
+```ts
+pipe(useCallValue())
+  .pipe(exactTypeOf('date'))
+  .resolveSync(123) // throws!
+
+pipe(useCallValue())
+  .pipe(exactTypeOf('date'))
+  .resolveSync(new Date()) // 2019-03-26T02:17:000Z
+```
+
+###### ofType
+
+Throws if the previous value is not of the same type expected.
+
+Internally uses the `typeof` operator.
+
+```ts
+pipe(useCallValue())
+  .pipe(exactTypeOf('number'))
+  .resolveSync(123) // 123
+
+pipe(useCallValue())
+  .pipe(exactTypeOf('number'))
+  .resolveSync(`hello world!`) // throws!
 ```
 
 ###### toArray
