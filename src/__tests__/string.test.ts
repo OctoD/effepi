@@ -67,6 +67,16 @@ describe(`String functions`, () => {
     ).toThrowError();
   });
 
+  testFunction(string.repeat, () => {
+    expect(string.repeat()('foo', createContextMock())).toBe('foofoo');
+    expect(string.repeat(0)('foo', createContextMock())).toBe('foo');
+    expect(string.repeat(-1)('foo', createContextMock())).toBe('foo');
+    expect(string.repeat(2)('foo', createContextMock())).toBe('foofoofoo');
+    expect(() =>
+      string.repeat(2)(123 as any, createContextMock())
+    ).toThrowError();
+  });
+
   testFunction(string.replaceAll, () => {
     const str = 'hello';
     const out = string.replaceAll('l', '1')(str, createContextMock());

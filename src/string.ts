@@ -50,6 +50,23 @@ export function pascalCase(): ExplicitCallable<string, string> {
   };
 }
 
+export function repeat(count: number = 1): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString('repeat', arg);
+
+    let i = 0;
+    let newArg = arg;
+
+    while (i < count) {
+      newArg += arg;
+
+      i++;
+    }
+
+    return newArg;
+  };
+}
+
 export function replaceAll(
   needle: string,
   replaceWith: string
