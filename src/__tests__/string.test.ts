@@ -35,6 +35,14 @@ describe(`String functions`, () => {
     ).toThrowError();
   });
 
+  testFunction(string.includes, () => {
+    expect(string.includes('foo')('foobar', createContextMock())).toBeTruthy();
+    expect(string.includes('baz')('foobar', createContextMock())).toBeFalsy();
+    expect(() =>
+      string.includes('bar')(123 as any, createContextMock())
+    ).toThrowError();
+  });
+
   testFunction(string.length, () => {
     const str = 'hello world';
     const length = string.length()(str, createContextMock());

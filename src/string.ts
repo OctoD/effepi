@@ -28,6 +28,14 @@ export function concat(str: string): ExplicitCallable<string, string> {
   };
 }
 
+export function includes(str: string): ExplicitCallable<string, boolean> {
+  return arg => {
+    throwIfNotString('find', arg);
+
+    return arg.indexOf(str) >= 0;
+  };
+}
+
 export function length(): ExplicitCallable<string, number> {
   return arg => {
     throwIfNotString(`length`, arg);

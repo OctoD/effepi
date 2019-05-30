@@ -57,6 +57,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [camelCase](#camelcase)
           - [chars](#chars)
           - [concat](#concat)
+          - [includes](#includes)
           - [length](#length)
           - [lowercase](#lowercase)
           - [pascalCase](#pascalcase)
@@ -668,6 +669,16 @@ Concatenate previous value with another string. Previous value must be a string.
 pipe(useCallValue())
   .pipe(concat('world'))
   .resolveSync('hello') // 'helloworld'
+```
+
+###### includes
+
+Returns if the previous value contains a portion of text. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(includes('llo'))
+  .resolveSync('hello') // true
 ```
 
 ###### length
