@@ -31,6 +31,16 @@ describe(`Object functions`, () => {
     expect(object.hasProperty('foo')(null, {} as any)).toBeFalsy();
   });
 
+  testFunction(object.keys, () => {
+    expect(
+      expect.arrayContaining(object.keys()({ foo: 100, bar: 200 }, {} as any))
+    ).toEqual(['bar', 'foo']);
+
+    expect(() =>
+      expect.arrayContaining(object.keys()(123, {} as any))
+    ).toThrowError();
+  });
+
   testFunction(object.maybe, async () => {
     const testObject = { foo: { bar: 100 } };
 

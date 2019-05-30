@@ -41,6 +41,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
       - [Object functions](#object-functions)
           - [exclude](#exclude)
           - [hasProperty](#hasproperty)
+          - [keys](#keys)
           - [maybe](#maybe)
           - [merge](#merge)
           - [pick](#pick)
@@ -468,6 +469,16 @@ Returns if an object has a owned property
 pipe(useCallValue())
   .pipe(hasProperty('foo'))
   .resolveSync({ foo: new Date() }) // true
+```
+
+###### keys
+
+Returns previous's value keys. Works only for objects
+
+```ts
+pipe(useCallValue())
+  .pipe(keys())
+  .resolveSync({ bar: 123, foo: new Date() }) // ['bar', 'foo']
 ```
 
 ###### maybe
