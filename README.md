@@ -17,6 +17,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [applyEach](#applyeach)
           - [applyEachSync](#applyeachsync)
           - [join](#join)
+          - [nth](#nth)
           - [reverse](#reverse)
       - [Math functions](#math-functions)
           - [add](#add)
@@ -201,6 +202,16 @@ Joins the previous value with a given char. If the previous value is not an arra
 pipe(useCallValue())
   .pipe(join('*'))
   .resolveSync([1,2,3]) // '1*2*3'
+```
+
+###### nth
+
+Returns the nth element in the previous value. If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(nth(3))
+  .resolveSync([0, 2, 5, 12, 24]) // 12
 ```
 
 ###### reverse

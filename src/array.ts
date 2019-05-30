@@ -1,4 +1,4 @@
-import { IPipe, IContext, ExplicitCallable } from './pipe';
+import { IPipe, IContext, ExplicitCallable, Callable } from './pipe';
 import { throwContextExecutionFlow, throwIfNotArray } from './helpers';
 
 export function applyEach<T, R>(
@@ -28,6 +28,14 @@ export function join(char: string): ExplicitCallable<unknown[], string> {
     throwIfNotArray('applyEach', arr);
 
     return arr.join(char);
+  };
+}
+
+export function nth(index: number): Callable {
+  return arg => {
+    throwIfNotArray('nth', arg);
+
+    return arg[index];
   };
 }
 
