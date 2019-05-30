@@ -61,6 +61,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [lowercase](#lowercase)
           - [pascalCase](#pascalcase)
           - [replaceAll](#replaceall)
+          - [toBinaryArray](#tobinaryarray)
           - [uppercase](#uppercase)
       - [Type functions](#type-functions)
           - [exactTypeOf](#exacttypeof)
@@ -706,6 +707,16 @@ Replaces all occurencies from the previous value. Previous value must be a strin
 pipe(useCallValue())
   .pipe(replaceAll('l', '1'))
   .resolveSync('hello') // he110
+```
+
+###### toBinaryArray
+
+Returns previous value in a binary representation. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(toBinary())
+  .resolveSync('hello world') // [ '1101000', '1100101', '1101100', '1101100', '1101111', '100000', '1110111', '1101111', '1110010', '1101100', '1100100' ] 
 ```
 
 ###### uppercase
