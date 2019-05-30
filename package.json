@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "eslint -c ./eslint.json",
     "test": "jest",
-    "size-limit": "size-limit"
+    "prepublishOnly": "tsc - p .",
+    "size-limit": "tsc -p . && size-limit"
   },
   "repository": {
     "type": "git",

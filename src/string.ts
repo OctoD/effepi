@@ -1,4 +1,4 @@
-import { ExplicitCallable } from './pipe';
+import { ExplicitCallable, Callable } from './pipe';
 import { throwIfNotString } from './helpers';
 
 const regexps = {} as { [index: string]: RegExp };
@@ -28,6 +28,14 @@ export function concat(str: string): ExplicitCallable<string, string> {
   };
 }
 
+export function includes(str: string): ExplicitCallable<string, boolean> {
+  return arg => {
+    throwIfNotString('find', arg);
+
+    return arg.indexOf(str) >= 0;
+  };
+}
+
 export function length(): ExplicitCallable<string, number> {
   return arg => {
     throwIfNotString(`length`, arg);
@@ -50,6 +58,23 @@ export function pascalCase(): ExplicitCallable<string, string> {
   };
 }
 
+export function repeat(count: number = 1): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString('repeat', arg);
+
+    let i = 0;
+    let newArg = arg;
+
+    while (i < count) {
+      newArg += arg;
+
+      i++;
+    }
+
+    return newArg;
+  };
+}
+
 export function replaceAll(
   needle: string,
   replaceWith: string
@@ -58,6 +83,27 @@ export function replaceAll(
     throwIfNotString(`replaceAll`, arg);
     regexps[needle] = regexps[needle] || new RegExp(needle, 'gi');
     return arg.replace(regexps[needle], replaceWith);
+  };
+}
+
+export function toBinaryArray(): ExplicitCallable<string, string[]> {
+  const binarizeCharset = (index: number, charset: string[]) => {
+    if (index >= charset.length) {
+      return charset;
+    }
+
+    const binary = charset[index].charCodeAt(0).toString(2);
+    const newCharset = charset.slice();
+
+    newCharset.splice(index, 1, binary);
+
+    return binarizeCharset(index + 1, newCharset);
+  };
+
+  return (arg, context) => {
+    throwIfNotString(`toBinary`, arg);
+
+    return binarizeCharset(0, context.apply(chars()));
   };
 }
 

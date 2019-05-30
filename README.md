@@ -57,10 +57,13 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [camelCase](#camelcase)
           - [chars](#chars)
           - [concat](#concat)
+          - [includes](#includes)
           - [length](#length)
           - [lowercase](#lowercase)
           - [pascalCase](#pascalcase)
+          - [repeat](#repeat)
           - [replaceAll](#replaceall)
+          - [toBinaryArray](#tobinaryarray)
           - [uppercase](#uppercase)
       - [Type functions](#type-functions)
           - [exactTypeOf](#exacttypeof)
@@ -668,6 +671,16 @@ pipe(useCallValue())
   .resolveSync('hello') // 'helloworld'
 ```
 
+###### includes
+
+Returns if the previous value contains a portion of text. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(includes('llo'))
+  .resolveSync('hello') // true
+```
+
 ###### length
 
 Returns previous value length. Previous value must be a string.
@@ -698,6 +711,20 @@ pipe(useCallValue())
   .resolveSync('hello world') // 'HelloWorld'
 ```
 
+###### repeat
+
+Repeats previous value a number of times. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(repeat())
+  .resolveSync('hello') // hellohello
+
+pipe(useCallValue())
+  .pipe(repeat(2))
+  .resolveSync('hello') // hellohellohello
+```
+
 ###### replaceAll
 
 Replaces all occurencies from the previous value. Previous value must be a string.
@@ -706,6 +733,16 @@ Replaces all occurencies from the previous value. Previous value must be a strin
 pipe(useCallValue())
   .pipe(replaceAll('l', '1'))
   .resolveSync('hello') // he110
+```
+
+###### toBinaryArray
+
+Returns previous value in a binary representation. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(toBinary())
+  .resolveSync('hello world') // [ '1101000', '1100101', '1101100', '1101100', '1101111', '100000', '1110111', '1101111', '1110010', '1101100', '1100100' ] 
 ```
 
 ###### uppercase
