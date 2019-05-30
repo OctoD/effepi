@@ -57,6 +57,14 @@ export function throwIfNotArray(
     throw new TypeError(`${functionName} argument must be a numbers array`);
   }
 }
+export function throwIfNotBoolean(
+  functionName: string,
+  value: unknown
+): never | void {
+  if (typeof value !== 'boolean') {
+    throw new TypeError(`${functionName} argument must be a numbers array`);
+  }
+}
 
 export function throwIfNotFunction(
   functionName: string,

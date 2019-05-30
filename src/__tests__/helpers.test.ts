@@ -60,6 +60,13 @@ describe(`tests helper functions`, () => {
     expect(() => helpers.throwIfNotArray('', [])).not.toThrowError();
   });
 
+  testFunction(helpers.throwIfNotBoolean, () => {
+    expect(() => helpers.throwIfNotBoolean('', {})).toThrowError();
+    expect(() => helpers.throwIfNotBoolean('', [])).toThrowError();
+    expect(() => helpers.throwIfNotBoolean('', false)).not.toThrowError();
+    expect(() => helpers.throwIfNotBoolean('', true)).not.toThrowError();
+  });
+
   testFunction(helpers.throwIfNotFunction, () => {
     expect(() => helpers.throwIfNotFunction('', '', [])).toThrowError();
     expect(() => helpers.throwIfNotFunction('', '', {})).toThrowError();

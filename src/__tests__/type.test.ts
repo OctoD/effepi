@@ -20,6 +20,15 @@ describe(`Type conversion functions`, () => {
     expect(Array.isArray(type.toArray()(123))).toBeTruthy();
   });
 
+  testFunction(type.toBoolean, () => {
+    expect(type.toBoolean()(10)).toBeTruthy();
+    expect(type.toBoolean()(0)).toBeFalsy();
+    expect(type.toBoolean()(null)).toBeFalsy();
+    expect(type.toBoolean()(undefined)).toBeFalsy();
+    expect(type.toBoolean()('')).toBeFalsy();
+    expect(type.toBoolean()('123')).toBeTruthy();
+  });
+
   testFunction(type.toDate, () => {
     const date = new Date();
 

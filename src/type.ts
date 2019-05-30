@@ -36,6 +36,10 @@ export function toArray(): <T>(arg: T) => T[] {
   return arg => [arg];
 }
 
+export function toBoolean(): <T>(arg: T) => boolean {
+  return arg => (!arg === true ? false : true);
+}
+
 export function toDate(): (arg: string | number) => Date {
   return arg => new Date(arg);
 }
