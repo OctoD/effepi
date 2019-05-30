@@ -70,6 +70,15 @@ export function throwIfNotObject(
   }
 }
 
+export function throwIfNotNumber(
+  functionName: string,
+  value: unknown
+): never | void {
+  if (typeof value !== 'number') {
+    throw new TypeError(`${functionName} argument must be a number`);
+  }
+}
+
 export function throwIfNotString(
   functionName: string,
   value: unknown
