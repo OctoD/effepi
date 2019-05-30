@@ -60,17 +60,18 @@ describe(`Array functions`, () => {
     ).toThrowError();
   });
 
+  testFunction(array.nth, () => {
+    expect(array.nth(3)([0, 2, 5, 12, 24], {} as any)).toBe(12);
+    expect(() => array.nth(3)(123, {} as any)).toThrowError();
+  });
+
   testFunction(array.reverse, () => {
-    expect(
-      array.join('_')([1, 2, 3], {} as any)
-    ).toBe('1_2_3');
+    expect(array.join('_')([1, 2, 3], {} as any)).toBe('1_2_3');
   });
 
   testFunction(array.reverse, () => {
     expect(
-      expect.arrayContaining(
-        array.reverse()([1, 2, 3], {} as any)
-      )
+      expect.arrayContaining(array.reverse()([1, 2, 3], {} as any))
     ).toEqual([3, 2, 1]);
   });
 });
