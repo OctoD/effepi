@@ -19,6 +19,10 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [join](#join)
           - [nth](#nth)
           - [reverse](#reverse)
+      - [Boolean functions](#boolean-functions)
+          - [F](#f)
+          - [T](#t)
+          - [inverse](#inverse)
       - [Math functions](#math-functions)
           - [add](#add)
           - [changeSign](#changesign)
@@ -69,6 +73,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [exactTypeOf](#exacttypeof)
           - [ofType](#oftype)
           - [toArray](#toarray)
+          - [toBoolean](#toboolean)
           - [toDate](#todate)
           - [toNumber](#tonumber)
           - [toString](#tostring)
@@ -225,6 +230,39 @@ Reverses the previous value. If the previous value is not an array an error will
 pipe(useCallValue())
   .pipe(reverse())
   .resolveSync([1,2,3]) // [3,2,1]
+```
+
+#### Boolean functions
+
+Boolean functions are under the `boolean` module.
+
+```ts
+import { boolean } from 'effepi';
+```
+
+###### F
+
+Puts a `false` value.
+
+```ts
+pipe(F()).resolveSync(undefined) // false
+```
+
+###### T
+
+Puts a `true` value.
+
+```ts
+pipe(T()).resolveSync(undefined) // true
+```
+
+###### inverse
+
+Inverts previous value. Previous value must be boolean.
+
+```ts
+pipe(useCallValue()).pipe(inverse()).resolveSync(true) // false
+pipe(useCallValue()).pipe(inverse()).resolveSync(false) // true
 ```
 
 #### Math functions
@@ -803,6 +841,19 @@ Converts previous value to an array.
 
 ```ts
 pipe(useCallValue()).pipe(toArray()).resolveSync(10) // [10]
+```
+
+###### toBoolean
+
+Converts previous value to a boolean value.
+
+```ts
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(10) // true
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(0) // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(null) // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(undefined) // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync('') // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync('123') // true
 ```
 
 ###### toDate
