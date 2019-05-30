@@ -37,9 +37,11 @@ Effepi is a functional way to enqueue and use different functions. You can put y
       - [Logical operators functions](#logical-operators-functions)
           - [createSwitch](#createswitch)
           - [fold](#fold)
+          - [ifElse](#ifelse)
       - [Object functions](#object-functions)
           - [exclude](#exclude)
           - [hasProperty](#hasproperty)
+          - [maybe](#maybe)
           - [merge](#merge)
           - [pick](#pick)
       - [Misc functions](#misc-functions)
@@ -80,18 +82,12 @@ yarn add pipe
 ## How to use it
 
 ```ts
-import { pipe, functions } from 'effepi';
-
-const {
-  divideBy,
-  multiplyBy,
-  useCallValue,
-} = functions;
+import { pipe, math, misc } from 'effepi';
 
 export const calculateVat = (vatPercentage: number) =>
-  pipe<number, number>(useCallValue())
-    .pipe(divideBy(100))
-    .pipe(multiplyBy(vatPercentage))
+  pipe<number, number>(misc.useCallValue())
+    .pipe(math.divideBy(100))
+    .pipe(math.multiplyBy(vatPercentage))
     .toSyncFunction();
 
 vatCalculator(22)(100); // 22
@@ -168,6 +164,12 @@ pipe(useCallValue())
 
 #### Array functions
 
+Array functions are under the `array` module.
+
+```ts
+import { array } from 'effepi';
+```
+
 ###### applyEach
 
 Applies the result of a pipeline to each element in an array of another pipeline.
@@ -209,6 +211,12 @@ pipe(useCallValue())
 ```
 
 #### Math functions
+
+Math functions are under the `math` module.
+
+```ts
+import { math } from 'effepi';
+```
 
 ###### add
 
@@ -349,6 +357,12 @@ pipe(useCallValue()).pipe(takeOuter(5, 10)).resolveSync([3,4,5,10,11]) // [3, 4,
 
 #### Logical operators functions
 
+Logical operators functions are under the `logical` module.
+
+```ts
+import { logical } from 'effepi';
+```
+
 ###### createSwitch
 
 Is the same of the `switch` construct.
@@ -390,7 +404,49 @@ smsLengthCheck('lorem') // ''
 smsLengthCheck('lorem'.repeat(2000)) // 'Maximum character'
 ```
 
+###### ifElse
+
+This function works like the `if/else` statement. 
+
+It requires three arguments:
+
+* a Condition (a `function` which returns a `boolean`)
+* a Left, which can be a value or another `pipe`. If is a pipe, it will be resolved using the context's async/sync flow
+* a Right, which can be a value or another `pipe`. If is a pipe, it will be resolved using the context's async/sync flow
+
+```ts
+const simple = pipe(useCallValue())
+  .pipe(
+    logical.ifElse(
+      (arg: number) => arg > 5,
+      'lower than 5',
+      'greater than 5'
+    )
+  )
+  .toSyncFunction();
+
+const complex = pipe(useCallValue())
+  .pipe(
+    logical.ifElse(
+      (arg: number) => arg > 5, 
+      pipe(useCallValue()).pipe(math.pow(2)), 
+      pipe(useCallValue()).pipe(math.divideBy(2)),
+    )
+  ).toSyncFunction();
+
+simple(4) // lower than 5
+simple(10) // greater than 5
+complex(4) // 14
+complex(10) // 5
+```
+
 #### Object functions
+
+Object functions are under the `object` module.
+
+```ts
+import { object } from 'effepi';
+```
 
 ###### exclude
 
@@ -410,6 +466,40 @@ Returns if an object has a owned property
 pipe(useCallValue())
   .pipe(hasProperty('foo'))
   .resolveSync({ foo: new Date() }) // true
+```
+
+###### maybe
+
+Returns a property key value by a given path. This applies only to objects.
+
+```ts
+pipe(useCallValue())
+  .pipe(maybe('foo.bar'))
+  .resolveSync({ foo: { bar: 100 } }) // 100
+```
+
+You can provide a fallback value or a fallback pipeline if the path does not match the object schema.
+
+If you start you pipeline with the `useCallValue` function, the monad will be invoked with an `undefined` value.
+
+```ts
+pipe(useCallValue())
+  .pipe(maybe('foo.bar.baz', 123))
+  .resolveSync({ foo: { bar: 100 } }) // 123
+
+// or
+const fallback = pipe(useCallValue());
+
+pipe(useCallValue())
+  .pipe(maybe('foo.bar.baz', fallback))
+  .resolveSync({ foo: { bar: 100 } }) // undefined
+
+// or
+const fallback = pipe(put(10));
+
+pipe(useCallValue())
+  .pipe(maybe('foo.bar.baz', fallback))
+  .resolveSync({ foo: { bar: 100 } }) // 10
 ```
 
 ###### merge
@@ -433,6 +523,12 @@ pipe(useCallValue())
 ```
 
 #### Misc functions
+
+Misc functions are under the `misc` module.
+
+```ts
+import { misc } from 'effepi';
+```
 
 ###### apply
 
@@ -511,6 +607,12 @@ pipe(useCallValue())
 ```
 
 #### String functions
+
+String functions are under the `string` module.
+
+```ts
+import { string } from 'effepi';
+```
 
 ###### camelCase
 
@@ -593,6 +695,12 @@ pipe(useCallValue())
 ```
 
 #### Type functions
+
+Type functions are under the `type` module.
+
+```ts
+import { type } from 'effepi';
+```
 
 ###### toArray
 
