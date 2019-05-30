@@ -69,6 +69,15 @@ describe(`tests helper functions`, () => {
     expect(() => helpers.throwIfNotObject('', 123)).toThrowError();
   });
 
+  testFunction(helpers.throwIfNotNumber, () => {
+    expect(() => helpers.throwIfNotNumber('', {})).toThrowError();
+    expect(() => helpers.throwIfNotNumber('', [])).toThrowError();
+    expect(() => helpers.throwIfNotNumber('', Function)).toThrowError();
+    expect(() => helpers.throwIfNotNumber('', new Date())).toThrowError();
+    expect(() => helpers.throwIfNotNumber('', '')).toThrowError();
+    expect(() => helpers.throwIfNotNumber('', 123)).not.toThrowError();
+  });
+
   testFunction(helpers.throwIfNotString, () => {
     expect(() => helpers.throwIfNotString('', {})).toThrowError();
     expect(() => helpers.throwIfNotString('', `123`)).not.toThrowError();
