@@ -1,11 +1,5 @@
+import { isContextFlowAsync, isPipe, throwIfNotFunction } from './helpers';
 import { IContext, IPipe } from './pipe';
-import {
-  isPipe,
-  isContextFlowAsync,
-  isContextFlowSync,
-  throwIfNotFunction,
-} from './helpers';
-import { put } from './misc';
 
 export type Condition<Type> = (arg: Type) => boolean;
 export type SwitchOption<TValue> = (arg: unknown) => ISwitchResult<TValue>;
