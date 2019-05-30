@@ -28,6 +28,14 @@ export function concat(str: string): ExplicitCallable<string, string> {
   };
 }
 
+export function includes(str: string): ExplicitCallable<string, boolean> {
+  return arg => {
+    throwIfNotString('find', arg);
+
+    return arg.indexOf(str) >= 0;
+  };
+}
+
 export function length(): ExplicitCallable<string, number> {
   return arg => {
     throwIfNotString(`length`, arg);
@@ -47,6 +55,23 @@ export function pascalCase(): ExplicitCallable<string, string> {
     let camelized = camelCase()(arg, context);
 
     return camelized.charAt(0).toUpperCase() + camelized.slice(1);
+  };
+}
+
+export function repeat(count: number = 1): ExplicitCallable<string, string> {
+  return arg => {
+    throwIfNotString('repeat', arg);
+
+    let i = 0;
+    let newArg = arg;
+
+    while (i < count) {
+      newArg += arg;
+
+      i++;
+    }
+
+    return newArg;
   };
 }
 

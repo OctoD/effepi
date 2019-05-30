@@ -35,6 +35,14 @@ describe(`String functions`, () => {
     ).toThrowError();
   });
 
+  testFunction(string.includes, () => {
+    expect(string.includes('foo')('foobar', createContextMock())).toBeTruthy();
+    expect(string.includes('baz')('foobar', createContextMock())).toBeFalsy();
+    expect(() =>
+      string.includes('bar')(123 as any, createContextMock())
+    ).toThrowError();
+  });
+
   testFunction(string.length, () => {
     const str = 'hello world';
     const length = string.length()(str, createContextMock());
@@ -64,6 +72,16 @@ describe(`String functions`, () => {
     expect(result).toBe(`HelloWorldFooBarBaz`);
     expect(() =>
       string.pascalCase()(123 as any, createContextMock())
+    ).toThrowError();
+  });
+
+  testFunction(string.repeat, () => {
+    expect(string.repeat()('foo', createContextMock())).toBe('foofoo');
+    expect(string.repeat(0)('foo', createContextMock())).toBe('foo');
+    expect(string.repeat(-1)('foo', createContextMock())).toBe('foo');
+    expect(string.repeat(2)('foo', createContextMock())).toBe('foofoofoo');
+    expect(() =>
+      string.repeat(2)(123 as any, createContextMock())
     ).toThrowError();
   });
 

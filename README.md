@@ -57,9 +57,11 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [camelCase](#camelcase)
           - [chars](#chars)
           - [concat](#concat)
+          - [includes](#includes)
           - [length](#length)
           - [lowercase](#lowercase)
           - [pascalCase](#pascalcase)
+          - [repeat](#repeat)
           - [replaceAll](#replaceall)
           - [toBinaryArray](#tobinaryarray)
           - [uppercase](#uppercase)
@@ -669,6 +671,16 @@ pipe(useCallValue())
   .resolveSync('hello') // 'helloworld'
 ```
 
+###### includes
+
+Returns if the previous value contains a portion of text. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(includes('llo'))
+  .resolveSync('hello') // true
+```
+
 ###### length
 
 Returns previous value length. Previous value must be a string.
@@ -697,6 +709,20 @@ Returns previous value in pascal-case. Previous value must be a string.
 pipe(useCallValue())
   .pipe(pascalCase())
   .resolveSync('hello world') // 'HelloWorld'
+```
+
+###### repeat
+
+Repeats previous value a number of times. Previous value must be a string.
+
+```ts
+pipe(useCallValue())
+  .pipe(repeat())
+  .resolveSync('hello') // hellohello
+
+pipe(useCallValue())
+  .pipe(repeat(2))
+  .resolveSync('hello') // hellohellohello
 ```
 
 ###### replaceAll
