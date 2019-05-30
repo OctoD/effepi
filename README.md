@@ -41,6 +41,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
       - [Object functions](#object-functions)
           - [exclude](#exclude)
           - [hasProperty](#hasproperty)
+          - [maybe](#maybe)
           - [merge](#merge)
           - [pick](#pick)
       - [Misc functions](#misc-functions)
@@ -465,6 +466,40 @@ Returns if an object has a owned property
 pipe(useCallValue())
   .pipe(hasProperty('foo'))
   .resolveSync({ foo: new Date() }) // true
+```
+
+###### maybe
+
+Returns a property key value by a given path. This applies only to objects.
+
+```ts
+pipe(useCallValue())
+  .pipe(maybe('foo.bar'))
+  .resolveSync({ foo: { bar: 100 } }) // 100
+```
+
+You can provide a fallback value or a fallback pipeline if the path does not match the object schema.
+
+If you start you pipeline with the `useCallValue` function, the monad will be invoked with an `undefined` value.
+
+```ts
+pipe(useCallValue())
+  .pipe(maybe('foo.bar.baz', 123))
+  .resolveSync({ foo: { bar: 100 } }) // 123
+
+// or
+const fallback = pipe(useCallValue());
+
+pipe(useCallValue())
+  .pipe(maybe('foo.bar.baz', fallback))
+  .resolveSync({ foo: { bar: 100 } }) // undefined
+
+// or
+const fallback = pipe(put(10));
+
+pipe(useCallValue())
+  .pipe(maybe('foo.bar.baz', fallback))
+  .resolveSync({ foo: { bar: 100 } }) // 10
 ```
 
 ###### merge
