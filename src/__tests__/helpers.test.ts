@@ -3,6 +3,12 @@ import testFunction from './__ignore__/testFunction';
 import { IContext, pipe } from '../pipe';
 
 describe(`tests helper functions`, () => {
+  testFunction(helpers.getTypeOf, () => {
+    expect(helpers.getTypeOf([])).toBe(`array`);
+    expect(helpers.getTypeOf({})).toBe(`object`);
+    expect(helpers.getTypeOf(1)).toBe(`number`);
+  });
+
   testFunction(helpers.isContextFlowAsync, () => {
     const mock = <IContext>{ executionFlow: 'async' };
 

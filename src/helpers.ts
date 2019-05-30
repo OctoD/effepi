@@ -1,5 +1,14 @@
 import { ExecutionContextFlow, IContext, IPipe } from './pipe';
 
+export function getTypeOf(arg: unknown): string {
+  const type = Object.prototype.toString.call(arg) as string;
+
+  return type
+    .replace('[object ', '')
+    .slice(0, -1)
+    .toLowerCase();
+}
+
 export function isContextFlowAsync(arg: IContext): boolean {
   return arg.executionFlow === 'async';
 }
