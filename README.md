@@ -37,6 +37,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
       - [Logical operators functions](#logical-operators-functions)
           - [createSwitch](#createswitch)
           - [fold](#fold)
+          - [ifElse](#ifelse)
       - [Object functions](#object-functions)
           - [exclude](#exclude)
           - [hasProperty](#hasproperty)
@@ -400,6 +401,42 @@ const smsLengthCheck = pipe(useCallValue())
 
 smsLengthCheck('lorem') // ''
 smsLengthCheck('lorem'.repeat(2000)) // 'Maximum character'
+```
+
+###### ifElse
+
+This function works like the `if/else` statement. 
+
+It requires three arguments:
+
+* a Condition (a `function` which returns a `boolean`)
+* a Left, which can be a value or another `pipe`. If is a pipe, it will be resolved using the context's async/sync flow
+* a Right, which can be a value or another `pipe`. If is a pipe, it will be resolved using the context's async/sync flow
+
+```ts
+const simple = pipe(useCallValue())
+  .pipe(
+    logical.ifElse(
+      (arg: number) => arg > 5,
+      'lower than 5',
+      'greater than 5'
+    )
+  )
+  .toSyncFunction();
+
+const complex = pipe(useCallValue())
+  .pipe(
+    logical.ifElse(
+      (arg: number) => arg > 5, 
+      pipe(useCallValue()).pipe(math.pow(2)), 
+      pipe(useCallValue()).pipe(math.divideBy(2)),
+    )
+  ).toSyncFunction();
+
+simple(4) // lower than 5
+simple(10) // greater than 5
+complex(4) // 14
+complex(10) // 5
 ```
 
 #### Object functions
