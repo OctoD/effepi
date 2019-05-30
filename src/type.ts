@@ -12,6 +12,16 @@ export type KnownTypes =
   | 'object'
   | 'string';
 
+export function exactTypeOf(typeName: string): Callable {
+  return arg => {
+    if (getTypeOf(arg) === typeName) {
+      return arg as any;
+    }
+
+    throw new TypeError(`Invalid type ${getTypeOf(arg)}, expected ${typeName}`);
+  };
+}
+
 export function ofType<T extends KnownTypes>(typeName: T): Callable {
   return arg => {
     if (typeof arg === typeName) {

@@ -2,6 +2,15 @@ import * as type from '../type';
 import testFunction from './__ignore__/testFunction';
 
 describe(`Type conversion functions`, () => {
+  testFunction(type.exactTypeOf, () => {
+    expect(() => type.exactTypeOf('object')({}, {} as any)).not.toThrowError();
+    expect(() => type.exactTypeOf('object')([], {} as any)).toThrowError();
+    expect(() => type.exactTypeOf('array')([], {} as any)).not.toThrowError();
+    expect(() =>
+      type.exactTypeOf('date')(new Date(), {} as any)
+    ).not.toThrowError();
+  });
+
   testFunction(type.ofType, () => {
     expect(() => type.ofType('boolean')(123, {} as any)).toThrowError();
     expect(() => type.ofType('number')(123, {} as any)).not.toThrowError();
