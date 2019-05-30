@@ -7,3 +7,11 @@ export function inverse(): ExplicitCallable<boolean, boolean> {
     return !arg;
   };
 }
+
+export function F(): ExplicitCallable<unknown, false> {
+  return () => false;
+}
+
+export function T(): ExplicitCallable<unknown, true> {
+  return () => true;
+}

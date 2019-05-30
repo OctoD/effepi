@@ -20,6 +20,8 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [nth](#nth)
           - [reverse](#reverse)
       - [Boolean functions](#boolean-functions)
+          - [F](#f)
+          - [T](#t)
           - [inverse](#inverse)
       - [Math functions](#math-functions)
           - [add](#add)
@@ -234,6 +236,22 @@ Boolean functions are under the `boolean` module.
 
 ```ts
 import { boolean } from 'effepi';
+```
+
+###### F
+
+Puts a `false` value.
+
+```ts
+pipe(F()).resolveSync(undefined) // false
+```
+
+###### T
+
+Puts a `true` value.
+
+```ts
+pipe(T()).resolveSync(undefined) // true
 ```
 
 ###### inverse
