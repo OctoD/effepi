@@ -17,6 +17,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [applyEach](#applyeach)
           - [applyEachSync](#applyeachsync)
           - [join](#join)
+          - [nth](#nth)
           - [reverse](#reverse)
       - [Math functions](#math-functions)
           - [add](#add)
@@ -41,6 +42,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
       - [Object functions](#object-functions)
           - [exclude](#exclude)
           - [hasProperty](#hasproperty)
+          - [keys](#keys)
           - [maybe](#maybe)
           - [merge](#merge)
           - [pick](#pick)
@@ -200,6 +202,16 @@ Joins the previous value with a given char. If the previous value is not an arra
 pipe(useCallValue())
   .pipe(join('*'))
   .resolveSync([1,2,3]) // '1*2*3'
+```
+
+###### nth
+
+Returns the nth element in the previous value. If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(nth(3))
+  .resolveSync([0, 2, 5, 12, 24]) // 12
 ```
 
 ###### reverse
@@ -470,6 +482,16 @@ pipe(useCallValue())
   .resolveSync({ foo: new Date() }) // true
 ```
 
+###### keys
+
+Returns previous's value keys. Works only for objects
+
+```ts
+pipe(useCallValue())
+  .pipe(keys())
+  .resolveSync({ bar: 123, foo: new Date() }) // ['bar', 'foo']
+```
+
 ###### maybe
 
 Returns a property key value by a given path. This applies only to objects.
@@ -576,7 +598,7 @@ pipe(put(10)).resolveSync(0) // 10
 
 ###### safeCall
 
-Use this function to perform a safe function call
+Use this function to perform a safe function call (will not throw) with the previous value as argument
 
 ```ts
 pipe(useCallValue())

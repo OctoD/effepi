@@ -1,4 +1,4 @@
-import { ExplicitCallable, IContext } from './pipe';
+import { ExplicitCallable, IContext, Callable } from './pipe';
 import { throwIfNotObject, isPipe } from './helpers';
 import { isNullOrUndefined } from 'util';
 
@@ -28,6 +28,14 @@ export function hasProperty(
     }
 
     return Object.prototype.hasOwnProperty.call(arg, propertyKey);
+  };
+}
+
+export function keys(): Callable {
+  return arg => {
+    throwIfNotObject(`keys`, arg);
+
+    return Object.keys((arg as unknown) as object) as any;
   };
 }
 
