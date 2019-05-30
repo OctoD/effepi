@@ -576,7 +576,7 @@ pipe(put(10)).resolveSync(0) // 10
 
 ###### safeCall
 
-Use this function to perform a safe function call
+Use this function to perform a safe function call (will not throw) with the previous value as argument
 
 ```ts
 pipe(useCallValue())
