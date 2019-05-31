@@ -16,7 +16,14 @@
     "type": "git",
     "url": "git+https://github.com/OctoD/effepi.git"
   },
-  "keywords": [],
+  "keywords": [
+    "functional programming",
+    "pipeline",
+    "pipe",
+    "typescript",
+    "function library",
+    "library"
+  ],
   "author": {
     "name": "Paolo Roth",
     "email": "iamoctod@gmail.com"
