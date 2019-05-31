@@ -239,10 +239,10 @@ function updateContext<CallValue, PreviousValue = unknown>(
   context: IContext<CallValue>,
   previousValue: PreviousValue
 ): IContext<CallValue, PreviousValue> {
-  const { call: apply, callValue, executionFlow, mutationIndex, mutate, previousValues } = context;
+  const { call, callValue, executionFlow, mutationIndex, mutate, previousValues } = context;
 
   return {
-    call: apply as any,
+    call: call as any,
     callValue,
     executionFlow,
     mutationIndex: mutationIndex + 1,

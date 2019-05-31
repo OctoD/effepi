@@ -34,7 +34,7 @@ describe(`Logical operators`, () => {
   });
 
   testFunction(logical.ifElse, async () => {
-    function apply(this: IContext, arg: ExplicitCallable<unknown, unknown>) {
+    function call(this: IContext, arg: ExplicitCallable<unknown, unknown>) {
       return arg(this.previousValue, this);
     }
     const check = (value: number) => value > 5;
@@ -44,8 +44,8 @@ describe(`Logical operators`, () => {
     const rightPipe = pipe(useCallValue()).pipe(divideBy(2));
     const complexPipe = pipe(useCallValue()).pipe(logical.ifElse(check, leftPipe, rightPipe));
 
-    expect(simple(4, { apply, previousValue: 4 } as any)).toBe('foo');
-    expect(simple(10, { apply, previousValue: 10 } as any)).toBe('bar');
+    expect(simple(4, { call, previousValue: 4 } as any)).toBe('foo');
+    expect(simple(10, { call, previousValue: 10 } as any)).toBe('bar');
     expect(simplePipe.resolveSync(4)).toBe('foo');
     expect(simplePipe.resolveSync(10)).toBe('bar');
     expect(complexPipe.resolveSync(4)).toBe(16);
