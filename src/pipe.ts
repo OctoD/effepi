@@ -1,48 +1,115 @@
-export type Callable = <Input, Output>(
-  input: Input,
-  context: IContext<unknown, Input>
-) => Output;
+export type Callable = <Input, Output>(input: Input, context: IContext<unknown, Input>) => Output;
 export type ExecutionContextFlow = 'async' | 'sync';
-export type ExplicitCallable<Input, Output> = (
-  input: Input,
-  context: IContext<unknown, Input>
-) => Output;
+export type ExplicitCallable<Input, Output> = (input: Input, context: IContext<unknown, Input>) => Output;
 export type ResolvedPipe<Input, Output> = (input: Input) => Promise<Output>;
 export type ResolvedSyncPipe<Input, Output> = (input: Input) => Output;
-export type Pipeline = Array<Callable | ExplicitCallable<unknown, unknown>>;
+export type Pipeline = (Callable | ExplicitCallable<unknown, unknown>)[];
 
 export interface IContext<CallValue = unknown, PreviousValue = unknown> {
+  /**
+   * The value used to call the pipeline
+   * @type {CallValue}
+   * @memberof IContext
+   */
   readonly callValue: CallValue;
+  /**
+   * The context execution flow can be `sync` or `async`, based on
+   * the invokation of sync methods like `resolveSync` and `toSyncFunction`
+   * @type {ExecutionContextFlow}
+   * @memberof IContext
+   */
   readonly executionFlow: ExecutionContextFlow;
+  /**
+   * Current mutation index.
+   * @type {number}
+   * @memberof IContext
+   */
   readonly mutationIndex: number;
+  /**
+   * Previous mutated value.
+   * @type {PreviousValue}
+   * @memberof IContext
+   */
   readonly previousValue: PreviousValue;
+  /**
+   * An array including previous values
+   * @type {unknown[]}
+   * @memberof IContext
+   */
   readonly previousValues: unknown[];
-  apply<ReturnType>(
-    callable: ExplicitCallable<PreviousValue, ReturnType>
-  ): ReturnType;
+  /**
+   * Calls a function with the `previousValue` and `context` as arguments
+   * @template ReturnType
+   * @param {ExplicitCallable<PreviousValue, ReturnType>} callable
+   * @returns {ReturnType}
+   * @memberof IContext
+   */
+  call<ReturnType>(callable: ExplicitCallable<PreviousValue, ReturnType>): ReturnType;
+  /**
+   * Applies a mutation.
+   * @param {Pipeline} pipeline
+   * @returns {IMutatedContext}
+   * @memberof IContext
+   */
   mutate?(pipeline: Pipeline): IMutatedContext;
 }
 
 export interface IPipe<InitialCallable, Output> {
+  /**
+   * Determines if the function is memoized or not
+   * @type {boolean}
+   * @memberof IPipe
+   */
   readonly memoized: boolean;
+  /**
+   * @type {'pipe'}
+   * @memberof IPipe
+   */
   readonly type: 'pipe';
-  pipe<NextValue>(
-    callable: ExplicitCallable<Output, NextValue>
-  ): IPipe<InitialCallable, NextValue>;
+  /**
+   * Method for chaining a function
+   * @template NextValue
+   * @param {ExplicitCallable<Output, NextValue>} callable
+   * @returns {IPipe<InitialCallable, NextValue>}
+   * @memberof IPipe
+   */
+  pipe<NextValue>(callable: ExplicitCallable<Output, NextValue>): IPipe<InitialCallable, NextValue>;
+  /**
+   * Resolves the pipeline asynchronously.
+   * @type {ResolvedPipe<InitialCallable, Output>}
+   * @memberof IPipe
+   */
   resolve: ResolvedPipe<InitialCallable, Output>;
+  /**
+   * Resolves the pipeline synchronously.
+   * @type {ResolvedSyncPipe<InitialCallable, Output>}
+   * @memberof IPipe
+   */
   resolveSync: ResolvedSyncPipe<InitialCallable, Output>;
+  /**
+   * Creates an `async` function from the pipeline
+   * @returns {(input: InitialCallable) => Promise<Output>}
+   * @memberof IPipe
+   */
   toFunction(): (input: InitialCallable) => Promise<Output>;
+  /**
+   * Creates a function from the pipeline
+   * @returns {(input: InitialCallable) => Output}
+   * @memberof IPipe
+   */
   toSyncFunction(): (input: InitialCallable) => Output;
 }
 
 export interface IMutatedContext {
+  /**
+   * A list of new mutations to append after the current one has been applied.
+   * @type {Pipeline}
+   * @memberof IMutatedContext
+   */
   pipeline: Pipeline;
 }
 
-function applyMutation(
-  context: IContext,
-  pipeline: Pipeline
-): [IContext, Pipeline] {
+function applyMutation(context: IContext, pipeline: Pipeline): [IContext, Pipeline] {
   if (typeof context.mutate !== 'function') {
     return [context, pipeline];
   }
@@ -57,17 +124,14 @@ function applyMutation(
   return [context, newPipeline];
 }
 
-function createContext<CallValue>(
-  callValue: CallValue,
-  executionFlow: ExecutionContextFlow
-): IContext<CallValue> {
+function createContext<CallValue>(callValue: CallValue, executionFlow: ExecutionContextFlow): IContext<CallValue> {
   return {
     callValue,
     executionFlow,
     mutationIndex: 0,
     previousValue: undefined,
     previousValues: [],
-    apply(this: IContext<CallValue>, callable) {
+    call(this: IContext<CallValue>, callable) {
       return callable(this.previousValue, this);
     },
   };
@@ -88,23 +152,16 @@ function createMethods<TCallValue, TReturnValue>(
   return {
     memoized,
     type: 'pipe',
-    pipe: <TNextValue>(
-      callable: ExplicitCallable<TReturnValue, TNextValue>
-    ): IPipe<TCallValue, TNextValue> => {
-      return (createMethods<TCallValue, TNextValue>(
-        [...pipeline, callable],
-        memoized
-      ) as unknown) as IPipe<TCallValue, TNextValue>;
+    pipe: <TNextValue>(callable: ExplicitCallable<TReturnValue, TNextValue>): IPipe<TCallValue, TNextValue> => {
+      return (createMethods<TCallValue, TNextValue>([...pipeline, callable], memoized) as unknown) as IPipe<
+        TCallValue,
+        TNextValue
+      >;
     },
     resolve: createResolver<TCallValue, TReturnValue>(pipeline, memoized),
-    resolveSync: createSyncResolver<TCallValue, TReturnValue>(
-      pipeline,
-      memoized
-    ),
-    toFunction: <TCall, TReturn>() =>
-      createFunction<TCall, TReturn>(pipeline, memoized),
-    toSyncFunction: <TCall, TReturn>() =>
-      createSyncFunction<TCall, TReturn>(pipeline, memoized),
+    resolveSync: createSyncResolver<TCallValue, TReturnValue>(pipeline, memoized),
+    toFunction: <TCall, TReturn>() => createFunction<TCall, TReturn>(pipeline, memoized),
+    toSyncFunction: <TCall, TReturn>() => createSyncFunction<TCall, TReturn>(pipeline, memoized),
   };
 }
 
@@ -112,10 +169,7 @@ function createSyncFunction<TCallValue, TReturnValue>(
   pipeline: Pipeline,
   memoized: boolean
 ): (arg: TCallValue) => TReturnValue {
-  const resolver = createSyncResolver<TCallValue, TReturnValue>(
-    pipeline,
-    memoized
-  );
+  const resolver = createSyncResolver<TCallValue, TReturnValue>(pipeline, memoized);
   return arg => resolver(arg);
 }
 
@@ -132,11 +186,7 @@ function createResolver<TCallValue, TReturnValue>(
     }
 
     previousCallValue = callValue;
-    previousReturnValue = (await resolve(
-      pipeline,
-      0,
-      createContext(callValue, 'async')
-    )) as TReturnValue;
+    previousReturnValue = (await resolve(pipeline, 0, createContext(callValue, 'async'))) as TReturnValue;
 
     return previousReturnValue;
   };
@@ -155,58 +205,32 @@ function createSyncResolver<TCallValue, TReturnValue>(
     }
 
     previousCallValue = callValue;
-    previousReturnValue = resolveSync(
-      pipeline,
-      0,
-      createContext(callValue, 'sync')
-    ) as TReturnValue;
+    previousReturnValue = resolveSync(pipeline, 0, createContext(callValue, 'sync')) as TReturnValue;
 
     return previousReturnValue;
   };
 }
 
-async function resolve(
-  pipeline: Pipeline,
-  index: number,
-  context: IContext
-): Promise<unknown> {
+async function resolve(pipeline: Pipeline, index: number, context: IContext): Promise<unknown> {
   if (index >= pipeline.length) {
     return context.previousValue;
   }
 
-  const previousValue = await Promise.resolve(
-    pipeline[index](context.previousValue, context)
-  );
-  const updatedContext = updateContext<unknown, unknown>(
-    context,
-    previousValue
-  );
-  const [mutatedContext, mutatedPipeline] = applyMutation(
-    updatedContext,
-    pipeline
-  );
+  const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
+  const updatedContext = updateContext<unknown, unknown>(context, previousValue);
+  const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
   return resolve(mutatedPipeline, index + 1, mutatedContext);
 }
 
-function resolveSync(
-  pipeline: Pipeline,
-  index: number,
-  context: IContext
-): unknown {
+function resolveSync(pipeline: Pipeline, index: number, context: IContext): unknown {
   if (index >= pipeline.length) {
     return context.previousValue;
   }
 
   const previousValue = pipeline[index](context.previousValue, context);
-  const updatedContext = updateContext<unknown, unknown>(
-    context,
-    previousValue
-  );
-  const [mutatedContext, mutatedPipeline] = applyMutation(
-    updatedContext,
-    pipeline
-  );
+  const updatedContext = updateContext<unknown, unknown>(context, previousValue);
+  const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
   return resolveSync(mutatedPipeline, index + 1, mutatedContext);
 }
@@ -215,17 +239,10 @@ function updateContext<CallValue, PreviousValue = unknown>(
   context: IContext<CallValue>,
   previousValue: PreviousValue
 ): IContext<CallValue, PreviousValue> {
-  const {
-    apply,
-    callValue,
-    executionFlow,
-    mutationIndex,
-    mutate,
-    previousValues,
-  } = context;
+  const { call, callValue, executionFlow, mutationIndex, mutate, previousValues } = context;
 
   return {
-    apply: apply as any,
+    call: call as any,
     callValue,
     executionFlow,
     mutationIndex: mutationIndex + 1,
@@ -235,6 +252,15 @@ function updateContext<CallValue, PreviousValue = unknown>(
   };
 }
 
+/**
+ * Creates a new pipeline
+ * @export
+ * @template CallValue
+ * @template NextValue
+ * @param {ExplicitCallable<CallValue, NextValue>} callable
+ * @param {boolean} [memoized=false]
+ * @returns
+ */
 export function pipe<CallValue, NextValue>(
   callable: ExplicitCallable<CallValue, NextValue>,
   memoized: boolean = false

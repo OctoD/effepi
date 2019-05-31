@@ -32,13 +32,9 @@ describe(`Object functions`, () => {
   });
 
   testFunction(object.keys, () => {
-    expect(
-      expect.arrayContaining(object.keys()({ foo: 100, bar: 200 }, {} as any))
-    ).toEqual(['bar', 'foo']);
+    expect(expect.arrayContaining(object.keys()({ foo: 100, bar: 200 }, {} as any))).toEqual(['bar', 'foo']);
 
-    expect(() =>
-      expect.arrayContaining(object.keys()(123, {} as any))
-    ).toThrowError();
+    expect(() => expect.arrayContaining(object.keys()(123, {} as any))).toThrowError();
   });
 
   testFunction(object.maybe, async () => {
@@ -47,27 +43,11 @@ describe(`Object functions`, () => {
     expect(() => object.maybe('')(123 as any, {} as any)).toThrowError();
     expect(object.maybe('foo.bar')(testObject, {} as any)).toBe(100);
     expect(object.maybe('foo.bar.baz')(testObject, {} as any)).toBe(undefined);
-    expect(object.maybe('foo.bar.baz.hello.world')(testObject, {} as any)).toBe(
-      undefined
-    );
-    expect(object.maybe('foo.baz.bar.hello.world')(testObject, {} as any)).toBe(
-      undefined
-    );
-    expect(
-      object.maybe('foo.baz.bar.hello.world', 123)(testObject, {} as any)
-    ).toBe(123);
-    expect(
-      object.maybe('foo.baz.bar.hello.world', pipe(useCallValue()))(
-        testObject,
-        {} as any
-      )
-    ).toBeUndefined();
-    expect(
-      object.maybe('foo.baz.bar.hello.world', pipe(put(10)))(
-        testObject,
-        {} as any
-      )
-    ).toBe(10);
+    expect(object.maybe('foo.bar.baz.hello.world')(testObject, {} as any)).toBe(undefined);
+    expect(object.maybe('foo.baz.bar.hello.world')(testObject, {} as any)).toBe(undefined);
+    expect(object.maybe('foo.baz.bar.hello.world', 123)(testObject, {} as any)).toBe(123);
+    expect(object.maybe('foo.baz.bar.hello.world', pipe(useCallValue()))(testObject, {} as any)).toBeUndefined();
+    expect(object.maybe('foo.baz.bar.hello.world', pipe(put(10)))(testObject, {} as any)).toBe(10);
     expect(
       await pipe(useCallValue())
         .pipe(object.maybe('foo.baz.bar.hello.world', pipe(put(10))))
@@ -90,10 +70,7 @@ describe(`Object functions`, () => {
       public baz = new Date();
     }
 
-    const result = object.pick<Test>('foo', 'bar', 'helloworld' as any)(
-      { foo: 1, bar: 2, baz: new Date() },
-      {} as any
-    );
+    const result = object.pick<Test>('foo', 'bar', 'helloworld' as any)({ foo: 1, bar: 2, baz: new Date() }, {} as any);
 
     expect(() => object.pick()('' as any, {} as any)).toThrowError();
 

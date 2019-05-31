@@ -39,20 +39,8 @@ describe(`tests helper functions`, () => {
   });
 
   testFunction(helpers.throwContextExecutionFlow, () => {
-    expect(() =>
-      helpers.throwContextExecutionFlow(
-        '',
-        { executionFlow: 'async' } as any,
-        'sync'
-      )
-    ).toThrowError();
-    expect(() =>
-      helpers.throwContextExecutionFlow(
-        '',
-        { executionFlow: 'sync' } as any,
-        'sync'
-      )
-    ).not.toThrowError();
+    expect(() => helpers.throwContextExecutionFlow('', { executionFlow: 'async' } as any, 'sync')).toThrowError();
+    expect(() => helpers.throwContextExecutionFlow('', { executionFlow: 'sync' } as any, 'sync')).not.toThrowError();
   });
 
   testFunction(helpers.throwIfNotArray, () => {
@@ -60,14 +48,19 @@ describe(`tests helper functions`, () => {
     expect(() => helpers.throwIfNotArray('', [])).not.toThrowError();
   });
 
+  testFunction(helpers.throwIfNotBoolean, () => {
+    expect(() => helpers.throwIfNotBoolean('', {})).toThrowError();
+    expect(() => helpers.throwIfNotBoolean('', [])).toThrowError();
+    expect(() => helpers.throwIfNotBoolean('', false)).not.toThrowError();
+    expect(() => helpers.throwIfNotBoolean('', true)).not.toThrowError();
+  });
+
   testFunction(helpers.throwIfNotFunction, () => {
     expect(() => helpers.throwIfNotFunction('', '', [])).toThrowError();
     expect(() => helpers.throwIfNotFunction('', '', {})).toThrowError();
     expect(() => helpers.throwIfNotFunction('', '', '')).toThrowError();
     expect(() => helpers.throwIfNotFunction('', '', 1)).toThrowError();
-    expect(() =>
-      helpers.throwIfNotFunction('', '', () => {})
-    ).not.toThrowError();
+    expect(() => helpers.throwIfNotFunction('', '', () => {})).not.toThrowError();
   });
 
   testFunction(helpers.throwIfNotObject, () => {

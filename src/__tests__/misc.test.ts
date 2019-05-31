@@ -5,8 +5,7 @@ import testFunction from './__ignore__/testFunction';
 
 describe(`Miscellaneous functions`, () => {
   testFunction(misc.apply, async () => {
-    const p = pipe(misc.useCallValue())
-      .pipe(math.add(10));
+    const p = pipe(misc.useCallValue()).pipe(math.add(10));
     const testP = pipe(misc.useCallValue())
       .pipe(misc.apply(p))
       .pipe(math.multiplyBy(2));
@@ -15,8 +14,7 @@ describe(`Miscellaneous functions`, () => {
   });
 
   testFunction(misc.applySync, () => {
-    const p = pipe(misc.useCallValue())
-      .pipe(math.add(10));
+    const p = pipe(misc.useCallValue()).pipe(math.add(10));
     const testP = pipe(misc.useCallValue())
       .pipe(misc.applySync(p))
       .pipe(math.multiplyBy(2));

@@ -1,4 +1,4 @@
-import { ExplicitCallable, Callable } from './pipe';
+import { ExplicitCallable } from './pipe';
 import { throwIfNotString } from './helpers';
 
 const regexps = {} as { [index: string]: RegExp };
@@ -7,9 +7,7 @@ export function camelCase(): ExplicitCallable<string, string> {
   return arg => {
     throwIfNotString(`camelCase`, arg);
     return arg
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) =>
-        index === 0 ? letter.toLowerCase() : letter.toUpperCase()
-      )
+      .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index === 0 ? letter.toLowerCase() : letter.toUpperCase()))
       .replace(/\s+/g, '');
   };
 }
@@ -75,10 +73,7 @@ export function repeat(count: number = 1): ExplicitCallable<string, string> {
   };
 }
 
-export function replaceAll(
-  needle: string,
-  replaceWith: string
-): ExplicitCallable<string, string> {
+export function replaceAll(needle: string, replaceWith: string): ExplicitCallable<string, string> {
   return arg => {
     throwIfNotString(`replaceAll`, arg);
     regexps[needle] = regexps[needle] || new RegExp(needle, 'gi');
@@ -103,7 +98,7 @@ export function toBinaryArray(): ExplicitCallable<string, string[]> {
   return (arg, context) => {
     throwIfNotString(`toBinary`, arg);
 
-    return binarizeCharset(0, context.apply(chars()));
+    return binarizeCharset(0, context.call(chars()));
   };
 }
 

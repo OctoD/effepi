@@ -11,7 +11,7 @@ export default function createContextMock<CallValue = any, PreviousValue = any>(
     mutationIndex: 0,
     previousValue,
     previousValues: [],
-    apply(this: IContext<CallValue, PreviousValue>, callable) {
+    call(this: IContext<CallValue, PreviousValue>, callable) {
       return callable(this.previousValue, this);
     },
   };

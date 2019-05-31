@@ -6,9 +6,7 @@ describe(`Type conversion functions`, () => {
     expect(() => type.exactTypeOf('object')({}, {} as any)).not.toThrowError();
     expect(() => type.exactTypeOf('object')([], {} as any)).toThrowError();
     expect(() => type.exactTypeOf('array')([], {} as any)).not.toThrowError();
-    expect(() =>
-      type.exactTypeOf('date')(new Date(), {} as any)
-    ).not.toThrowError();
+    expect(() => type.exactTypeOf('date')(new Date(), {} as any)).not.toThrowError();
   });
 
   testFunction(type.ofType, () => {
@@ -18,6 +16,15 @@ describe(`Type conversion functions`, () => {
 
   testFunction(type.toArray, () => {
     expect(Array.isArray(type.toArray()(123))).toBeTruthy();
+  });
+
+  testFunction(type.toBoolean, () => {
+    expect(type.toBoolean()(10)).toBeTruthy();
+    expect(type.toBoolean()(0)).toBeFalsy();
+    expect(type.toBoolean()(null)).toBeFalsy();
+    expect(type.toBoolean()(undefined)).toBeFalsy();
+    expect(type.toBoolean()('')).toBeFalsy();
+    expect(type.toBoolean()('123')).toBeTruthy();
   });
 
   testFunction(type.toDate, () => {

@@ -16,7 +16,7 @@ describe(`Math functions`, () => {
   });
 
   testFunction(math.divideBy, () => {
-    expect(math.divideBy(20)(2, {} as any)).toBe(.1);
+    expect(math.divideBy(20)(2, {} as any)).toBe(0.1);
   });
 
   testFunction(math.increment, () => {

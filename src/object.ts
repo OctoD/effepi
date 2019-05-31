@@ -19,9 +19,7 @@ export function exclude<KObject, Keys extends keyof KObject = keyof KObject>(
   };
 }
 
-export function hasProperty(
-  propertyKey: string
-): ExplicitCallable<unknown, boolean> {
+export function hasProperty(propertyKey: string): ExplicitCallable<unknown, boolean> {
   return arg => {
     if (isNullOrUndefined(arg)) {
       return false;
@@ -85,9 +83,7 @@ export function maybe<TObject = unknown, TReturn = unknown>(
   };
 }
 
-export function merge<T extends object, K>(
-  target: T
-): ExplicitCallable<K, K & T> {
+export function merge<T extends object, K>(target: T): ExplicitCallable<K, K & T> {
   return arg => {
     throwIfNotObject('merge', arg);
 

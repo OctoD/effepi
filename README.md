@@ -19,10 +19,16 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [join](#join)
           - [nth](#nth)
           - [reverse](#reverse)
+      - [Boolean functions](#boolean-functions)
+          - [F](#f)
+          - [T](#t)
+          - [inverse](#inverse)
       - [Math functions](#math-functions)
           - [add](#add)
           - [changeSign](#changesign)
+          - [decrement](#decrement)
           - [divideBy](#divideby)
+          - [increment](#increment)
           - [multiplyBy](#multiplyby)
           - [negative](#negative)
           - [positive](#positive)
@@ -69,6 +75,7 @@ Effepi is a functional way to enqueue and use different functions. You can put y
           - [exactTypeOf](#exacttypeof)
           - [ofType](#oftype)
           - [toArray](#toarray)
+          - [toBoolean](#toboolean)
           - [toDate](#todate)
           - [toNumber](#tonumber)
           - [toString](#tostring)
@@ -156,13 +163,13 @@ const isEven = pipe(useCallValue())
 isEven(10) // logs 10, logs true, returns true
 ```
 
-A context has also the `apply` method, which can be used to invoke a function with
+A context has also the `call` method, which can be used to invoke a function with
 the previous value as argument.
 
 ```ts
 pipe(useCallValue())
   .pipe(
-    (value, context) => context.apply(add(10))
+    (value, context) => context.call(add(10))
   )
 ).resolveSync(0); // returns 10
 ```
@@ -184,7 +191,13 @@ Applies the result of a pipeline to each element in an array of another pipeline
 Note: invoking a pipeline using this function with a sync method will throw an error.
 
 ```ts
-applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[]
+const doMath = pipe(useCallValue())
+  .pipe(sum(2))
+  .pipe(multiplyBy(3));
+
+pipe(useCallValue())
+  .pipe(applyEach(doMath))
+  .resolve([10, 20, 30]) // Promise([36, 66, 96])
 ```
 
 ###### applyEachSync
@@ -194,12 +207,20 @@ Is the same of applyEach, except it does not work with async functions
 Note: invoking a pipeline using this function with an async method will throw an error.
 
 ```ts
-applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[]
+const doMath = pipe(useCallValue())
+  .pipe(sum(2))
+  .pipe(multiplyBy(3));
+
+pipe(useCallValue())
+  .pipe(applyEach(doMath))
+  .resolveSync([10, 20, 30]) // [36, 66, 96]
 ```
 
 ###### join
 
-Joins the previous value with a given char. If the previous value is not an array an error will be thrown
+Joins the previous value with a given char. 
+
+If the previous value is not an array an error will be thrown
 
 ```ts
 pipe(useCallValue())
@@ -209,7 +230,9 @@ pipe(useCallValue())
 
 ###### nth
 
-Returns the nth element in the previous value. If the previous value is not an array an error will be thrown
+Returns the nth element in the previous value.
+
+If the previous value is not an array an error will be thrown
 
 ```ts
 pipe(useCallValue())
@@ -219,12 +242,49 @@ pipe(useCallValue())
 
 ###### reverse
 
-Reverses the previous value. If the previous value is not an array an error will be thrown
+Reverses the previous value. 
+
+If the previous value is not an array an error will be thrown
 
 ```ts
 pipe(useCallValue())
   .pipe(reverse())
   .resolveSync([1,2,3]) // [3,2,1]
+```
+
+#### Boolean functions
+
+Boolean functions are under the `boolean` module.
+
+```ts
+import { boolean } from 'effepi';
+```
+
+###### F
+
+Puts a `false` value.
+
+```ts
+pipe(F()).resolveSync(undefined) // false
+```
+
+###### T
+
+Puts a `true` value.
+
+```ts
+pipe(T()).resolveSync(undefined) // true
+```
+
+###### inverse
+
+Inverts previous value. 
+
+Previous value must be boolean.
+
+```ts
+pipe(useCallValue()).pipe(inverse()).resolveSync(true) // false
+pipe(useCallValue()).pipe(inverse()).resolveSync(false) // true
 ```
 
 #### Math functions
@@ -251,12 +311,28 @@ Changes previous value sign, from positive to negative and vice-versa.
 pipe(put(-123)).pipe(changeSign()) // 123
 ```
 
+###### decrement
+
+Decrements the previous value by one.
+
+```ts
+pipe(useCallValue()).pipe(decrement()).resolve(44) // 41
+```
+
 ###### divideBy
 
 Divides the previous value by the passed one.
 
 ```ts
 pipe(useCallValue()).pipe(divideBy(2)).resolve(44) // 22
+```
+
+###### increment
+
+Increments the previous value by one.
+
+```ts
+pipe(useCallValue()).pipe(increment()).resolve(44) // 45
 ```
 
 ###### multiplyBy
@@ -803,6 +879,19 @@ Converts previous value to an array.
 
 ```ts
 pipe(useCallValue()).pipe(toArray()).resolveSync(10) // [10]
+```
+
+###### toBoolean
+
+Converts previous value to a boolean value.
+
+```ts
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(10) // true
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(0) // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(null) // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync(undefined) // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync('') // false
+pipe(useCallValue()).pipe(toBoolean()).resolveSync('123') // true
 ```
 
 ###### toDate
