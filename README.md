@@ -26,7 +26,9 @@ Effepi is a functional way to enqueue and use different functions. You can put y
       - [Math functions](#math-functions)
           - [add](#add)
           - [changeSign](#changesign)
+          - [decrement](#decrement)
           - [divideBy](#divideby)
+          - [increment](#increment)
           - [multiplyBy](#multiplyby)
           - [negative](#negative)
           - [positive](#positive)
@@ -189,7 +191,13 @@ Applies the result of a pipeline to each element in an array of another pipeline
 Note: invoking a pipeline using this function with a sync method will throw an error.
 
 ```ts
-applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[]
+const doMath = pipe(useCallValue())
+  .pipe(sum(2))
+  .pipe(multiplyBy(3));
+
+pipe(useCallValue())
+  .pipe(applyEach(doMath))
+  .resolve([10, 20, 30]) // Promise([36, 66, 96])
 ```
 
 ###### applyEachSync
@@ -199,12 +207,20 @@ Is the same of applyEach, except it does not work with async functions
 Note: invoking a pipeline using this function with an async method will throw an error.
 
 ```ts
-applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[]
+const doMath = pipe(useCallValue())
+  .pipe(sum(2))
+  .pipe(multiplyBy(3));
+
+pipe(useCallValue())
+  .pipe(applyEach(doMath))
+  .resolveSync([10, 20, 30]) // [36, 66, 96]
 ```
 
 ###### join
 
-Joins the previous value with a given char. If the previous value is not an array an error will be thrown
+Joins the previous value with a given char. 
+
+If the previous value is not an array an error will be thrown
 
 ```ts
 pipe(useCallValue())
@@ -214,7 +230,9 @@ pipe(useCallValue())
 
 ###### nth
 
-Returns the nth element in the previous value. If the previous value is not an array an error will be thrown
+Returns the nth element in the previous value.
+
+If the previous value is not an array an error will be thrown
 
 ```ts
 pipe(useCallValue())
@@ -224,7 +242,9 @@ pipe(useCallValue())
 
 ###### reverse
 
-Reverses the previous value. If the previous value is not an array an error will be thrown
+Reverses the previous value. 
+
+If the previous value is not an array an error will be thrown
 
 ```ts
 pipe(useCallValue())
@@ -258,7 +278,9 @@ pipe(T()).resolveSync(undefined) // true
 
 ###### inverse
 
-Inverts previous value. Previous value must be boolean.
+Inverts previous value. 
+
+Previous value must be boolean.
 
 ```ts
 pipe(useCallValue()).pipe(inverse()).resolveSync(true) // false
@@ -289,12 +311,28 @@ Changes previous value sign, from positive to negative and vice-versa.
 pipe(put(-123)).pipe(changeSign()) // 123
 ```
 
+###### decrement
+
+Decrements the previous value by one.
+
+```ts
+pipe(useCallValue()).pipe(decrement()).resolve(44) // 41
+```
+
 ###### divideBy
 
 Divides the previous value by the passed one.
 
 ```ts
 pipe(useCallValue()).pipe(divideBy(2)).resolve(44) // 22
+```
+
+###### increment
+
+Increments the previous value by one.
+
+```ts
+pipe(useCallValue()).pipe(increment()).resolve(44) // 45
 ```
 
 ###### multiplyBy
