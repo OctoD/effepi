@@ -163,13 +163,13 @@ const isEven = pipe(useCallValue())
 isEven(10) // logs 10, logs true, returns true
 ```
 
-A context has also the `apply` method, which can be used to invoke a function with
+A context has also the `call` method, which can be used to invoke a function with
 the previous value as argument.
 
 ```ts
 pipe(useCallValue())
   .pipe(
-    (value, context) => context.apply(add(10))
+    (value, context) => context.call(add(10))
   )
 ).resolveSync(0); // returns 10
 ```

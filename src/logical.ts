@@ -73,7 +73,7 @@ export function ifElse<TCondition extends Condition<K>, Left, Right, K>(
   return (value, context) => {
     throwIfNotFunction(`ifElse`, 'condition', condition);
 
-    const result = context.apply(condition);
+    const result = context.call(condition);
 
     if (isPipe(left) && !result) {
       return resolveIfIsPipe(context, left, value);

@@ -104,7 +104,7 @@ describe(`pipe`, () => {
 
   test(`context has an apply method, which can be used to call a function with the previous value as argument`, () => {
     const p = pipe<number, number>(misc.useCallValue()).pipe((value, context) => {
-      return context.apply(math.add(value));
+      return context.call(math.add(value));
     });
 
     expect(p.resolveSync(2)).toBe(4);

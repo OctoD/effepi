@@ -98,7 +98,7 @@ export function toBinaryArray(): ExplicitCallable<string, string[]> {
   return (arg, context) => {
     throwIfNotString(`toBinary`, arg);
 
-    return binarizeCharset(0, context.apply(chars()));
+    return binarizeCharset(0, context.call(chars()));
   };
 }
 

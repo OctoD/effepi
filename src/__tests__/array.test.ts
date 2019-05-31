@@ -13,7 +13,7 @@ describe(`Array functions`, () => {
       mutationIndex: 0,
       previousValue: 0,
       previousValues: [],
-      apply: jest.fn(),
+      call: jest.fn(),
     });
     const exresult = await Promise.all(result);
 
@@ -28,7 +28,7 @@ describe(`Array functions`, () => {
         mutationIndex: 0,
         previousValue: 0,
         previousValues: [],
-        apply: jest.fn(),
+        call: jest.fn(),
       })
     ).toThrowError();
   });
@@ -41,7 +41,7 @@ describe(`Array functions`, () => {
       mutationIndex: 0,
       previousValue: 0,
       previousValues: [],
-      apply: jest.fn(),
+      call: jest.fn(),
     });
 
     expect(result[0]).toBe(101);
@@ -55,7 +55,7 @@ describe(`Array functions`, () => {
         mutationIndex: 0,
         previousValue: 0,
         previousValues: [],
-        apply: jest.fn(),
+        call: jest.fn(),
       })
     ).toThrowError();
   });
