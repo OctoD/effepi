@@ -10,9 +10,7 @@ export interface ISwitchResult<TValue> {
   value: TValue;
 }
 
-export function createSwitch<TValue>(
-  ...args: SwitchOption<TValue>[]
-): (arg: TValue) => unknown {
+export function createSwitch<TValue>(...args: SwitchOption<TValue>[]): (arg: TValue) => unknown {
   return arg => {
     let defaultCase: ISwitchResult<unknown> = undefined;
     let tests = args.slice();
@@ -46,10 +44,7 @@ export function createSwitchDefault<Value>(value: Value): SwitchOption<Value> {
   };
 }
 
-export function createSwitchOption<Match, Value>(
-  match: Match,
-  value: Value
-): SwitchOption<Value> {
+export function createSwitchOption<Match, Value>(match: Match, value: Value): SwitchOption<Value> {
   return arg => {
     if (arg === match) {
       return { default: false, success: true, value };
@@ -70,18 +65,9 @@ export function ifElse<TCondition extends Condition<K>, Left, Right, K>(
   condition: TCondition,
   left: Left,
   right: Right
-): <T extends K>(
-  arg: T,
-  context: IContext
-) => ReturnType<TCondition> extends true ? Right : Left {
-  const resolveIfIsPipe = (
-    context: IContext,
-    currentPipe: IPipe<unknown, unknown>,
-    value: unknown
-  ) => {
-    return isContextFlowAsync(context)
-      ? currentPipe.resolve(value)
-      : currentPipe.resolveSync(value);
+): <T extends K>(arg: T, context: IContext) => ReturnType<TCondition> extends true ? Right : Left {
+  const resolveIfIsPipe = (context: IContext, currentPipe: IPipe<unknown, unknown>, value: unknown) => {
+    return isContextFlowAsync(context) ? currentPipe.resolve(value) : currentPipe.resolveSync(value);
   };
 
   return (value, context) => {

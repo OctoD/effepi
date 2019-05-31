@@ -6,9 +6,7 @@ describe(`Type conversion functions`, () => {
     expect(() => type.exactTypeOf('object')({}, {} as any)).not.toThrowError();
     expect(() => type.exactTypeOf('object')([], {} as any)).toThrowError();
     expect(() => type.exactTypeOf('array')([], {} as any)).not.toThrowError();
-    expect(() =>
-      type.exactTypeOf('date')(new Date(), {} as any)
-    ).not.toThrowError();
+    expect(() => type.exactTypeOf('date')(new Date(), {} as any)).not.toThrowError();
   });
 
   testFunction(type.ofType, () => {

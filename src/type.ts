@@ -3,14 +3,7 @@ import { getTypeOf } from './helpers';
 
 export type TypeCheckerFunction = (value: unknown) => boolean;
 
-export type KnownTypes =
-  | 'bigint'
-  | 'boolean'
-  | 'function'
-  | 'undefined'
-  | 'number'
-  | 'object'
-  | 'string';
+export type KnownTypes = 'bigint' | 'boolean' | 'function' | 'undefined' | 'number' | 'object' | 'string';
 
 export function exactTypeOf(typeName: string): Callable {
   return arg => {

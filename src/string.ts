@@ -7,9 +7,7 @@ export function camelCase(): ExplicitCallable<string, string> {
   return arg => {
     throwIfNotString(`camelCase`, arg);
     return arg
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) =>
-        index === 0 ? letter.toLowerCase() : letter.toUpperCase()
-      )
+      .replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => (index === 0 ? letter.toLowerCase() : letter.toUpperCase()))
       .replace(/\s+/g, '');
   };
 }
@@ -75,10 +73,7 @@ export function repeat(count: number = 1): ExplicitCallable<string, string> {
   };
 }
 
-export function replaceAll(
-  needle: string,
-  replaceWith: string
-): ExplicitCallable<string, string> {
+export function replaceAll(needle: string, replaceWith: string): ExplicitCallable<string, string> {
   return arg => {
     throwIfNotString(`replaceAll`, arg);
     regexps[needle] = regexps[needle] || new RegExp(needle, 'gi');

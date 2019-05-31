@@ -70,8 +70,6 @@ describe(`Array functions`, () => {
   });
 
   testFunction(array.reverse, () => {
-    expect(
-      expect.arrayContaining(array.reverse()([1, 2, 3], {} as any))
-    ).toEqual([3, 2, 1]);
+    expect(expect.arrayContaining(array.reverse()([1, 2, 3], {} as any))).toEqual([3, 2, 1]);
   });
 });

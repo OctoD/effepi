@@ -78,10 +78,7 @@ export function subtract(value: number): ExplicitCallable<number, number> {
   };
 }
 
-export function takeBetween(
-  start: number,
-  end: number
-): ExplicitCallable<number[], number[]> {
+export function takeBetween(start: number, end: number): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
     throwIfNotArray(`takeBetween`, arg);
 
@@ -109,10 +106,7 @@ export function takeGreater(): ExplicitCallable<number[], number> {
   };
 }
 
-export function takeGreaterThan(
-  check: number,
-  equal: boolean = false
-): ExplicitCallable<number[], number[]> {
+export function takeGreaterThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
     throwIfNotArray(`takeGreaterThan`, arg);
 
@@ -142,10 +136,7 @@ export function takeLower(): ExplicitCallable<number[], number> {
   };
 }
 
-export function takeLowerThan(
-  check: number,
-  equal: boolean = false
-): ExplicitCallable<number[], number[]> {
+export function takeLowerThan(check: number, equal: boolean = false): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
     throwIfNotArray(`takeLowerThan`, arg);
 
@@ -168,10 +159,7 @@ export function takeLowerThan(
   };
 }
 
-export function takeOuter(
-  start: number,
-  end: number
-): ExplicitCallable<number[], number[]> {
+export function takeOuter(start: number, end: number): ExplicitCallable<number[], number[]> {
   return (arg: number[]) => {
     throwIfNotArray(`takeOuter`, arg);
 

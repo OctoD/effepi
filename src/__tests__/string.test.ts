@@ -9,9 +9,7 @@ describe(`String functions`, () => {
 
     expect(typeof result === 'string').toBeTruthy();
     expect(result).toBe(`helloWorldFooBarBaz`);
-    expect(() =>
-      string.camelCase()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.camelCase()(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.chars, () => {
@@ -20,9 +18,7 @@ describe(`String functions`, () => {
 
     expect(Array.isArray(chars)).toBeTruthy();
     expect(chars.length).toBe(str.length);
-    expect(() =>
-      string.chars()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.chars()(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.concat, () => {
@@ -30,17 +26,13 @@ describe(`String functions`, () => {
     const concat = string.concat('world')(str, createContextMock());
 
     expect(concat).toBe('helloworld');
-    expect(() =>
-      string.concat('')(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.concat('')(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.includes, () => {
     expect(string.includes('foo')('foobar', createContextMock())).toBeTruthy();
     expect(string.includes('baz')('foobar', createContextMock())).toBeFalsy();
-    expect(() =>
-      string.includes('bar')(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.includes('bar')(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.length, () => {
@@ -49,9 +41,7 @@ describe(`String functions`, () => {
 
     expect(Number.isInteger(length)).toBeTruthy();
     expect(length).toBe(str.length);
-    expect(() =>
-      string.length()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.length()(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.lowercase, () => {
@@ -59,9 +49,7 @@ describe(`String functions`, () => {
     const lowercase = string.lowercase()(str, createContextMock());
 
     expect(lowercase).toBe('hello world');
-    expect(() =>
-      string.lowercase()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.lowercase()(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.pascalCase, () => {
@@ -70,9 +58,7 @@ describe(`String functions`, () => {
 
     expect(typeof result === 'string').toBeTruthy();
     expect(result).toBe(`HelloWorldFooBarBaz`);
-    expect(() =>
-      string.pascalCase()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.pascalCase()(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.repeat, () => {
@@ -80,9 +66,7 @@ describe(`String functions`, () => {
     expect(string.repeat(0)('foo', createContextMock())).toBe('foo');
     expect(string.repeat(-1)('foo', createContextMock())).toBe('foo');
     expect(string.repeat(2)('foo', createContextMock())).toBe('foofoofoo');
-    expect(() =>
-      string.repeat(2)(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.repeat(2)(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.replaceAll, () => {
@@ -91,9 +75,7 @@ describe(`String functions`, () => {
 
     expect(typeof out === 'string').toBeTruthy();
     expect(out).toBe('he11o');
-    expect(() =>
-      string.replaceAll('', '')(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.replaceAll('', '')(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.toBinaryArray, () => {
@@ -115,9 +97,7 @@ describe(`String functions`, () => {
     ];
 
     expect(expect.arrayContaining(binaryArray)).toEqual(expected);
-    expect(() =>
-      string.toBinaryArray()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.toBinaryArray()(123 as any, createContextMock())).toThrowError();
   });
 
   testFunction(string.uppercase, () => {
@@ -125,8 +105,6 @@ describe(`String functions`, () => {
     const uppercase = string.uppercase()(str, createContextMock());
 
     expect(uppercase).toBe('HELLO WORLD');
-    expect(() =>
-      string.uppercase()(123 as any, createContextMock())
-    ).toThrowError();
+    expect(() => string.uppercase()(123 as any, createContextMock())).toThrowError();
   });
 });

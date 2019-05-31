@@ -1,9 +1,7 @@
 import { IPipe, IContext, ExplicitCallable, Callable } from './pipe';
 import { throwContextExecutionFlow, throwIfNotArray } from './helpers';
 
-export function applyEach<T, R>(
-  pipe: IPipe<T, R>
-): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
+export function applyEach<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => Promise<R>[] {
   return (values, context) => {
     throwContextExecutionFlow('applyEach', context, 'async');
     throwIfNotArray('applyEach', values);
@@ -12,9 +10,7 @@ export function applyEach<T, R>(
   };
 }
 
-export function applyEachSync<T, R>(
-  pipe: IPipe<T, R>
-): (arg: T[], context: IContext<T[], R>) => R[] {
+export function applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: IContext<T[], R>) => R[] {
   return (values, context) => {
     throwContextExecutionFlow('applyEachSync', context, 'sync');
     throwIfNotArray('applyEach', values);
