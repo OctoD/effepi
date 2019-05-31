@@ -3,7 +3,7 @@ export type ExecutionContextFlow = 'async' | 'sync';
 export type ExplicitCallable<Input, Output> = (input: Input, context: IContext<unknown, Input>) => Output;
 export type ResolvedPipe<Input, Output> = (input: Input) => Promise<Output>;
 export type ResolvedSyncPipe<Input, Output> = (input: Input) => Output;
-export type Pipeline = Array<Callable | ExplicitCallable<unknown, unknown>>;
+export type Pipeline = (Callable | ExplicitCallable<unknown, unknown>)[];
 
 export interface IContext<CallValue = unknown, PreviousValue = unknown> {
   readonly callValue: CallValue;

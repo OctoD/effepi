@@ -1,4 +1,4 @@
-import { ExplicitCallable, Callable } from './pipe';
+import { ExplicitCallable } from './pipe';
 import { throwIfNotString } from './helpers';
 
 const regexps = {} as { [index: string]: RegExp };

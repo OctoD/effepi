@@ -7,7 +7,7 @@
     "node": "10.x"
   },
   "scripts": {
-    "lint": "eslint -c ./eslint.json",
+    "lint": "eslint -c ./eslint.json src/**/*.ts --fix",
     "test": "jest",
     "prepublishOnly": "tsc - p .",
     "size-limit": "tsc -p . && size-limit"
