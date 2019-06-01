@@ -2,7 +2,7 @@
   <img src="./logo.svg" />
 </div>
 
-effepi
+effepi [![Build Status](https://travis-ci.org/OctoD/effepi.svg?branch=master)](https://travis-ci.org/OctoD/effepi)
 ======
 
 Fun functional programming with pipelinable functions.
