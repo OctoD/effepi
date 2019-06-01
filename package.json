@@ -8,7 +8,7 @@
   },
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json src/**/*.ts --fix",
-    "prepublishOnly": "tsc - p .",
+    "prepublishOnly": "tsc -p .",
     "size-limit": "tsc -p . && size-limit",
     "test": "jest"
   },
