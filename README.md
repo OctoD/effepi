@@ -5,7 +5,7 @@
 effepi
 ======
 
-Put your functions in a pipeline.
+Fun functional programming with pipelinable functions.
 
 ## What effepi is
 
