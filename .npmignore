@@ -6,7 +6,10 @@ src
 
 # config files and dirs
 .github
+.prettierrc
 .vscode
+*.sketch
 coverage
 jest.config.js
+social-banner.png
 tsconfig.json
