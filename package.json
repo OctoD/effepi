@@ -1,6 +1,6 @@
 {
   "name": "effepi",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Pipelinable functions",
   "main": "dist/index.js",
   "engines": {
@@ -8,9 +8,9 @@
   },
   "scripts": {
     "lint": "eslint -c ./.eslintrc.json src/**/*.ts --fix",
-    "test": "jest",
     "prepublishOnly": "tsc - p .",
-    "size-limit": "tsc -p . && size-limit"
+    "size-limit": "tsc -p . && size-limit",
+    "test": "jest"
   },
   "repository": {
     "type": "git",

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="164px" height="175px" viewBox="0 0 164 175" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55.1 (78136) - https://sketchapp.com -->
+    <title>Logo</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <radialGradient cx="94.2259687%" cy="36.5485666%" fx="94.2259687%" fy="36.5485666%" r="100%" id="radialGradient-1">
+            <stop stop-color="#FF963B" offset="0%"></stop>
+            <stop stop-color="#FA5475" offset="100%"></stop>
+        </radialGradient>
+        <rect id="path-2" x="0" y="0" width="160" height="160" rx="16"></rect>
+        <filter x="-5.9%" y="-4.7%" width="111.9%" height="118.8%" filterUnits="objectBoundingBox" id="filter-3">
+            <feMorphology radius="6.5" operator="erode" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="13" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="7.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feComposite in="shadowBlurOuter1" in2="SourceAlpha" operator="out" result="shadowBlurOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.21 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-4">
+            <stop stop-color="#FA5475" offset="0%"></stop>
+            <stop stop-color="#FF963B" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Logo" transform="translate(2.000000, 0.000000)">
+            <g id="Background">
+                <use fill="black" fill-opacity="1" filter="url(#filter-3)" xlink:href="#path-2"></use>
+                <rect stroke="url(#radialGradient-1)" stroke-width="8" stroke-linejoin="square" fill="#FFFFFF" fill-rule="evenodd" x="4" y="4" width="152" height="152" rx="16"></rect>
+            </g>
+            <path d="M96,24 L112,24 C117.333333,24 120,26.6666667 120,32 L120,128 C120,133.333333 117.333333,136 112,136 C106.666667,136 101.333333,136 96,136 L96,48 L64,48 L63.8,72 L80,72 L80,80.708068 L80,96 L64,96 L63.8,136 L48,136 C43.3333333,136 41,133.590276 41,128.770827 C41,123.951378 41,91.6944354 41,32 C41,26.6666667 43.3333333,24 48,24 L96,24 Z" id="EffePi" stroke="url(#linearGradient-4)" stroke-width="8" fill="#FFFFFF" stroke-linejoin="round"></path>
+        </g>
+    </g>
+</svg>
