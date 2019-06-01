@@ -2,10 +2,10 @@
   <img src="./logo.svg" />
 </div>
 
-effepi
+effepi [![Build Status](https://travis-ci.org/OctoD/effepi.svg?branch=master)](https://travis-ci.org/OctoD/effepi)
 ======
 
-Put your functions in a pipeline.
+Fun functional programming with pipelinable functions.
 
 ## What effepi is
 
