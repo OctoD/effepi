@@ -23,13 +23,13 @@ describe(`miscellaneous tests, jff`, () => {
       context.mutate = () => {
         const pipeline = [mock];
 
-        return { pipeline };
+        return { pipeline } as any;
       };
 
       return previousValue;
     };
 
-    const isEven = pipe(misc.useCallValue())
+    const isEven = pipe<number, number>(misc.useCallValue())
       .pipe(aFunctionUsingContext)
       .toSyncFunction();
 
@@ -39,8 +39,8 @@ describe(`miscellaneous tests, jff`, () => {
   });
 
   test(`Pipeline composition`, () => {
-    const p1 = pipe(misc.useCallValue()).pipe(math.multiplyBy(5));
-    const p2 = pipe(misc.useCallValue())
+    const p1 = pipe<number, number>(misc.useCallValue()).pipe(math.multiplyBy(5));
+    const p2 = pipe<number, number>(misc.useCallValue())
       .pipe(math.divideBy(2))
       .pipe(math.pow(3));
     const p3 = pipe<number, number>(misc.useCallValue())

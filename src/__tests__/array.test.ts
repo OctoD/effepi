@@ -6,7 +6,7 @@ import * as math from '../math';
 
 describe(`Array functions`, () => {
   testFunction(array.applyEach, async () => {
-    const p = pipe(misc.useCallValue()).pipe(math.add(1));
+    const p = pipe<number, number>(misc.useCallValue()).pipe(math.add(1));
     const result = array.applyEach(p)([100, 200, 300], {
       callValue: 0 as any,
       executionFlow: 'async',
@@ -34,7 +34,7 @@ describe(`Array functions`, () => {
   });
 
   testFunction(array.applyEachSync, async () => {
-    const p = pipe(misc.useCallValue()).pipe(math.add(1));
+    const p = pipe<number, number>(misc.useCallValue()).pipe(math.add(1));
     const result = array.applyEachSync(p)([100, 200, 300], {
       callValue: 0 as any,
       executionFlow: 'sync',
