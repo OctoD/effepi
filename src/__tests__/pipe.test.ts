@@ -89,7 +89,7 @@ describe(`pipe`, () => {
           const pipeline = [mock];
           return {
             pipeline,
-          };
+          } as any;
         };
 
         return arg + 1;

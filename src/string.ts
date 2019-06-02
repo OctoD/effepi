@@ -82,7 +82,7 @@ export function replaceAll(needle: string, replaceWith: string): ExplicitCallabl
 }
 
 export function toBinaryArray(): ExplicitCallable<string, string[]> {
-  const binarizeCharset = (index: number, charset: string[]) => {
+  const binarizeCharset = (index: number, charset: string[]): string[] => {
     if (index >= charset.length) {
       return charset;
     }

@@ -38,11 +38,11 @@ describe(`Logical operators`, () => {
       return arg(this.previousValue, this);
     }
     const check = (value: number) => value > 5;
-    const simple = logical.ifElse(check, 'foo', 'bar');
-    const simplePipe = pipe(useCallValue()).pipe(simple);
-    const leftPipe = pipe(useCallValue()).pipe(pow(2));
-    const rightPipe = pipe(useCallValue()).pipe(divideBy(2));
-    const complexPipe = pipe(useCallValue()).pipe(logical.ifElse(check, leftPipe, rightPipe));
+    const simple = logical.ifElse(check as any, 'foo', 'bar');
+    const simplePipe = pipe<number, number>(useCallValue()).pipe(simple);
+    const leftPipe = pipe<number, number>(useCallValue()).pipe(pow(2));
+    const rightPipe = pipe<number, number>(useCallValue()).pipe(divideBy(2));
+    const complexPipe = pipe<number, number>(useCallValue()).pipe(logical.ifElse(check as any, leftPipe, rightPipe));
 
     expect(simple(4, { call, previousValue: 4 } as any)).toBe('foo');
     expect(simple(10, { call, previousValue: 10 } as any)).toBe('bar');

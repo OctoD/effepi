@@ -12,7 +12,7 @@ export interface ISwitchResult<TValue> {
 
 export function createSwitch<TValue>(...args: SwitchOption<TValue>[]): (arg: TValue) => unknown {
   return arg => {
-    let defaultCase: ISwitchResult<unknown> = undefined;
+    let defaultCase: ISwitchResult<unknown>;
     let tests = args.slice();
 
     while (tests.length > 0) {
@@ -28,7 +28,7 @@ export function createSwitch<TValue>(...args: SwitchOption<TValue>[]): (arg: TVa
       }
     }
 
-    if (defaultCase !== undefined) {
+    if (defaultCase! !== undefined) {
       return defaultCase.value;
     }
   };
@@ -47,7 +47,7 @@ export function createSwitchDefault<Value>(value: Value): SwitchOption<Value> {
 export function createSwitchOption<Match, Value>(match: Match, value: Value): SwitchOption<Value> {
   return arg => {
     if (arg === match) {
-      return { default: false, success: true, value };
+      return { default: false, success: true, value } as any;
     }
 
     return { default: false, success: false, value: undefined };
@@ -73,7 +73,7 @@ export function ifElse<TCondition extends Condition<K>, Left, Right, K>(
   return (value, context) => {
     throwIfNotFunction(`ifElse`, 'condition', condition);
 
-    const result = context.call(condition);
+    const result = context.call(<any>condition);
 
     if (isPipe(left) && !result) {
       return resolveIfIsPipe(context, left, value);

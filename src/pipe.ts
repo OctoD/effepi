@@ -153,7 +153,7 @@ function createMethods<TCallValue, TReturnValue>(
     memoized,
     type: 'pipe',
     pipe: <TNextValue>(callable: ExplicitCallable<TReturnValue, TNextValue>): IPipe<TCallValue, TNextValue> => {
-      return (createMethods<TCallValue, TNextValue>([...pipeline, callable], memoized) as unknown) as IPipe<
+      return (createMethods<TCallValue, TNextValue>([...pipeline, callable] as any, memoized) as unknown) as IPipe<
         TCallValue,
         TNextValue
       >;
@@ -177,8 +177,8 @@ function createResolver<TCallValue, TReturnValue>(
   pipeline: Pipeline,
   memoized: boolean
 ): ResolvedPipe<TCallValue, TReturnValue> {
-  let previousCallValue: TCallValue = undefined;
-  let previousReturnValue: TReturnValue = undefined;
+  let previousCallValue: TCallValue;
+  let previousReturnValue: TReturnValue;
 
   return async callValue => {
     if (memoized && callValue === previousCallValue) {
@@ -196,8 +196,8 @@ function createSyncResolver<TCallValue, TReturnValue>(
   pipeline: Pipeline,
   memoized: boolean
 ): ResolvedSyncPipe<TCallValue, TReturnValue> {
-  let previousCallValue: TCallValue = undefined;
-  let previousReturnValue: TReturnValue = undefined;
+  let previousCallValue: TCallValue;
+  let previousReturnValue: TReturnValue;
 
   return callValue => {
     if (memoized && callValue === previousCallValue) {
