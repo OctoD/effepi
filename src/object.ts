@@ -12,7 +12,7 @@ export function exclude<KObject, Keys extends keyof KObject = keyof KObject>(
     const keysArray = keys.slice();
 
     while (keysArray.length > 0) {
-      delete newObject[keysArray.pop()];
+      delete newObject[keysArray.pop()!];
     }
 
     return newObject;
@@ -40,7 +40,7 @@ export function keys(): Callable {
 export function maybe<TObject = unknown, TReturn = unknown>(
   path: string,
   fallbackValue?: TReturn
-): ExplicitCallable<TObject, TReturn> {
+): ExplicitCallable<TObject, TReturn | undefined> {
   const shouldUseFallback = (current: TObject) => {
     return isNullOrUndefined(current) && !isNullOrUndefined(fallbackValue);
   };
@@ -66,13 +66,13 @@ export function maybe<TObject = unknown, TReturn = unknown>(
     let current = arg;
 
     while (pathChunks.length) {
-      const key = pathChunks.pop();
+      const key = pathChunks.pop()!;
 
       if (!current) {
         break;
       }
 
-      current = current[key];
+      current = (current as any)[key];
     }
 
     if (shouldUseFallback(current)) {
@@ -107,7 +107,7 @@ export function pick<KObject, Keys extends keyof KObject = keyof KObject>(
       const key = keysArray.pop();
 
       if (arg[key]) {
-        newObject[key] = arg[key];
+        (newObject as any)[key] = arg[key];
       }
     }
 

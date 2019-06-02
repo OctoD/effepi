@@ -5,8 +5,8 @@ import testFunction from './__ignore__/testFunction';
 
 describe(`Miscellaneous functions`, () => {
   testFunction(misc.apply, async () => {
-    const p = pipe(misc.useCallValue()).pipe(math.add(10));
-    const testP = pipe(misc.useCallValue())
+    const p = pipe<number, number>(misc.useCallValue()).pipe(math.add(10));
+    const testP = pipe<number, number>(misc.useCallValue())
       .pipe(misc.apply(p))
       .pipe(math.multiplyBy(2));
 
@@ -14,8 +14,8 @@ describe(`Miscellaneous functions`, () => {
   });
 
   testFunction(misc.applySync, () => {
-    const p = pipe(misc.useCallValue()).pipe(math.add(10));
-    const testP = pipe(misc.useCallValue())
+    const p = pipe<number, number>(misc.useCallValue()).pipe(math.add(10));
+    const testP = pipe<number, number>(misc.useCallValue())
       .pipe(misc.applySync(p))
       .pipe(math.multiplyBy(2));
 
@@ -42,13 +42,13 @@ describe(`Miscellaneous functions`, () => {
     expect(() => misc.safeCall(fn)(1)).not.toThrow();
     expect(() => misc.safeCall(fn)({})).not.toThrow();
     expect(() => misc.safeCall(fn)([])).not.toThrow();
-    expect(() => misc.safeCall(fn)(undefined)).not.toThrow();
+    expect(() => misc.safeCall(fn)(undefined as any)).not.toThrow();
 
     expect(misc.safeCall(fn)('')).toBeUndefined();
     expect(misc.safeCall(fn)(1)).toBeUndefined();
     expect(misc.safeCall(fn)({})).toBeUndefined();
     expect(misc.safeCall(fn)([])).toBeUndefined();
-    expect(misc.safeCall(fn)(undefined)).toBe('hello');
+    expect(misc.safeCall(fn)(undefined as any)).toBe('hello');
     expect(misc.safeCall(fn, '100')([])).toBe('100');
   });
 

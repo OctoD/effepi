@@ -31,7 +31,7 @@ export function nth(index: number): Callable {
   return arg => {
     throwIfNotArray('nth', arg);
 
-    return arg[index];
+    return (<any>arg)[index];
   };
 }
 
