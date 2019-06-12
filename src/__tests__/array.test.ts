@@ -66,6 +66,11 @@ describe(`Array functions`, () => {
     expect(() => array.filter((a: number) => a > 2)(`123` as any, createContextMock())).toThrowError();
   });
 
+  testFunction(array.filterWith, () => {
+    expect(expect.arrayContaining(array.filterWith(2)([1, 2, 3], createContextMock()))).toEqual([2]);
+    expect(() => array.filterWith(`123`)(`123` as any, createContextMock())).toThrowError();
+  });
+
   testFunction(array.length, () => {
     expect(array.length()([1, 2, 3, 4, 5], createContextMock())).toBe(5);
     expect(() => array.length()({} as any, createContextMock())).toThrowError();

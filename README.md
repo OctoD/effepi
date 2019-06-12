@@ -41,6 +41,7 @@ yarn add effepi
           - [applyEach](#applyeach)
           - [applyEachSync](#applyeachsync)
           - [filter](#filter)
+          - [filterWith](#filterwith)
           - [join](#join)
           - [length](#length)
           - [nth](#nth)
@@ -252,6 +253,18 @@ If the previous value is not an array an error will be thrown
 pipe(useCallValue())
   .pipe(filter(a => a > 2))
   .resolveSync([1,2,3]) // [3]
+```
+
+###### filterWith
+
+Filters the previous value with a given value.
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(filterWith(2))
+  .resolveSync([1,2,3,2,3,2]) // [2,2,2]
 ```
 
 ###### join

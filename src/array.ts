@@ -31,6 +31,14 @@ export function filter<T = unknown>(
   };
 }
 
+export function filterWith<T>(value: T): ExplicitCallable<T[], T[]> {
+  return arr => {
+    throwIfNotArray('filterWith', arr);
+
+    return arr.filter(x => x === value);
+  };
+}
+
 export function join(char: string): ExplicitCallable<unknown[], string> {
   return arr => {
     throwIfNotArray('applyEach', arr);
