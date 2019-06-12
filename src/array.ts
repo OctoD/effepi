@@ -19,6 +19,14 @@ export function applyEachSync<T, R>(pipe: IPipe<T, R>): (arg: T[], context: ICon
   };
 }
 
+export function concat<T = unknown>(newArr: T[]): ExplicitCallable<T[], T[]> {
+  return arr => {
+    throwIfNotArray('concat', arr);
+
+    return arr.concat(newArr);
+  };
+}
+
 export function filter<T = unknown>(filterCallback: (arg: T) => boolean): ExplicitCallable<T[], T[]>;
 export function filter<T = unknown>(filterCallback: (arg: T, index: number) => boolean): ExplicitCallable<T[], T[]>;
 export function filter<T = unknown>(

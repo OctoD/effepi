@@ -40,6 +40,7 @@ yarn add effepi
       - [Array functions](#array-functions)
           - [applyEach](#applyeach)
           - [applyEachSync](#applyeachsync)
+          - [concat](#concat)
           - [filter](#filter)
           - [filterWith](#filterwith)
           - [join](#join)
@@ -89,7 +90,7 @@ yarn add effepi
       - [String functions](#string-functions)
           - [camelCase](#camelcase)
           - [chars](#chars)
-          - [concat](#concat)
+          - [concat](#concat-1)
           - [includes](#includes)
           - [length](#length-1)
           - [lowercase](#lowercase)
@@ -242,6 +243,18 @@ const doMath = pipe(useCallValue())
 pipe(useCallValue())
   .pipe(applyEach(doMath))
   .resolveSync([10, 20, 30]) // [36, 66, 96]
+```
+
+###### concat
+
+Concatenates previous value with another array.
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(concat([4,5,6]))
+  .resolveSync([1,2,3]) // [1,2,3,4,5,6]
 ```
 
 ###### filter
