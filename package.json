@@ -1,6 +1,6 @@
 {
   "name": "effepi",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Fun functional programming with pipelinable functions",
   "main": "dist/index.js",
   "engines": {
