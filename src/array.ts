@@ -27,6 +27,14 @@ export function join(char: string): ExplicitCallable<unknown[], string> {
   };
 }
 
+export function length(): ExplicitCallable<unknown[], number> {
+  return arr => {
+    throwIfNotArray('length', arr);
+
+    return arr.length;
+  };
+}
+
 export function nth(index: number): Callable {
   return arg => {
     throwIfNotArray('nth', arg);

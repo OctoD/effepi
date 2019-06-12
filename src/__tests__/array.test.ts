@@ -3,6 +3,7 @@ import { pipe } from '../pipe';
 import * as array from '../array';
 import * as misc from '../misc';
 import * as math from '../math';
+import createContextMock from './__ignore__/createContext';
 
 describe(`Array functions`, () => {
   testFunction(array.applyEach, async () => {
@@ -58,6 +59,12 @@ describe(`Array functions`, () => {
         call: jest.fn(),
       })
     ).toThrowError();
+  });
+
+  testFunction(array.length, () => {
+    expect(array.length()([1, 2, 3, 4, 5], createContextMock())).toBe(5);
+    expect(() => array.length()({} as any, createContextMock())).toThrowError();
+    expect(() => array.length()('unicorn!' as any, createContextMock())).toThrowError();
   });
 
   testFunction(array.nth, () => {
