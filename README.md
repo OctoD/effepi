@@ -105,6 +105,7 @@ yarn add effepi
           - [toBoolean](#toboolean)
           - [toDate](#todate)
           - [toNumber](#tonumber)
+          - [toSet](#toset)
           - [toString](#tostring)
   - [Examples](#examples)
   - [Contributing](#contributing)
@@ -976,6 +977,10 @@ pipe(useCallValue())
   .pipe(toNumber())
   .resolveSync('12000') // 12000
 ```
+
+###### toSet
+
+Converts previous value to a set. Previous value must be an array.
 
 ###### toString
 
