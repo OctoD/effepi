@@ -76,6 +76,18 @@ describe(`Array functions`, () => {
     expect(() => array.filterWith(`123`)(`123` as any, createContextMock())).toThrowError();
   });
 
+  testFunction(array.find, () => {
+    expect(array.find((arg: number) => arg === 1)([1, 2, 3], createContextMock())).toBe(1);
+    expect(array.find((arg: number) => arg === 5)([1, 2, 3], createContextMock())).toBeUndefined();
+    expect(() => array.find((arg: number) => arg === 5)('kaboom' as any, createContextMock())).toThrowError();
+  });
+
+  testFunction(array.findExact, () => {
+    expect(array.findExact(1)([1, 2, 3], createContextMock())).toBe(1);
+    expect(array.findExact(5)([1, 2, 3], createContextMock())).toBeUndefined();
+    expect(() => array.findExact(5)('kaboom' as any, createContextMock())).toThrowError();
+  });
+
   testFunction(array.length, () => {
     expect(array.length()([1, 2, 3, 4, 5], createContextMock())).toBe(5);
     expect(() => array.length()({} as any, createContextMock())).toThrowError();

@@ -43,6 +43,8 @@ yarn add effepi
           - [concat](#concat)
           - [filter](#filter)
           - [filterWith](#filterwith)
+          - [find](#find)
+          - [findExact](#findexact)
           - [join](#join)
           - [length](#length)
           - [nth](#nth)
@@ -279,6 +281,34 @@ If the previous value is not an array an error will be thrown
 pipe(useCallValue())
   .pipe(filterWith(2))
   .resolveSync([1,2,3,2,3,2]) // [2,2,2]
+```
+
+###### find
+
+Finds a value as specified by a find callback. The callback must return `true`.
+
+If the value is not found, the pipe will return an `undefined`
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(find((arg: number) => arg === 1))
+  .resolveSync([1,2,3,2,3,2]) // 1
+```
+
+###### findExact
+
+Finds an exacts value.
+
+If the value is not found, the pipe will return an `undefined`
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(find(1))
+  .resolveSync([1,2,3,2,3,2]) // 1
 ```
 
 ###### join

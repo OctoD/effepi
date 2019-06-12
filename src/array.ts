@@ -47,6 +47,32 @@ export function filterWith<T>(value: T): ExplicitCallable<T[], T[]> {
   };
 }
 
+export function find<T>(callback: (arg: T) => boolean): ExplicitCallable<T[], T | undefined>;
+export function find<T>(callback: (arg: T, index: number) => boolean): ExplicitCallable<T[], T | undefined>;
+export function find<T>(callback: (arg: T, index: number, arr: T[]) => boolean): ExplicitCallable<T[], T | undefined> {
+  return arr => {
+    throwIfNotArray('findExact', arr);
+
+    for (let i = 0; i < arr.length; i++) {
+      if (callback(arr[i], i, arr)) {
+        return arr[i];
+      }
+    }
+  };
+}
+
+export function findExact<T>(value: T): ExplicitCallable<T[], T | undefined> {
+  return arr => {
+    throwIfNotArray('findExact', arr);
+
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === value) {
+        return arr[i];
+      }
+    }
+  };
+}
+
 export function join(char: string): ExplicitCallable<unknown[], string> {
   return arr => {
     throwIfNotArray('applyEach', arr);
