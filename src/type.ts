@@ -1,5 +1,5 @@
 import { Callable } from './pipe';
-import { getTypeOf } from './helpers';
+import { getTypeOf, throwIfNotArray } from './helpers';
 
 export type TypeCheckerFunction = (value: unknown) => boolean;
 
@@ -129,6 +129,20 @@ export function toDate(): (arg: string | number) => Date {
  */
 export function toNumber(): (arg: unknown) => number {
   return arg => Number(arg);
+}
+
+/**
+ * Converts previous value to a set. Previous value must be an array.
+ *
+ * @export
+ * @returns {<T>(arg: T[]) => Set<T>}
+ */
+export function toSet(): <T>(arg: T[]) => Set<T> {
+  return arg => {
+    throwIfNotArray('toSet', arg);
+
+    return new Set(arg);
+  };
 }
 
 /**

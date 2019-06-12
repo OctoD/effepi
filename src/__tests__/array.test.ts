@@ -3,6 +3,7 @@ import { pipe } from '../pipe';
 import * as array from '../array';
 import * as misc from '../misc';
 import * as math from '../math';
+import createContextMock from './__ignore__/createContext';
 
 describe(`Array functions`, () => {
   testFunction(array.applyEach, async () => {
@@ -58,6 +59,39 @@ describe(`Array functions`, () => {
         call: jest.fn(),
       })
     ).toThrowError();
+  });
+
+  testFunction(array.concat, () => {
+    expect(expect.arrayContaining(array.concat([4, 5, 6])([1, 2, 3], createContextMock()))).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(() => array.concat([4, 5, 6])(123 as any, createContextMock())).toThrowError();
+  });
+
+  testFunction(array.filter, () => {
+    expect(expect.arrayContaining(array.filter((a: number) => a > 2)([1, 2, 3], createContextMock()))).toEqual([3]);
+    expect(() => array.filter((a: number) => a > 2)(`123` as any, createContextMock())).toThrowError();
+  });
+
+  testFunction(array.filterWith, () => {
+    expect(expect.arrayContaining(array.filterWith(2)([1, 2, 3], createContextMock()))).toEqual([2]);
+    expect(() => array.filterWith(`123`)(`123` as any, createContextMock())).toThrowError();
+  });
+
+  testFunction(array.find, () => {
+    expect(array.find((arg: number) => arg === 1)([1, 2, 3], createContextMock())).toBe(1);
+    expect(array.find((arg: number) => arg === 5)([1, 2, 3], createContextMock())).toBeUndefined();
+    expect(() => array.find((arg: number) => arg === 5)('kaboom' as any, createContextMock())).toThrowError();
+  });
+
+  testFunction(array.findExact, () => {
+    expect(array.findExact(1)([1, 2, 3], createContextMock())).toBe(1);
+    expect(array.findExact(5)([1, 2, 3], createContextMock())).toBeUndefined();
+    expect(() => array.findExact(5)('kaboom' as any, createContextMock())).toThrowError();
+  });
+
+  testFunction(array.length, () => {
+    expect(array.length()([1, 2, 3, 4, 5], createContextMock())).toBe(5);
+    expect(() => array.length()({} as any, createContextMock())).toThrowError();
+    expect(() => array.length()('unicorn!' as any, createContextMock())).toThrowError();
   });
 
   testFunction(array.nth, () => {

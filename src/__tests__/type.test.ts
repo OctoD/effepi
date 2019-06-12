@@ -49,6 +49,11 @@ describe(`Type conversion functions`, () => {
     expect(type.toNumber()('100')).toBe(100);
   });
 
+  testFunction(type.toSet, () => {
+    expect(type.toSet()([1, 2, 3, 3, 3]) instanceof Set).toBeTruthy();
+    expect(type.toSet()([1, 2, 3, 3, 3]).size).toBe(3);
+  });
+
   testFunction(type.toString, () => {
     expect(type.toString()(100)).toBe('100');
   });

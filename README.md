@@ -27,78 +27,92 @@ yarn add effepi
 
 ## Index
 
-- [How to use it](#how-to-use-it)
-    - [pipeline context](#pipeline-context)
-- [Functions](#functions)
-    - [Array functions](#array-functions)
-        - [applyEach](#applyeach)
-        - [applyEachSync](#applyeachsync)
-        - [join](#join)
-        - [nth](#nth)
-        - [reverse](#reverse)
-    - [Boolean functions](#boolean-functions)
-        - [F](#f)
-        - [T](#t)
-        - [inverse](#inverse)
-    - [Math functions](#math-functions)
-        - [add](#add)
-        - [changeSign](#changesign)
-        - [decrement](#decrement)
-        - [divideBy](#divideby)
-        - [increment](#increment)
-        - [multiplyBy](#multiplyby)
-        - [negative](#negative)
-        - [positive](#positive)
-        - [pow](#pow)
-        - [root](#root)
-        - [subtract](#subtract)
-        - [takeBetween](#takebetween)
-        - [takeGreater](#takegreater)
-        - [takeGreaterThan](#takegreaterthan)
-        - [takeLower](#takelower)
-        - [takeLowerThan](#takelowerthan)
-        - [takeOuter](#takeouter)
-    - [Logical operators functions](#logical-operators-functions)
-        - [createSwitch](#createswitch)
-        - [fold](#fold)
-        - [ifElse](#ifelse)
-    - [Object functions](#object-functions)
-        - [exclude](#exclude)
-        - [hasProperty](#hasproperty)
-        - [keys](#keys)
-        - [maybe](#maybe)
-        - [merge](#merge)
-        - [pick](#pick)
-    - [Misc functions](#misc-functions)
-        - [apply](#apply)
-        - [applySync](#applysync)
-        - [put](#put)
-        - [safeCall](#safecall)
-        - [useCallValue](#usecallvalue)
-        - [useValue](#usevalue)
-    - [String functions](#string-functions)
-        - [camelCase](#camelcase)
-        - [chars](#chars)
-        - [concat](#concat)
-        - [includes](#includes)
-        - [length](#length)
-        - [lowercase](#lowercase)
-        - [pascalCase](#pascalcase)
-        - [repeat](#repeat)
-        - [replaceAll](#replaceall)
-        - [toBinaryArray](#tobinaryarray)
-        - [uppercase](#uppercase)
-    - [Type functions](#type-functions)
-        - [exactTypeOf](#exacttypeof)
-        - [ofType](#oftype)
-        - [toArray](#toarray)
-        - [toBoolean](#toboolean)
-        - [toDate](#todate)
-        - [toNumber](#tonumber)
-        - [toString](#tostring)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [Licence](#licence)
+- [effepi ![Build Status](https://travis-ci.org/OctoD/effepi)](#effepi-build-statushttpstravis-ciorgoctodeffepi)
+  - [What effepi is](#what-effepi-is)
+  - [Install](#install)
+      - [Npm](#npm)
+      - [Yarn](#yarn)
+  - [Index](#index)
+  - [Install](#install-1)
+  - [How to use it](#how-to-use-it)
+      - [pipeline context](#pipeline-context)
+  - [Functions](#functions)
+      - [Array functions](#array-functions)
+          - [applyEach](#applyeach)
+          - [applyEachSync](#applyeachsync)
+          - [concat](#concat)
+          - [filter](#filter)
+          - [filterWith](#filterwith)
+          - [find](#find)
+          - [findExact](#findexact)
+          - [join](#join)
+          - [length](#length)
+          - [nth](#nth)
+          - [reverse](#reverse)
+      - [Boolean functions](#boolean-functions)
+          - [F](#f)
+          - [T](#t)
+          - [inverse](#inverse)
+      - [Math functions](#math-functions)
+          - [add](#add)
+          - [changeSign](#changesign)
+          - [decrement](#decrement)
+          - [divideBy](#divideby)
+          - [increment](#increment)
+          - [multiplyBy](#multiplyby)
+          - [negative](#negative)
+          - [positive](#positive)
+          - [pow](#pow)
+          - [root](#root)
+          - [subtract](#subtract)
+          - [takeBetween](#takebetween)
+          - [takeGreater](#takegreater)
+          - [takeGreaterThan](#takegreaterthan)
+          - [takeLower](#takelower)
+          - [takeLowerThan](#takelowerthan)
+          - [takeOuter](#takeouter)
+      - [Logical operators functions](#logical-operators-functions)
+          - [createSwitch](#createswitch)
+          - [fold](#fold)
+          - [ifElse](#ifelse)
+      - [Object functions](#object-functions)
+          - [exclude](#exclude)
+          - [hasProperty](#hasproperty)
+          - [keys](#keys)
+          - [maybe](#maybe)
+          - [merge](#merge)
+          - [pick](#pick)
+      - [Misc functions](#misc-functions)
+          - [apply](#apply)
+          - [applySync](#applysync)
+          - [put](#put)
+          - [safeCall](#safecall)
+          - [useCallValue](#usecallvalue)
+          - [useValue](#usevalue)
+      - [String functions](#string-functions)
+          - [camelCase](#camelcase)
+          - [chars](#chars)
+          - [concat](#concat-1)
+          - [includes](#includes)
+          - [length](#length-1)
+          - [lowercase](#lowercase)
+          - [pascalCase](#pascalcase)
+          - [repeat](#repeat)
+          - [replaceAll](#replaceall)
+          - [toBinaryArray](#tobinaryarray)
+          - [uppercase](#uppercase)
+      - [Type functions](#type-functions)
+          - [exactTypeOf](#exacttypeof)
+          - [ofType](#oftype)
+          - [toArray](#toarray)
+          - [toBoolean](#toboolean)
+          - [toDate](#todate)
+          - [toNumber](#tonumber)
+          - [toSet](#toset)
+          - [toString](#tostring)
+  - [Examples](#examples)
+  - [Contributing](#contributing)
+  - [Licence](#licence)
 
 ## Install
 
@@ -233,6 +247,70 @@ pipe(useCallValue())
   .resolveSync([10, 20, 30]) // [36, 66, 96]
 ```
 
+###### concat
+
+Concatenates previous value with another array.
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(concat([4,5,6]))
+  .resolveSync([1,2,3]) // [1,2,3,4,5,6]
+```
+
+###### filter
+
+Filters the previous value with a given callback. The callback must return a boolean value. 
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(filter(a => a > 2))
+  .resolveSync([1,2,3]) // [3]
+```
+
+###### filterWith
+
+Filters the previous value with a given value.
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(filterWith(2))
+  .resolveSync([1,2,3,2,3,2]) // [2,2,2]
+```
+
+###### find
+
+Finds a value as specified by a find callback. The callback must return `true`.
+
+If the value is not found, the pipe will return an `undefined`
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(find((arg: number) => arg === 1))
+  .resolveSync([1,2,3,2,3,2]) // 1
+```
+
+###### findExact
+
+Finds an exacts value.
+
+If the value is not found, the pipe will return an `undefined`
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(find(1))
+  .resolveSync([1,2,3,2,3,2]) // 1
+```
+
 ###### join
 
 Joins the previous value with a given char. 
@@ -243,6 +321,18 @@ If the previous value is not an array an error will be thrown
 pipe(useCallValue())
   .pipe(join('*'))
   .resolveSync([1,2,3]) // '1*2*3'
+```
+
+###### length
+
+Returns the length of the previous value.
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(length())
+  .resolveSync([1,2,3]) // 3
 ```
 
 ###### nth
@@ -930,6 +1020,10 @@ pipe(useCallValue())
   .pipe(toNumber())
   .resolveSync('12000') // 12000
 ```
+
+###### toSet
+
+Converts previous value to a set. Previous value must be an array.
 
 ###### toString
 
