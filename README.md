@@ -40,6 +40,7 @@ yarn add effepi
       - [Array functions](#array-functions)
           - [applyEach](#applyeach)
           - [applyEachSync](#applyeachsync)
+          - [filter](#filter)
           - [join](#join)
           - [length](#length)
           - [nth](#nth)
@@ -239,6 +240,18 @@ const doMath = pipe(useCallValue())
 pipe(useCallValue())
   .pipe(applyEach(doMath))
   .resolveSync([10, 20, 30]) // [36, 66, 96]
+```
+
+###### filter
+
+Filters the previous value with a given callback. The callback must return a boolean value. 
+
+If the previous value is not an array an error will be thrown
+
+```ts
+pipe(useCallValue())
+  .pipe(filter(a => a > 2))
+  .resolveSync([1,2,3]) // [3]
 ```
 
 ###### join
