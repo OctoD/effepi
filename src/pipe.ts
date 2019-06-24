@@ -1,4 +1,4 @@
-import { IContext, create, update } from './context';
+import { IContext, create, update, applyMutation } from './context';
 
 export type Callable = <Input, Output>(input: Input, context: IContext<unknown, Input>) => Output;
 export type ExecutionContextFlow = 'async' | 'sync';
@@ -52,21 +52,6 @@ export interface IPipe<InitialCallable, Output> {
    * @memberof IPipe
    */
   toSyncFunction(): (input: InitialCallable) => Output;
-}
-
-function applyMutation(context: IContext, pipeline: Pipeline): [IContext, Pipeline] {
-  if (typeof context.mutate !== 'function') {
-    return [context, pipeline];
-  }
-
-  const mutations = context.mutate(pipeline);
-  const newPipeline = pipeline.slice();
-
-  newPipeline.splice(context.mutationIndex, 0, ...mutations.pipeline);
-
-  context.mutate = undefined;
-
-  return [context, newPipeline];
 }
 
 function createFunction<TCallValue, TReturnValue>(

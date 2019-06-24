@@ -58,6 +58,28 @@ export interface IMutatedContext {
   pipeline: Pipeline;
 }
 
+export function applyMutation(context: IContext, pipeline: Pipeline): [IContext, Pipeline] {
+  if (typeof context.mutate !== 'function') {
+    return [context, pipeline];
+  }
+
+  const mutations = context.mutate(pipeline);
+  const newPipeline = pipeline.slice();
+
+  newPipeline.splice(context.mutationIndex, 0, ...mutations.pipeline);
+
+  context.mutate = undefined;
+
+  return [context, newPipeline];
+}
+
+/**
+ * @export
+ * @template CallValue
+ * @param {CallValue} callValue
+ * @param {ExecutionContextFlow} executionFlow
+ * @returns {IContext<CallValue>}
+ */
 export function create<CallValue>(callValue: CallValue, executionFlow: ExecutionContextFlow): IContext<CallValue> {
   return {
     callValue,
@@ -71,6 +93,14 @@ export function create<CallValue>(callValue: CallValue, executionFlow: Execution
   };
 }
 
+/**
+ * @export
+ * @template CallValue
+ * @template PreviousValue
+ * @param {IContext<CallValue>} context
+ * @param {PreviousValue} previousValue
+ * @returns {IContext<CallValue, PreviousValue>}
+ */
 export function update<CallValue, PreviousValue = unknown>(
   context: IContext<CallValue>,
   previousValue: PreviousValue
