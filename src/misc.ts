@@ -1,5 +1,6 @@
-import { IPipe, ExplicitCallable, IContext } from './pipe';
+import { IPipe, ExplicitCallable, PassThroughCallable } from './pipe';
 import { throwContextExecutionFlow } from './helpers';
+import { IContext } from './context';
 
 /**
  * Applies a pipeline using the async `resolve` method.
@@ -56,6 +57,37 @@ export function applySync<Initial, Output>(pipe: IPipe<Initial, Output>): Explic
   return (arg, context) => {
     throwContextExecutionFlow('applySync', context, 'sync');
     return pipe.resolveSync(arg);
+  };
+}
+
+/**
+ * Breaks execution (resolve or call) at a certain point.
+ *
+ * ```ts
+ * const p = pipe(useCallValue())
+ *    .pipe(add(10))
+ *    .pipe(breakpoint())
+ *    .pipe(multiplyBy(2))
+ *    .pipe(breakpoint())
+ *    .pipe(multiplyBy(2));
+ *
+ * p.start(10)
+ * p.hasNext() // true
+ * p.next() // 20
+ * p.hasNext() // true
+ * p.next() // 40
+ * p.hasNext() // true
+ * p.next() // 80
+ * p.hasNext() // false
+ * p.next() // throws an error
+ * ```
+ *
+ * @export
+ * @returns {PassThroughCallable}
+ */
+export function breakpoint(): PassThroughCallable {
+  return <Value>(value: Value, context: IContext<unknown, Value>) => {
+    return value;
   };
 }
 

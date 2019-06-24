@@ -1,8 +1,9 @@
 import * as logical from '../logical';
 import { divideBy, pow } from '../math';
 import { useCallValue } from '../misc';
-import { ExplicitCallable, IContext, pipe } from '../pipe';
+import { ExplicitCallable, pipe } from '../pipe';
 import testFunction from './__ignore__/testFunction';
+import { IContext } from '../context';
 
 describe(`Logical operators`, () => {
   testFunction(logical.fold, () => {

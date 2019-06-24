@@ -1,6 +1,7 @@
-import { ExplicitCallable, IContext, Callable } from './pipe';
+import { ExplicitCallable, Callable } from './pipe';
 import { throwIfNotObject, isPipe } from './helpers';
 import { isNullOrUndefined } from 'util';
+import { IContext } from './context';
 
 /**
  * Returns previous value except for the given keys. This applies only to objects.

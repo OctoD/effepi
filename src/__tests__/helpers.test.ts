@@ -1,6 +1,7 @@
 import * as helpers from '../helpers';
 import testFunction from './__ignore__/testFunction';
-import { IContext, pipe } from '../pipe';
+import { pipe } from '../pipe';
+import { IContext } from '../context';
 
 describe(`tests helper functions`, () => {
   testFunction(helpers.getTypeOf, () => {

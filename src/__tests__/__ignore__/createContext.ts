@@ -1,4 +1,5 @@
-import { ExecutionContextFlow, IContext } from '../../pipe';
+import { ExecutionContextFlow } from '../../pipe';
+import { IContext } from '../../context';
 
 export default function createContextMock<CallValue = any, PreviousValue = any>(
   callValue: CallValue | undefined = undefined,

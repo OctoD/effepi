@@ -1,8 +1,9 @@
-import { pipe, IContext } from '../pipe';
+import { pipe } from '../pipe';
 import * as misc from '../misc';
 import * as math from '../math';
 import * as string from '../string';
 import * as type from '../type';
+import { IContext } from '../context';
 
 describe(`miscellaneous tests, jff`, () => {
   test(`A vat calculator`, () => {
