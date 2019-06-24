@@ -87,6 +87,7 @@ export function applySync<Initial, Output>(pipe: IPipe<Initial, Output>): Explic
  */
 export function breakpoint(): PassThroughCallable {
   return <Value>(value: Value, context: IContext<unknown, Value>) => {
+    context.break();
     return value;
   };
 }

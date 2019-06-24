@@ -1,19 +1,14 @@
 import { ExecutionContextFlow } from '../../pipe';
-import { IContext } from '../../context';
+import { IContext, create } from '../../context';
 
 export default function createContextMock<CallValue = any, PreviousValue = any>(
   callValue: CallValue | undefined = undefined,
   executionFlow: ExecutionContextFlow = 'sync',
   previousValue: any = undefined
 ): IContext<CallValue, PreviousValue> {
-  return {
-    callValue: callValue as any,
-    executionFlow,
-    mutationIndex: 0,
-    previousValue,
-    previousValues: [],
-    call(this: IContext<CallValue, PreviousValue>, callable) {
-      return callable(this.previousValue, this);
-    },
-  };
+  const context = create(callValue, executionFlow);
+
+  (context as any).previousValue = previousValue as any;
+
+  return context as IContext<CallValue, PreviousValue>;
 }
