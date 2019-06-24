@@ -1,4 +1,4 @@
-import { ExecutionContextFlow, ExplicitCallable, Pipeline, IMutatedContext } from './pipe';
+import { ExecutionContextFlow, ExplicitCallable, Pipeline } from './pipe';
 
 export interface IContext<CallValue = unknown, PreviousValue = unknown> {
   /**
@@ -47,6 +47,15 @@ export interface IContext<CallValue = unknown, PreviousValue = unknown> {
    * @memberof IContext
    */
   mutate?(pipeline: Pipeline): IMutatedContext;
+}
+
+export interface IMutatedContext {
+  /**
+   * A list of new mutations to append after the current one has been applied.
+   * @type {Pipeline}
+   * @memberof IMutatedContext
+   */
+  pipeline: Pipeline;
 }
 
 export function create<CallValue>(callValue: CallValue, executionFlow: ExecutionContextFlow): IContext<CallValue> {

@@ -54,15 +54,6 @@ export interface IPipe<InitialCallable, Output> {
   toSyncFunction(): (input: InitialCallable) => Output;
 }
 
-export interface IMutatedContext {
-  /**
-   * A list of new mutations to append after the current one has been applied.
-   * @type {Pipeline}
-   * @memberof IMutatedContext
-   */
-  pipeline: Pipeline;
-}
-
 function applyMutation(context: IContext, pipeline: Pipeline): [IContext, Pipeline] {
   if (typeof context.mutate !== 'function') {
     return [context, pipeline];
