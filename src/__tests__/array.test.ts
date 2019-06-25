@@ -8,57 +8,25 @@ import createContextMock from './__ignore__/createContext';
 describe(`Array functions`, () => {
   testFunction(array.applyEach, async () => {
     const p = pipe<number, number>(misc.useCallValue()).pipe(math.add(1));
-    const result = array.applyEach(p)([100, 200, 300], {
-      callValue: 0 as any,
-      executionFlow: 'async',
-      mutationIndex: 0,
-      previousValue: 0,
-      previousValues: [],
-      call: jest.fn(),
-    });
+    const result = array.applyEach(p)([100, 200, 300], createContextMock(0 as any, 'async', 0));
     const exresult = await Promise.all(result);
 
     expect(exresult[0]).toBe(101);
     expect(exresult[1]).toBe(201);
     expect(exresult[2]).toBe(301);
 
-    expect(() =>
-      array.applyEach(p)([100, 200, 300], {
-        callValue: 0 as any,
-        executionFlow: 'sync',
-        mutationIndex: 0,
-        previousValue: 0,
-        previousValues: [],
-        call: jest.fn(),
-      })
-    ).toThrowError();
+    expect(() => array.applyEach(p)([100, 200, 300], createContextMock(0 as any, 'sync', 0))).toThrowError();
   });
 
   testFunction(array.applyEachSync, async () => {
     const p = pipe<number, number>(misc.useCallValue()).pipe(math.add(1));
-    const result = array.applyEachSync(p)([100, 200, 300], {
-      callValue: 0 as any,
-      executionFlow: 'sync',
-      mutationIndex: 0,
-      previousValue: 0,
-      previousValues: [],
-      call: jest.fn(),
-    });
+    const result = array.applyEachSync(p)([100, 200, 300], createContextMock(0 as any, 'sync', 0));
 
     expect(result[0]).toBe(101);
     expect(result[1]).toBe(201);
     expect(result[2]).toBe(301);
 
-    expect(() =>
-      array.applyEachSync(p)([100, 200, 300], {
-        callValue: 0 as any,
-        executionFlow: 'async',
-        mutationIndex: 0,
-        previousValue: 0,
-        previousValues: [],
-        call: jest.fn(),
-      })
-    ).toThrowError();
+    expect(() => array.applyEachSync(p)([100, 200, 300], createContextMock(0 as any, 'async', 0))).toThrowError();
   });
 
   testFunction(array.concat, () => {
