@@ -21,6 +21,12 @@ export interface IPipe<InitialCallable, Output> {
    */
   readonly type: 'pipe';
   /**
+   * Runs until next breakpoint
+   * @returns {IIterablePipe<InitialCallable, Output>}
+   * @memberof IPipe
+   */
+  iter(callValue: InitialCallable): IIterablePipe<InitialCallable, Output>;
+  /**
    * Method for chaining a function
    * @template NextValue
    * @param {ExplicitCallable<Output, NextValue>} callable
@@ -54,12 +60,83 @@ export interface IPipe<InitialCallable, Output> {
   toSyncFunction(): (input: InitialCallable) => Output;
 }
 
+export interface IIterablePipe<InitialCallable, Output> {
+  hasnext(): boolean;
+  hasprev(): boolean;
+  next(): IIterablePipe<InitialCallable, Output>;
+  prev(): IIterablePipe<InitialCallable, Output>;
+  value<Value = unknown>(): Value;
+}
+
 function createFunction<TCallValue, TReturnValue>(
   pipeline: Pipeline,
   memoized: boolean
 ): (arg: TCallValue) => Promise<TReturnValue> {
   const resolver = createResolver<TCallValue, TReturnValue>(pipeline, memoized);
   return arg => resolver(arg);
+}
+
+function createIter<CallValue, NextValue>(
+  pipeline: Pipeline
+): (callValue: CallValue) => IIterablePipe<CallValue, NextValue> {
+  return callValue => {
+    const context = create(callValue, 'sync');
+    return createIterableMethods(callValue, pipeline, context);
+  };
+}
+
+function createIterableMethods<CallValue, ReturnValue>(
+  callValue: CallValue,
+  pipeline: Pipeline,
+  context: IContext
+): IIterablePipe<CallValue, ReturnValue> {
+  const breakpoint = context.mutationIndex;
+  const methods = <IIterablePipe<CallValue, ReturnValue>>{};
+
+  function getPreviousBreakpoint(mutationIndex: number, breakpoints: number[]): number {
+    const copy = breakpoints.slice();
+
+    while (copy.length > 0) {
+      const breakpoint = breakpoints.pop()!;
+
+      if (breakpoint < mutationIndex) {
+        return breakpoint;
+      }
+    }
+
+    return 0;
+  }
+
+  methods.hasnext = () => hasNextIterable(context, pipeline.length);
+  methods.hasprev = () => hasPrevIterable(context);
+  methods.next = () => {
+    const [nextContext, value] = resolveSync(pipeline, breakpoint, context, true);
+
+    return createIterableMethods(value, pipeline, nextContext);
+  };
+  methods.prev = () => {
+    const previousBreakpoint = getPreviousBreakpoint(breakpoint, context.breakpoints);
+    const previousBreakpointIndex = context.breakpoints.indexOf(previousBreakpoint);
+    const breakpoints = context.breakpoints.slice(0, previousBreakpointIndex);
+    const previousValues = context.previousValues.slice(0, previousBreakpoint);
+    const previousValueIndex = previousValues.length - 1;
+    const previousValue = previousValues[previousValueIndex > 0 ? previousValueIndex : 0];
+    const prevContext = update(
+      {
+        ...context,
+        breakpoints,
+        mutationIndex: previousBreakpoint,
+        previousValue,
+        previousValues,
+      },
+      previousValue
+    );
+
+    return createIterableMethods(previousValue, pipeline, prevContext);
+  };
+  methods.value = <Value = unknown>() => (callValue as unknown) as Value;
+
+  return methods;
 }
 
 function createMethods<TCallValue, TReturnValue>(
@@ -69,6 +146,7 @@ function createMethods<TCallValue, TReturnValue>(
   return {
     memoized,
     type: 'pipe',
+    iter: createIter(pipeline),
     pipe: <TNextValue>(callable: ExplicitCallable<TReturnValue, TNextValue>): IPipe<TCallValue, TNextValue> => {
       return (createMethods<TCallValue, TNextValue>([...pipeline, callable] as any, memoized) as unknown) as IPipe<
         TCallValue,
@@ -103,7 +181,8 @@ function createResolver<TCallValue, TReturnValue>(
     }
 
     previousCallValue = callValue;
-    previousReturnValue = (await resolve(pipeline, 0, create(callValue, 'async'))) as TReturnValue;
+    const [_, value] = await resolve(pipeline, 0, create(callValue, 'async'));
+    previousReturnValue = value as TReturnValue;
 
     return previousReturnValue;
   };
@@ -122,34 +201,61 @@ function createSyncResolver<TCallValue, TReturnValue>(
     }
 
     previousCallValue = callValue;
-    previousReturnValue = resolveSync(pipeline, 0, create(callValue, 'sync')) as TReturnValue;
+    const [_, value] = resolveSync(pipeline, 0, create(callValue, 'sync'));
+    previousReturnValue = value as TReturnValue;
 
     return previousReturnValue;
   };
 }
 
-async function resolve(pipeline: Pipeline, index: number, context: IContext): Promise<unknown> {
+function hasNextIterable(context: IContext, pipelineSize: number): boolean {
+  return context.mutationIndex < pipelineSize;
+}
+
+function hasPrevIterable(context: IContext): boolean {
+  return context.mutationIndex > 0;
+}
+
+async function resolve(
+  pipeline: Pipeline,
+  index: number,
+  context: IContext,
+  stopOnBreakpoint = false
+): Promise<[IContext, unknown]> {
   if (index >= pipeline.length) {
-    return context.previousValue;
+    return [context, context.previousValue];
   }
 
   const previousValue = await Promise.resolve(pipeline[index](context.previousValue, context));
   const updatedContext = update<unknown, unknown>(context, previousValue);
   const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
-  return resolve(mutatedPipeline, index + 1, mutatedContext);
+  return resolve(mutatedPipeline, index + 1, mutatedContext, stopOnBreakpoint);
 }
 
-function resolveSync(pipeline: Pipeline, index: number, context: IContext): unknown {
+function resolveSync(
+  pipeline: Pipeline,
+  index: number,
+  context: IContext,
+  stopOnBreakpoint = false
+): [IContext, unknown] {
   if (index >= pipeline.length) {
-    return context.previousValue;
+    return [context, context.previousValue];
   }
 
   const previousValue = pipeline[index](context.previousValue, context);
   const updatedContext = update<unknown, unknown>(context, previousValue);
   const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
-  return resolveSync(mutatedPipeline, index + 1, mutatedContext);
+  if (shouldStopAndBreakOn(stopOnBreakpoint, index, mutatedContext.breakpoints)) {
+    return [mutatedContext, previousValue];
+  }
+
+  return resolveSync(mutatedPipeline, index + 1, mutatedContext, stopOnBreakpoint);
+}
+
+function shouldStopAndBreakOn(stopOnBreakpoint: boolean, breakpoint: number, breakpoints: number[]): boolean {
+  return stopOnBreakpoint && breakpoints.indexOf(breakpoint) >= 0;
 }
 
 /**
@@ -164,7 +270,7 @@ function resolveSync(pipeline: Pipeline, index: number, context: IContext): unkn
 export function pipe<CallValue, NextValue>(
   callable: ExplicitCallable<CallValue, NextValue>,
   memoized: boolean = false
-) {
+): IPipe<CallValue, NextValue> {
   const pipeline = [callable] as Pipeline;
-  return createMethods<CallValue, NextValue>(pipeline, memoized);
+  return createMethods<CallValue, NextValue>(pipeline, memoized) as IPipe<CallValue, NextValue>;
 }

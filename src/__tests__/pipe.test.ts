@@ -6,6 +6,7 @@ describe(`pipe`, () => {
   test(`creates a pipe`, async () => {
     const p = pipe(() => 10);
 
+    expect(p).toHaveProperty('iter');
     expect(p).toHaveProperty('pipe');
     expect(p).toHaveProperty('resolve');
     expect(p).toHaveProperty('resolveSync');
@@ -151,5 +152,59 @@ describe(`pipe`, () => {
 
     expect(mock).toBeCalledTimes(3);
     expect(mockSync).toBeCalledTimes(3);
+  });
+
+  test(`a pipeline can be iterable`, () => {
+    const test = pipe<number, number>(misc.useCallValue())
+      .pipe(math.add(10))
+      .pipe(misc.breakpoint())
+      .pipe(math.multiplyBy(2))
+      .pipe(misc.breakpoint())
+      .pipe(math.multiplyBy(2))
+      .iter(10);
+
+    expect(test.hasnext()).toBeTruthy();
+    expect(test.hasprev()).toBeFalsy();
+
+    const first = test.next();
+
+    expect(first.value()).toBe(20);
+    expect(first.hasprev()).toBeTruthy();
+    expect(first.hasnext()).toBeTruthy();
+
+    const second = first.next();
+
+    expect(second.value()).toBe(40);
+    expect(second.hasprev()).toBeTruthy();
+    expect(second.hasnext()).toBeTruthy();
+
+    const third = second.next();
+
+    expect(third.value()).toBe(80);
+    expect(third.hasprev()).toBeTruthy();
+    expect(third.hasnext()).toBeFalsy();
+
+    expect(first.next().value()).toBe(40);
+    expect(
+      first
+        .next()
+        .next()
+        .value()
+    ).toBe(80);
+
+    expect(third.prev().value()).toBe(40);
+    expect(
+      third
+        .prev()
+        .prev()
+        .value()
+    ).toBe(20);
+    expect(
+      third
+        .prev()
+        .prev()
+        .prev()
+        .value()
+    ).toBeUndefined();
   });
 });

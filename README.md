@@ -27,92 +27,93 @@ yarn add effepi
 
 ## Index
 
-- [effepi ![Build Status](https://travis-ci.org/OctoD/effepi)](#effepi-build-statushttpstravis-ciorgoctodeffepi)
-  - [What effepi is](#what-effepi-is)
-  - [Install](#install)
-      - [Npm](#npm)
-      - [Yarn](#yarn)
-  - [Index](#index)
-  - [Install](#install-1)
-  - [How to use it](#how-to-use-it)
+- [effepi ![Build Status](https://travis-ci.org/OctoD/effepi)](#effepi-Build-Statushttpstravis-ciorgOctoDeffepi)
+  - [What effepi is](#What-effepi-is)
+  - [Install](#Install)
+      - [Npm](#Npm)
+      - [Yarn](#Yarn)
+  - [Index](#Index)
+  - [Install](#Install-1)
+  - [How to use it](#How-to-use-it)
       - [pipeline context](#pipeline-context)
-  - [Functions](#functions)
-      - [Array functions](#array-functions)
-          - [applyEach](#applyeach)
-          - [applyEachSync](#applyeachsync)
+  - [Functions](#Functions)
+      - [Array functions](#Array-functions)
+          - [applyEach](#applyEach)
+          - [applyEachSync](#applyEachSync)
           - [concat](#concat)
           - [filter](#filter)
-          - [filterWith](#filterwith)
+          - [filterWith](#filterWith)
           - [find](#find)
-          - [findExact](#findexact)
+          - [findExact](#findExact)
           - [join](#join)
           - [length](#length)
           - [nth](#nth)
           - [reverse](#reverse)
-      - [Boolean functions](#boolean-functions)
-          - [F](#f)
-          - [T](#t)
+      - [Boolean functions](#Boolean-functions)
+          - [F](#F)
+          - [T](#T)
           - [inverse](#inverse)
-      - [Math functions](#math-functions)
+      - [Math functions](#Math-functions)
           - [add](#add)
-          - [changeSign](#changesign)
+          - [changeSign](#changeSign)
           - [decrement](#decrement)
-          - [divideBy](#divideby)
+          - [divideBy](#divideBy)
           - [increment](#increment)
-          - [multiplyBy](#multiplyby)
+          - [multiplyBy](#multiplyBy)
           - [negative](#negative)
           - [positive](#positive)
           - [pow](#pow)
           - [root](#root)
           - [subtract](#subtract)
-          - [takeBetween](#takebetween)
-          - [takeGreater](#takegreater)
-          - [takeGreaterThan](#takegreaterthan)
-          - [takeLower](#takelower)
-          - [takeLowerThan](#takelowerthan)
-          - [takeOuter](#takeouter)
-      - [Logical operators functions](#logical-operators-functions)
-          - [createSwitch](#createswitch)
+          - [takeBetween](#takeBetween)
+          - [takeGreater](#takeGreater)
+          - [takeGreaterThan](#takeGreaterThan)
+          - [takeLower](#takeLower)
+          - [takeLowerThan](#takeLowerThan)
+          - [takeOuter](#takeOuter)
+      - [Logical operators functions](#Logical-operators-functions)
+          - [createSwitch](#createSwitch)
           - [fold](#fold)
-          - [ifElse](#ifelse)
-      - [Object functions](#object-functions)
+          - [ifElse](#ifElse)
+      - [Object functions](#Object-functions)
           - [exclude](#exclude)
-          - [hasProperty](#hasproperty)
+          - [hasProperty](#hasProperty)
           - [keys](#keys)
           - [maybe](#maybe)
           - [merge](#merge)
           - [pick](#pick)
-      - [Misc functions](#misc-functions)
+      - [Misc functions](#Misc-functions)
           - [apply](#apply)
-          - [applySync](#applysync)
+          - [applySync](#applySync)
+          - [breakpoint](#breakpoint)
           - [put](#put)
-          - [safeCall](#safecall)
-          - [useCallValue](#usecallvalue)
-          - [useValue](#usevalue)
-      - [String functions](#string-functions)
-          - [camelCase](#camelcase)
+          - [safeCall](#safeCall)
+          - [useCallValue](#useCallValue)
+          - [useValue](#useValue)
+      - [String functions](#String-functions)
+          - [camelCase](#camelCase)
           - [chars](#chars)
           - [concat](#concat-1)
           - [includes](#includes)
           - [length](#length-1)
           - [lowercase](#lowercase)
-          - [pascalCase](#pascalcase)
+          - [pascalCase](#pascalCase)
           - [repeat](#repeat)
-          - [replaceAll](#replaceall)
-          - [toBinaryArray](#tobinaryarray)
+          - [replaceAll](#replaceAll)
+          - [toBinaryArray](#toBinaryArray)
           - [uppercase](#uppercase)
-      - [Type functions](#type-functions)
-          - [exactTypeOf](#exacttypeof)
-          - [ofType](#oftype)
-          - [toArray](#toarray)
-          - [toBoolean](#toboolean)
-          - [toDate](#todate)
-          - [toNumber](#tonumber)
-          - [toSet](#toset)
-          - [toString](#tostring)
-  - [Examples](#examples)
-  - [Contributing](#contributing)
-  - [Licence](#licence)
+      - [Type functions](#Type-functions)
+          - [exactTypeOf](#exactTypeOf)
+          - [ofType](#ofType)
+          - [toArray](#toArray)
+          - [toBoolean](#toBoolean)
+          - [toDate](#toDate)
+          - [toNumber](#toNumber)
+          - [toSet](#toSet)
+          - [toString](#toString)
+  - [Examples](#Examples)
+  - [Contributing](#Contributing)
+  - [Licence](#Licence)
 
 ## Install
 
@@ -204,6 +205,10 @@ pipe(useCallValue())
   )
 ).resolveSync(0); // returns 10
 ```
+
+Within a context you can also call the `break` method, which will add a `breakpoint` at the current mutation index. 
+
+Read this for an explanation of using [`breakpoints`](#breakpoint).
 
 ## Functions
 
@@ -772,6 +777,49 @@ const testPipeline = pipe(functions.useCallValue())
   .pipe(functions.multiplyBy(2)); 
 
 testPipeline.resolve(2) // 24
+```
+
+###### breakpoint
+
+Breaks execution (resolve or call) at a certain point.
+
+It should be used with the `iter` method.
+
+It allows you to go forward and backward the pipeline, 
+making it ideal for writing tests and for iterating values.
+
+```ts
+const p = pipe(useCallValue())
+    .pipe(add(10))
+    .pipe(breakpoint())
+    .pipe(multiplyBy(2))
+    .pipe(breakpoint())
+    .pipe(multiplyBy(2))
+    .iter(10);
+
+p.hasNext(); // true
+const step1 = p.next(); // 20
+step1.hasNext(); // true
+const step2 = p.next(); // 40
+step2.hasNext(); // true
+const step3 = p.next(); // 80
+step3.hasNext(); // false
+```
+
+**warning**: iterable pipelines are evaluated in sync, PromiseLike values
+have to be handled manually
+
+```ts
+const p = pipe(useCallValue())
+    .pipe(arg => Promise.resolve(arg))
+    .iter(10)
+;
+
+p.hasNext(); // true
+p.next(); // Promise(10)
+p.value(); // Promise(10)
+
+await p.value<Promise<number>>(); // 10
 ```
 
 ###### put
