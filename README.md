@@ -27,92 +27,94 @@ yarn add effepi
 
 ## Index
 
-- [effepi ![Build Status](https://travis-ci.org/OctoD/effepi)](#effepi-build-statushttpstravis-ciorgoctodeffepi)
-  - [What effepi is](#what-effepi-is)
-  - [Install](#install)
-      - [Npm](#npm)
-      - [Yarn](#yarn)
-  - [Index](#index)
-  - [Install](#install-1)
-  - [How to use it](#how-to-use-it)
+- [effepi ![Build Status](https://travis-ci.org/OctoD/effepi)](#effepi-Build-Statushttpstravis-ciorgOctoDeffepi)
+  - [What effepi is](#What-effepi-is)
+  - [Install](#Install)
+      - [Npm](#Npm)
+      - [Yarn](#Yarn)
+  - [Index](#Index)
+  - [Install](#Install-1)
+  - [How to use it](#How-to-use-it)
       - [pipeline context](#pipeline-context)
-  - [Functions](#functions)
-      - [Array functions](#array-functions)
-          - [applyEach](#applyeach)
-          - [applyEachSync](#applyeachsync)
+  - [Functions](#Functions)
+      - [Array functions](#Array-functions)
+          - [applyEach](#applyEach)
+          - [applyEachSync](#applyEachSync)
           - [concat](#concat)
           - [filter](#filter)
-          - [filterWith](#filterwith)
+          - [filterWith](#filterWith)
           - [find](#find)
-          - [findExact](#findexact)
+          - [findExact](#findExact)
           - [join](#join)
           - [length](#length)
           - [nth](#nth)
           - [reverse](#reverse)
-      - [Boolean functions](#boolean-functions)
-          - [F](#f)
-          - [T](#t)
+      - [Boolean functions](#Boolean-functions)
+          - [F](#F)
+          - [T](#T)
           - [inverse](#inverse)
-      - [Math functions](#math-functions)
+      - [Math functions](#Math-functions)
           - [add](#add)
-          - [changeSign](#changesign)
+          - [changeSign](#changeSign)
           - [decrement](#decrement)
-          - [divideBy](#divideby)
+          - [divideBy](#divideBy)
           - [increment](#increment)
-          - [multiplyBy](#multiplyby)
+          - [multiplyBy](#multiplyBy)
           - [negative](#negative)
           - [positive](#positive)
           - [pow](#pow)
           - [root](#root)
           - [subtract](#subtract)
-          - [takeBetween](#takebetween)
-          - [takeGreater](#takegreater)
-          - [takeGreaterThan](#takegreaterthan)
-          - [takeLower](#takelower)
-          - [takeLowerThan](#takelowerthan)
-          - [takeOuter](#takeouter)
-      - [Logical operators functions](#logical-operators-functions)
-          - [createSwitch](#createswitch)
+          - [takeBetween](#takeBetween)
+          - [takeGreater](#takeGreater)
+          - [takeGreaterThan](#takeGreaterThan)
+          - [takeLower](#takeLower)
+          - [takeLowerThan](#takeLowerThan)
+          - [takeOuter](#takeOuter)
+      - [Logical operators functions](#Logical-operators-functions)
+          - [createSwitch](#createSwitch)
           - [fold](#fold)
-          - [ifElse](#ifelse)
-      - [Object functions](#object-functions)
+          - [ifElse](#ifElse)
+      - [Object functions](#Object-functions)
           - [exclude](#exclude)
-          - [hasProperty](#hasproperty)
+          - [hasProperty](#hasProperty)
           - [keys](#keys)
           - [maybe](#maybe)
           - [merge](#merge)
           - [pick](#pick)
-      - [Misc functions](#misc-functions)
+      - [Misc functions](#Misc-functions)
+          - [adapt](#adapt)
           - [apply](#apply)
-          - [applySync](#applysync)
+          - [applySync](#applySync)
+          - [callWith](#callWith)
           - [put](#put)
-          - [safeCall](#safecall)
-          - [useCallValue](#usecallvalue)
-          - [useValue](#usevalue)
-      - [String functions](#string-functions)
-          - [camelCase](#camelcase)
+          - [safeCall](#safeCall)
+          - [useCallValue](#useCallValue)
+          - [useValue](#useValue)
+      - [String functions](#String-functions)
+          - [camelCase](#camelCase)
           - [chars](#chars)
           - [concat](#concat-1)
           - [includes](#includes)
           - [length](#length-1)
           - [lowercase](#lowercase)
-          - [pascalCase](#pascalcase)
+          - [pascalCase](#pascalCase)
           - [repeat](#repeat)
-          - [replaceAll](#replaceall)
-          - [toBinaryArray](#tobinaryarray)
+          - [replaceAll](#replaceAll)
+          - [toBinaryArray](#toBinaryArray)
           - [uppercase](#uppercase)
-      - [Type functions](#type-functions)
-          - [exactTypeOf](#exacttypeof)
-          - [ofType](#oftype)
-          - [toArray](#toarray)
-          - [toBoolean](#toboolean)
-          - [toDate](#todate)
-          - [toNumber](#tonumber)
-          - [toSet](#toset)
-          - [toString](#tostring)
-  - [Examples](#examples)
-  - [Contributing](#contributing)
-  - [Licence](#licence)
+      - [Type functions](#Type-functions)
+          - [exactTypeOf](#exactTypeOf)
+          - [ofType](#ofType)
+          - [toArray](#toArray)
+          - [toBoolean](#toBoolean)
+          - [toDate](#toDate)
+          - [toNumber](#toNumber)
+          - [toSet](#toSet)
+          - [toString](#toString)
+  - [Examples](#Examples)
+  - [Contributing](#Contributing)
+  - [Licence](#Licence)
 
 ## Install
 
@@ -740,6 +742,34 @@ Misc functions are under the `misc` module.
 import { misc } from 'effepi';
 ```
 
+###### adapt
+
+A simple currying function which adapts a function 
+with two arguments in order to be used with the `pipe` method.
+
+Can adapt both a sync or an async function.
+
+```ts
+function myFn(name: string, surname: string): string {
+   return [name, surname].join(' ');
+}
+
+async function myFnAsync(name: string, surname: string): string {
+   return [name, surname].join(' ');
+}
+
+const adaptedMyFn = adapt(myFn);
+const adaptedMyFnAsync = adapt(myFnAsync);
+
+pipe(useCallValue())
+   .pipe(adaptedMyFn('john'))
+   .resolveSync('snow'); // 'john snow'
+
+pipe(useCallValue())
+   .pipe(adaptedMyFnAsync('john'))
+   .resolve('snow'); // Promise('john snow')
+```
+
 ###### apply
 
 Applies a pipeline using the async `resolve` method. 
@@ -772,6 +802,26 @@ const testPipeline = pipe(functions.useCallValue())
   .pipe(functions.multiplyBy(2)); 
 
 testPipeline.resolve(2) // 24
+```
+
+###### callWith
+
+Calls previous value with a specific argument.
+
+Works both with async and sync flows, and the argument can be both a value or a pipeline.
+
+It will throw a TypeError if the previous value is not a function.
+
+```ts
+const p1 = pipe(put(2));
+
+pipe(useCallValue())
+   .pipe(callWith(2))
+   .resolveSync((arg: number) => arg * 2) // 4
+
+pipe(useCallValue())
+   .pipe(callWith(2))
+   .resolve(async (arg: number) => arg * 2) // Promise(4)
 ```
 
 ###### put
