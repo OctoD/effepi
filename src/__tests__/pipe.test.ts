@@ -157,50 +157,59 @@ describe(`pipe`, () => {
   test(`a pipeline can be iterable`, () => {
     const test = pipe<number, number>(misc.useCallValue())
       .pipe(math.add(10))
-      .pipe(misc.breakpoint())
       .pipe(math.multiplyBy(2))
-      .pipe(misc.breakpoint())
       .pipe(math.multiplyBy(2))
       .iter(10);
 
     expect(test.hasnext()).toBeTruthy();
     expect(test.hasprev()).toBeFalsy();
 
-    const first = test.next();
-
-    expect(first.value()).toBe(20);
-    expect(first.hasprev()).toBeTruthy();
-    expect(first.hasnext()).toBeTruthy();
-
-    const second = first.next();
-
-    expect(second.value()).toBe(40);
-    expect(second.hasprev()).toBeTruthy();
-    expect(second.hasnext()).toBeTruthy();
-
-    const third = second.next();
-
-    expect(third.value()).toBe(80);
-    expect(third.hasprev()).toBeTruthy();
-    expect(third.hasnext()).toBeFalsy();
-
-    expect(first.next().value()).toBe(40);
+    expect(test.next().value()).toBe(10);
     expect(
-      first
+      test
+        .next()
+        .next()
+        .value()
+    ).toBe(20);
+    expect(
+      test
+        .next()
+        .next()
+        .next()
+        .value()
+    ).toBe(40);
+    expect(
+      test
+        .next()
+        .next()
         .next()
         .next()
         .value()
     ).toBe(80);
 
-    expect(third.prev().value()).toBe(40);
+    const last = test
+      .next()
+      .next()
+      .next()
+      .next();
+
+    expect(last.prev().value()).toBe(40);
     expect(
-      third
+      last
         .prev()
         .prev()
         .value()
     ).toBe(20);
     expect(
-      third
+      last
+        .prev()
+        .prev()
+        .prev()
+        .value()
+    ).toBe(10);
+    expect(
+      last
+        .prev()
         .prev()
         .prev()
         .prev()

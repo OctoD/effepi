@@ -61,57 +61,6 @@ export function applySync<Initial, Output>(pipe: IPipe<Initial, Output>): Explic
 }
 
 /**
- * Breaks execution (resolve or call) at a certain point.
- *
- * It should be used with the `iter` method.
- *
- * It allows you to go forward and backward the pipeline,
- * making it ideal for writing tests and for iterating values.
- *
- * ```ts
- * const p = pipe(useCallValue())
- *    .pipe(add(10))
- *    .pipe(breakpoint())
- *    .pipe(multiplyBy(2))
- *    .pipe(breakpoint())
- *    .pipe(multiplyBy(2))
- *    .iter(10);
- *
- * p.hasNext(); // true
- * const step1 = p.next(); // 20
- * step1.hasNext(); // true
- * const step2 = p.next(); // 40
- * step2.hasNext(); // true
- * const step3 = p.next(); // 80
- * step3.hasNext(); // false
- * ```
- *
- * **warning**: iterable pipelines are evaluated in sync, PromiseLike values
- * have to be handled manually
- *
- * ```ts
- * const p = pipe(useCallValue())
- *    .pipe(arg => Promise.resolve(arg))
- *    .iter(10)
- * ;
- *
- * p.hasNext(); // true
- * p.next(); // Promise(10)
- * p.value(); // Promise(10)
- * await p.value<Promise<number>>(); // 10
- * ```
- *
- * @export
- * @returns {PassThroughCallable}
- */
-export function breakpoint(): PassThroughCallable {
-  return <Value>(value: Value, context: IContext<unknown, Value>) => {
-    context.break();
-    return value;
-  };
-}
-
-/**
  * Use this function to put a value at the beginning of the pipeline
  *
  * ```

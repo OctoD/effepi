@@ -1,4 +1,4 @@
-import { IContext, create, update, applyMutation } from './context';
+import { IContext, create, update, applyMutation, downgrade } from './context';
 
 export type Callable = <Input, Output>(input: Input, context: IContext<unknown, Input>) => Output;
 export type ExecutionContextFlow = 'async' | 'sync';
@@ -90,49 +90,20 @@ function createIterableMethods<CallValue, ReturnValue>(
   pipeline: Pipeline,
   context: IContext
 ): IIterablePipe<CallValue, ReturnValue> {
-  const breakpoint = context.mutationIndex;
+  const mutationIndex = context.mutationIndex;
   const methods = <IIterablePipe<CallValue, ReturnValue>>{};
-
-  function getPreviousBreakpoint(mutationIndex: number, breakpoints: number[]): number {
-    const copy = breakpoints.slice();
-
-    while (copy.length > 0) {
-      const breakpoint = breakpoints.pop()!;
-
-      if (breakpoint < mutationIndex) {
-        return breakpoint;
-      }
-    }
-
-    return 0;
-  }
 
   methods.hasnext = () => hasNextIterable(context, pipeline.length);
   methods.hasprev = () => hasPrevIterable(context);
   methods.next = () => {
-    const [nextContext, value] = resolveSync(pipeline, breakpoint, context, true);
+    const [nextContext, value] = resolveSync(pipeline, mutationIndex, context, true);
 
     return createIterableMethods(value, pipeline, nextContext);
   };
   methods.prev = () => {
-    const previousBreakpoint = getPreviousBreakpoint(breakpoint, context.breakpoints);
-    const previousBreakpointIndex = context.breakpoints.indexOf(previousBreakpoint);
-    const breakpoints = context.breakpoints.slice(0, previousBreakpointIndex);
-    const previousValues = context.previousValues.slice(0, previousBreakpoint);
-    const previousValueIndex = previousValues.length - 1;
-    const previousValue = previousValues[previousValueIndex > 0 ? previousValueIndex : 0];
-    const prevContext = update(
-      {
-        ...context,
-        breakpoints,
-        mutationIndex: previousBreakpoint,
-        previousValue,
-        previousValues,
-      },
-      previousValue
-    );
+    const prevContext = downgrade(context);
 
-    return createIterableMethods(previousValue, pipeline, prevContext);
+    return createIterableMethods(prevContext.previousValue, pipeline, prevContext);
   };
   methods.value = <Value = unknown>() => (callValue as unknown) as Value;
 
@@ -247,15 +218,11 @@ function resolveSync(
   const updatedContext = update<unknown, unknown>(context, previousValue);
   const [mutatedContext, mutatedPipeline] = applyMutation(updatedContext, pipeline);
 
-  if (shouldStopAndBreakOn(stopOnBreakpoint, index, mutatedContext.breakpoints)) {
+  if (stopOnBreakpoint) {
     return [mutatedContext, previousValue];
   }
 
   return resolveSync(mutatedPipeline, index + 1, mutatedContext, stopOnBreakpoint);
-}
-
-function shouldStopAndBreakOn(stopOnBreakpoint: boolean, breakpoint: number, breakpoints: number[]): boolean {
-  return stopOnBreakpoint && breakpoints.indexOf(breakpoint) >= 0;
 }
 
 /**

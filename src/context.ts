@@ -2,12 +2,6 @@ import { ExecutionContextFlow, ExplicitCallable, Pipeline } from './pipe';
 
 export interface IContext<CallValue = unknown, PreviousValue = unknown> {
   /**
-   * An array of breakpoints
-   * @type {number[]}
-   * @memberof IContext
-   */
-  readonly breakpoints: number[];
-  /**
    * The value used to call the pipeline
    * @type {CallValue}
    * @memberof IContext
@@ -38,11 +32,6 @@ export interface IContext<CallValue = unknown, PreviousValue = unknown> {
    * @memberof IContext
    */
   readonly previousValues: unknown[];
-  /**
-   * Adds a breakpoint
-   * @memberof IContext
-   */
-  break(): void;
   /**
    * Calls a function with the `previousValue` and `context` as arguments
    * @template ReturnType
@@ -93,18 +82,40 @@ export function applyMutation(context: IContext, pipeline: Pipeline): [IContext,
  */
 export function create<CallValue>(callValue: CallValue, executionFlow: ExecutionContextFlow): IContext<CallValue> {
   return {
-    breakpoints: [],
     callValue,
     executionFlow,
     mutationIndex: 0,
     previousValue: undefined,
     previousValues: [],
-    break() {
-      this.breakpoints.push(this.mutationIndex);
-    },
     call(this: IContext<CallValue>, callable) {
       return callable(this.previousValue, this);
     },
+  };
+}
+
+/**
+ *
+ * @export
+ * @template CallValue
+ * @template PreviousValue
+ * @param {IContext<CallValue>} context
+ * @returns {IContext<CallValue, PreviousValue>}
+ */
+export function downgrade<CallValue, PreviousValue = unknown>(
+  context: IContext<CallValue>
+): IContext<CallValue, PreviousValue> {
+  const { call, callValue, executionFlow, mutationIndex, mutate, previousValues } = context;
+  const previousMutationIndex = mutationIndex - 1;
+  const prevPreviousValues = previousValues.slice(0, previousMutationIndex);
+
+  return {
+    call: call as any,
+    callValue,
+    executionFlow,
+    mutationIndex: previousMutationIndex,
+    mutate,
+    previousValue: prevPreviousValues[prevPreviousValues.length - 1] as PreviousValue,
+    previousValues: prevPreviousValues,
   };
 }
 
@@ -120,20 +131,9 @@ export function update<CallValue, PreviousValue = unknown>(
   context: IContext<CallValue>,
   previousValue: PreviousValue
 ): IContext<CallValue, PreviousValue> {
-  const {
-    break: breakFn,
-    breakpoints,
-    call,
-    callValue,
-    executionFlow,
-    mutationIndex,
-    mutate,
-    previousValues,
-  } = context;
+  const { call, callValue, executionFlow, mutationIndex, mutate, previousValues } = context;
 
   return {
-    break: breakFn,
-    breakpoints,
     call: call as any,
     callValue,
     executionFlow,
