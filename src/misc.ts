@@ -1,6 +1,46 @@
-import { IPipe, ExplicitCallable, PassThroughCallable } from './pipe';
-import { throwContextExecutionFlow } from './helpers';
+import { IPipe, ExplicitCallable } from './pipe';
+import { throwContextExecutionFlow, throwIfNotFunction } from './helpers';
 import { IContext } from './context';
+
+/**
+ * A simple currying function which adapts a function
+ * with two arguments in order to be used with the `pipe` method.
+ *
+ * Can adapt both a sync or an async function.
+ *
+ * ```ts
+ * function myFn(name: string, surname: string): string {
+ *    return [name, surname].join(' ');
+ * }
+ *
+ * async function myFnAsync(name: string, surname: string): string {
+ *    return [name, surname].join(' ');
+ * }
+ *
+ * const adaptedMyFn = adapt(myFn);
+ * const adaptedMyFnAsync = adapt(myFnAsync);
+ *
+ * pipe(useCallValue())
+ *    .pipe(adaptedMyFn('john'))
+ *    .resolveSync('snow'); // 'john snow'
+ *
+ * pipe(useCallValue())
+ *    .pipe(adaptedMyFnAsync('john'))
+ *    .resolve('snow'); // Promise('john snow')
+ * ```
+ *
+ * @export
+ * @template Arg1
+ * @template Arg2
+ * @template ReturnType
+ * @param {(arg1: Arg1, arg2: Arg2) => ReturnType} fn
+ * @returns {(arg: Arg1) => ExplicitCallable<Arg2, ReturnType>}
+ */
+export function adapt<Arg1, Arg2, ReturnType>(
+  fn: (arg1: Arg1, arg2: Arg2) => ReturnType
+): (arg: Arg1) => ExplicitCallable<Arg2, ReturnType> {
+  return arg1 => arg2 => fn(arg1, arg2);
+}
 
 /**
  * Applies a pipeline using the async `resolve` method.
@@ -57,6 +97,39 @@ export function applySync<Initial, Output>(pipe: IPipe<Initial, Output>): Explic
   return (arg, context) => {
     throwContextExecutionFlow('applySync', context, 'sync');
     return pipe.resolveSync(arg);
+  };
+}
+
+/**
+ * Calls previous value with a specific argument.
+ *
+ * Works both with async and sync flows, and the argument can be both a value or a pipeline.
+ *
+ * It will throw a TypeError if the previous value is not a function.
+ *
+ * ```ts
+ * const p1 = pipe(put(2));
+ *
+ * pipe(useCallValue())
+ *    .pipe(callWith(2))
+ *    .resolveSync((arg: number) => arg * 2) // 4
+ *
+ * pipe(useCallValue())
+ *    .pipe(callWith(2))
+ *    .resolve(async (arg: number) => arg * 2) // Promise(4)
+ * ```
+ *
+ * @export
+ * @template Arg
+ * @template ReturnType
+ * @param {Arg} value
+ * @returns {ExplicitCallable<(arg: Arg) => ReturnType, ReturnType>}
+ */
+export function callWith<Arg, ReturnType>(value: Arg): ExplicitCallable<(arg: Arg) => ReturnType, ReturnType> {
+  return fn => {
+    throwIfNotFunction(`callWith`, `fn`, fn);
+
+    return fn(value);
   };
 }
 

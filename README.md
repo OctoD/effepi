@@ -83,8 +83,10 @@ yarn add effepi
           - [merge](#merge)
           - [pick](#pick)
       - [Misc functions](#Misc-functions)
+          - [adapt](#adapt)
           - [apply](#apply)
           - [applySync](#applySync)
+          - [callWith](#callWith)
           - [put](#put)
           - [safeCall](#safeCall)
           - [useCallValue](#useCallValue)
@@ -744,6 +746,34 @@ Misc functions are under the `misc` module.
 import { misc } from 'effepi';
 ```
 
+###### adapt
+
+A simple currying function which adapts a function 
+with two arguments in order to be used with the `pipe` method.
+
+Can adapt both a sync or an async function.
+
+```ts
+function myFn(name: string, surname: string): string {
+   return [name, surname].join(' ');
+}
+
+async function myFnAsync(name: string, surname: string): string {
+   return [name, surname].join(' ');
+}
+
+const adaptedMyFn = adapt(myFn);
+const adaptedMyFnAsync = adapt(myFnAsync);
+
+pipe(useCallValue())
+   .pipe(adaptedMyFn('john'))
+   .resolveSync('snow'); // 'john snow'
+
+pipe(useCallValue())
+   .pipe(adaptedMyFnAsync('john'))
+   .resolve('snow'); // Promise('john snow')
+```
+
 ###### apply
 
 Applies a pipeline using the async `resolve` method. 
@@ -776,6 +806,26 @@ const testPipeline = pipe(functions.useCallValue())
   .pipe(functions.multiplyBy(2)); 
 
 testPipeline.resolve(2) // 24
+```
+
+###### callWith
+
+Calls previous value with a specific argument.
+
+Works both with async and sync flows, and the argument can be both a value or a pipeline.
+
+It will throw a TypeError if the previous value is not a function.
+
+```ts
+const p1 = pipe(put(2));
+
+pipe(useCallValue())
+   .pipe(callWith(2))
+   .resolveSync((arg: number) => arg * 2) // 4
+
+pipe(useCallValue())
+   .pipe(callWith(2))
+   .resolve(async (arg: number) => arg * 2) // Promise(4)
 ```
 
 ###### put
