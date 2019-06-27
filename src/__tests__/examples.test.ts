@@ -4,6 +4,7 @@ import * as math from '../math';
 import * as string from '../string';
 import * as type from '../type';
 import { IContext } from '../context';
+import { ifElse, fold } from '../logical';
 
 describe(`miscellaneous tests, jff`, () => {
   test(`A vat calculator`, () => {
@@ -55,5 +56,26 @@ describe(`miscellaneous tests, jff`, () => {
     expect(p3.resolveSync(4)).toBe(1000);
     const p4result = p4.resolveSync(4);
     expect(expect.arrayContaining(p4result)).toEqual(['1', '0', '0', '0']);
+  });
+
+  test(`if statements`, () => {
+    const result = ' result';
+    const positive = 'positive';
+    const negative = 'negative';
+
+    const pipeline = pipe(misc.useCallValue<number>())
+      .pipe(misc.applySync(pipe(misc.useCallValue<number>()).pipe(ifElse(math.isPositive(), negative, positive))))
+      .pipe(
+        misc.applySync(
+          pipe(misc.useCallValue())
+            .pipe(type.toString())
+            .pipe(string.concat(result))
+        )
+      );
+
+    const fn = pipeline.toSyncFunction();
+
+    expect(fn(1)).toBe(positive + result);
+    expect(fn(-1)).toBe(negative + result);
   });
 });

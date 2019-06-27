@@ -88,6 +88,14 @@ export function increment(): ExplicitCallable<number, number> {
   };
 }
 
+export function isNegative(): ExplicitCallable<number, boolean> {
+  return arg => arg >= 0;
+}
+
+export function isPositive(): ExplicitCallable<number, boolean> {
+  return arg => arg >= 0;
+}
+
 /**
  * Multiplies the previous value by the given one
  *
