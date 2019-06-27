@@ -1,7 +1,7 @@
 import { isContextFlowAsync, isPipe, throwIfNotFunction } from './helpers';
-import { IContext, IPipe } from './pipe';
+import { IPipe, ExplicitCallable } from './pipe';
+import { IContext } from './context';
 
-export type Condition<Type> = (arg: Type) => boolean;
 export type SwitchOption<TValue> = (arg: unknown) => ISwitchResult<TValue>;
 
 export interface ISwitchResult<TValue> {
@@ -168,16 +168,16 @@ export function fold<Left, Right>(
  * @template Left
  * @template Right
  * @template K
- * @param {TCondition} condition
+ * @param {K} ExplicitCallable<K, boolean>
  * @param {Left} left
  * @param {Right} right
  * @returns {<T extends K>(arg: T, context: IContext) => ReturnType<TCondition> extends true ? Right : Left}
  */
-export function ifElse<TCondition extends Condition<K>, Left, Right, K>(
-  condition: TCondition,
+export function ifElse<K, Left, Right>(
+  condition: ExplicitCallable<K, boolean>,
   left: Left,
   right: Right
-): <T extends K>(arg: T, context: IContext) => ReturnType<TCondition> extends true ? Right : Left {
+): ExplicitCallable<K, ReturnType<ExplicitCallable<K, boolean>> extends true ? Right : Left> {
   const resolveIfIsPipe = (context: IContext, currentPipe: IPipe<unknown, unknown>, value: unknown) => {
     return isContextFlowAsync(context) ? currentPipe.resolve(value) : currentPipe.resolveSync(value);
   };

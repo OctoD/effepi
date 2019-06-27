@@ -1,5 +1,6 @@
-import { IPipe, IContext, ExplicitCallable, Callable } from './pipe';
+import { IPipe, ExplicitCallable, Callable } from './pipe';
 import { throwContextExecutionFlow, throwIfNotArray } from './helpers';
+import { IContext } from './context';
 
 /**
  * Applies a pipeline to an array of values.

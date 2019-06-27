@@ -1,4 +1,5 @@
-import { ExecutionContextFlow, IContext, IPipe } from './pipe';
+import { ExecutionContextFlow, IPipe } from './pipe';
+import { IContext } from './context';
 
 export function getTypeOf(arg: unknown): string {
   const type = Object.prototype.toString.call(arg) as string;

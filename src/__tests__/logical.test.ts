@@ -1,8 +1,9 @@
 import * as logical from '../logical';
 import { divideBy, pow } from '../math';
 import { useCallValue } from '../misc';
-import { ExplicitCallable, IContext, pipe } from '../pipe';
+import { ExplicitCallable, pipe } from '../pipe';
 import testFunction from './__ignore__/testFunction';
+import { IContext } from '../context';
 
 describe(`Logical operators`, () => {
   testFunction(logical.fold, () => {
@@ -42,7 +43,7 @@ describe(`Logical operators`, () => {
     const simplePipe = pipe<number, number>(useCallValue()).pipe(simple);
     const leftPipe = pipe<number, number>(useCallValue()).pipe(pow(2));
     const rightPipe = pipe<number, number>(useCallValue()).pipe(divideBy(2));
-    const complexPipe = pipe<number, number>(useCallValue()).pipe(logical.ifElse(check as any, leftPipe, rightPipe));
+    const complexPipe = pipe<number, number>(useCallValue()).pipe(logical.ifElse(check, leftPipe, rightPipe));
 
     expect(simple(4, { call, previousValue: 4 } as any)).toBe('foo');
     expect(simple(10, { call, previousValue: 10 } as any)).toBe('bar');

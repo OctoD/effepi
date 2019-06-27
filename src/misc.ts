@@ -1,5 +1,6 @@
-import { IPipe, ExplicitCallable, IContext } from './pipe';
+import { IPipe, ExplicitCallable } from './pipe';
 import { throwContextExecutionFlow, throwIfNotFunction } from './helpers';
+import { IContext } from './context';
 
 /**
  * A simple currying function which adapts a function
