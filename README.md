@@ -60,6 +60,8 @@ yarn add effepi
       - [decrement](#decrement)
       - [divideBy](#divideBy)
       - [increment](#increment)
+      - [isNegative](#isNegative)
+      - [isPositive](#isPositive)
       - [multiplyBy](#multiplyBy)
       - [negative](#negative)
       - [positive](#positive)
@@ -467,6 +469,24 @@ Increments the previous value by one.
 
 ```ts
 pipe(useCallValue()).pipe(increment()).resolve(44) // 45
+```
+
+#### isNegative
+
+Checks if previous value is negative.
+
+```ts
+pipe(useCallValue()).pipe(isNegative()).resolveSync(1) // false
+pipe(useCallValue()).pipe(isNegative()).resolveSync(-1) // true
+```
+
+#### isPositive
+
+Checks if previous value is positive.
+
+```ts
+pipe(useCallValue()).pipe(isPositive()).resolveSync(1) // true
+pipe(useCallValue()).pipe(isPositive()).resolveSync(-1) // false
 ```
 
 #### multiplyBy

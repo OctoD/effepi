@@ -88,12 +88,40 @@ export function increment(): ExplicitCallable<number, number> {
   };
 }
 
+/**
+ * Checks if previous value is negative.
+ *
+ * ```ts
+ * pipe(useCallValue()).pipe(isNegative()).resolveSync(1) // false
+ * pipe(useCallValue()).pipe(isNegative()).resolveSync(-1) // true
+ * ```
+ *
+ * @export
+ * @returns {ExplicitCallable<number, boolean>}
+ */
 export function isNegative(): ExplicitCallable<number, boolean> {
-  return arg => arg >= 0;
+  return arg => {
+    throwIfNotNumber('isNegative', arg);
+    return arg < 0;
+  };
 }
 
+/**
+ * Checks if previous value is positive.
+ *
+ * ```ts
+ * pipe(useCallValue()).pipe(isPositive()).resolveSync(1) // true
+ * pipe(useCallValue()).pipe(isPositive()).resolveSync(-1) // false
+ * ```
+ *
+ * @export
+ * @returns {ExplicitCallable<number, boolean>}
+ */
 export function isPositive(): ExplicitCallable<number, boolean> {
-  return arg => arg >= 0;
+  return arg => {
+    throwIfNotNumber('isPositive', arg);
+    return arg >= 0;
+  };
 }
 
 /**
