@@ -1,5 +1,6 @@
 import * as math from '../math';
 import testFunction from './__ignore__/testFunction';
+import createContextMock from './__ignore__/createContext';
 
 describe(`Math functions`, () => {
   testFunction(math.add, () => {
@@ -21,6 +22,18 @@ describe(`Math functions`, () => {
 
   testFunction(math.increment, () => {
     expect(math.increment()(1, {} as any)).toBe(2);
+  });
+
+  testFunction(math.isNegative, () => {
+    expect(math.isNegative()(1, createContextMock())).toBeFalsy();
+    expect(math.isNegative()(-1, createContextMock())).toBeTruthy();
+    expect(math.isNegative()(0, createContextMock())).toBeFalsy();
+  });
+
+  testFunction(math.isPositive, () => {
+    expect(math.isPositive()(1, createContextMock())).toBeTruthy();
+    expect(math.isPositive()(-1, createContextMock())).toBeFalsy();
+    expect(math.isPositive()(0, createContextMock())).toBeTruthy();
   });
 
   testFunction(math.multiplyBy, () => {
