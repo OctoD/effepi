@@ -171,7 +171,7 @@ test(2) // returns the cached previous result
 
 You can iterate a pipeline. 
 
-Each iteration does not mutate the generated iterable pipeline.
+Each iteration returns an immutable pipeline result.
 
 ```ts
 const pipeline = pipe(useCallValue())
