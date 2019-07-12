@@ -11,6 +11,12 @@ Fun functional programming with pipelinable functions.
 
 Effepi is a functional way to enqueue and use different functions. You can put your functions in a pipeline and resolve them both asynchronously or synchronously, creating new async functions or sync functions.
 
+# Bugs of Feature Request?
+
+If you have found a bug, please feel free to open an issue or to create a pull request with the fix. 
+
+If you want a specific feature, please check if there is an open pull requests about it, otherwise create an issue with the proper template. If you have implemented it yourself, a pull request is really welcome.
+
 # Install
 
 ## Npm 
